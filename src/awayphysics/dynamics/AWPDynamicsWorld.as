@@ -21,7 +21,7 @@ package awayphysics.dynamics
 		public static function getInstance() : AWPDynamicsWorld
 		{
 			if (!currentDynamicsWorld) {
-				trace("version: BulletFlash v0.62 alpha (16-8-2011)");
+				trace("version: AwayPhysics v0.62 (16-8-2011)");
 				currentDynamicsWorld = new AWPDynamicsWorld();
 			}
 			return currentDynamicsWorld;
