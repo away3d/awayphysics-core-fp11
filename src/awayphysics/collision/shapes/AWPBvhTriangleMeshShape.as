@@ -7,6 +7,9 @@ package awayphysics.collision.shapes
 		private var indexDataPtr : uint;
 		private var vertexDataPtr : uint;
 
+		/**
+		 *create a static triangle mesh shape with a 3D mesh object
+		 */
 		public function AWPBvhTriangleMeshShape(mesh : IMesh3D, useQuantizedAabbCompression : Boolean = true)
 		{
 			var indexData : Vector.<uint> = mesh.indices;
@@ -32,6 +35,9 @@ package awayphysics.collision.shapes
 			pointer = bullet.createBvhTriangleMeshShapeMethod(triangleIndexVertexArrayPtr, useQuantizedAabbCompression ? 1 : 0, 1);
 		}
 
+		/**
+		 *release the memory of index/vertex buffer
+		 */
 		public function deleteBvhTriangleMeshShapeBuffer() : void
 		{
 			bullet.removeTriangleIndexDataBufferMethod(indexDataPtr);

@@ -7,11 +7,19 @@ package awayphysics.events
 
 	public class AWPCollisionEvent extends Event
 	{
-		// Dispatched when the body occur collision
+		/*
+		 * Dispatched when the body occur collision
+		 */
 		public static const COLLISION_ADDED : String = "collisionStart";
-		// stored which object is collide with target object
+		
+		/*
+		 * stored which object is collide with target object
+		 */
 		public var collisionObject : AWPCollisionObject;
-		// stored collision point, normal, impulse etc.
+		
+		/*
+		 * stored collision point, normal, impulse etc.
+		 */
 		public var manifoldPoint : AWPManifoldPoint;
 
 		public function AWPCollisionEvent(type : String)

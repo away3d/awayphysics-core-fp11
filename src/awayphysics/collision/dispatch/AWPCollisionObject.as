@@ -21,6 +21,7 @@ package awayphysics.collision.dispatch
 		public static var WANTS_DEACTIVATION : int = 3;
 		public static var DISABLE_DEACTIVATION : int = 4;
 		public static var DISABLE_SIMULATION : int = 5;
+		
 		private var m_shape : AWPShape;
 		private var m_skin : IMesh3D;
 		private var m_worldTransform : AWPTransform;
@@ -48,7 +49,10 @@ package awayphysics.collision.dispatch
 			return m_skin;
 		}
 
-		// update the transform of skin mesh
+		/**
+		 * update the transform of skin mesh
+		 * called by dynamicsWorld
+		 */
 		public function updateTransform() : void
 		{
 			var pos : Vector3D = this.position;
@@ -61,6 +65,9 @@ package awayphysics.collision.dispatch
 			}
 		}
 
+		/**
+		 * set the position in world coordinates
+		 */
 		public function set position(pos : Vector3D) : void {
 			m_worldTransform.position.sv3d = pos;
 		}
@@ -69,6 +76,9 @@ package awayphysics.collision.dispatch
 			return m_worldTransform.position.sv3d;
 		}
 
+		/**
+		 * set the orientation in world coordinates
+		 */
 		public function set rotation(rot : Matrix3D) : void {
 			m_worldTransform.rotation.m3d = rot;
 		}
@@ -76,15 +86,14 @@ package awayphysics.collision.dispatch
 		public function get rotation() : Matrix3D {
 			return m_worldTransform.rotation.m3d;
 		}
-
+		
+		/**
+		* set the position and orientation in world coordinates
+		*/
 		public function setWorldTransform(pos : Vector3D, rot : Matrix3D) : void
 		{
 			m_worldTransform.position.sv3d = pos;
 			m_worldTransform.rotation.m3d = rot;
-		}
-
-		public function get worldTransform() : Matrix3D {
-			return null;
 		}
 
 		public function get anisotropicFriction() : Vector3D {
@@ -214,7 +223,9 @@ package awayphysics.collision.dispatch
 			return dispatcher.willTrigger(type);
 		}
 
-		// this function just called by alchemy
+		/**
+		 * this function just called by alchemy
+		 */
 		public function collisionCallback(mpt : uint, body : AWPCollisionObject) : void
 		{
 			var pt : AWPManifoldPoint = new AWPManifoldPoint(mpt);

@@ -33,11 +33,17 @@ package awayphysics.dynamics.character
 			return m_shape;
 		}
 
+		/*
+		 * called by dynamicsWorld
+		 */
 		public function updateTransform() : void
 		{
 			m_ghostObject.updateTransform();
 		}
 
+		/*
+		 * set the walk direction and speed
+		 */
 		public function setWalkDirection(walkDirection : Vector3D) : void
 		{
 			useWalkDirection = true;
@@ -47,6 +53,9 @@ package awayphysics.dynamics.character
 			m_normalizedDirection.v3d = vec;
 		}
 
+		/*
+		 * set the walk direction and speed with time interval
+		 */
 		public function setVelocityForTimeInterval(velocity : Vector3D, timeInterval : Number) : void
 		{
 			useWalkDirection = false;
@@ -57,16 +66,25 @@ package awayphysics.dynamics.character
 			velocityTimeInterval = timeInterval;
 		}
 
+		/*
+		 * set the character's position in world coordinates
+		 */
 		public function warp(origin : Vector3D) : void
 		{
 			m_ghostObject.position = origin;
 		}
 
+		/*
+		 * whether character contact with ground
+		 */
 		public function onGround() : Boolean
 		{
 			return (verticalVelocity == 0 && verticalOffset == 0);
 		}
 
+		/*
+		 * whether character can jump (on the ground)
+		 */
 		public function canJump() : Boolean
 		{
 			return onGround();
@@ -81,6 +99,10 @@ package awayphysics.dynamics.character
 			wasJumping = true;
 		}
 
+		/*
+		 * The max slope determines the maximum angle that the controller can walk up.
+	     * The slope angle is measured in radians.
+		 */
 		public function setMaxSlope(slopeRadians : Number) : void
 		{
 			maxSlopeRadians = slopeRadians;

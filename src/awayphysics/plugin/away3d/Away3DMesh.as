@@ -12,7 +12,6 @@ package awayphysics.plugin.away3d
 		private var _mesh : Mesh;
 		private var _translationOffset : Vector3D;
 		private var _scale : Vector3D;
-		private var _transform : Matrix3D = new Matrix3D();
 
 		public function Away3DMesh(do3d : Mesh, offset : Vector3D = null)
 		{
@@ -30,12 +29,13 @@ package awayphysics.plugin.away3d
 			return _mesh.transform;
 		}
 
-		public function set transform(matrix3D : Matrix3D) : void {
-			_transform.identity();
-			if (_translationOffset) _transform.appendTranslation(_translationOffset.x, _translationOffset.y, _translationOffset.z);
-			if (_scale) _transform.appendScale(_scale.x, _scale.y, _scale.z);
-			_transform.append(matrix3D);
-			_mesh.transform = _transform;
+		public function set transform(m : Matrix3D) : void {
+			var tr : Matrix3D = new Matrix3D();
+			if (_translationOffset) tr.appendTranslation(_translationOffset.x, _translationOffset.y, _translationOffset.z);
+			if (_scale) tr.appendScale(_scale.x, _scale.y, _scale.z);
+			tr.append(m);
+
+			_mesh.transform = tr;
 		}
 
 		public function get mesh() : Mesh {

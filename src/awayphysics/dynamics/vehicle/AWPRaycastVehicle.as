@@ -6,8 +6,10 @@ package awayphysics.dynamics.vehicle
 
 	import flash.geom.Vector3D;
 
-	// create the raycast vehicle
-	// refer to https://docs.google.com/document/edit?id=18edpOwtGgCwNyvakS78jxMajCuezotCU_0iezcwiFQc
+	/*
+	 * create the raycast vehicle
+	 * refer to https://docs.google.com/document/edit?id=18edpOwtGgCwNyvakS78jxMajCuezotCU_0iezcwiFQc
+	 */
 	public class AWPRaycastVehicle extends AWPBase
 	{
 		private var m_chassisBody : AWPRigidBody;

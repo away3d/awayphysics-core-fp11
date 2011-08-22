@@ -7,6 +7,9 @@ package awayphysics.collision.shapes
 	{
 		private var m_children : Vector.<AWPShape>;
 
+		/**
+		 *create a compound shape use the other primitive shapes
+		 */
 		public function AWPCompoundShape()
 		{
 			pointer = bullet.createCompoundShapeMethod();
@@ -14,6 +17,9 @@ package awayphysics.collision.shapes
 			m_children = new Vector.<AWPShape>();
 		}
 
+		/**
+		 *add a child shape and set its position and rotation in local coordinates
+		 */
 		public function addChildShape(child : AWPShape, localPos : Vector3D, localRot : Matrix3D) : void
 		{
 			var rotArr : Vector.<Number> = localRot.rawData;
@@ -22,6 +28,9 @@ package awayphysics.collision.shapes
 			m_children.push(child);
 		}
 
+		/**
+		 *remove a child shape from compound shape
+		 */
 		public function removeChildShapeByIndex(childShapeindex : int) : void
 		{
 			bullet.removeCompoundChildMethod(pointer, childShapeindex);
@@ -29,6 +38,9 @@ package awayphysics.collision.shapes
 			m_children.splice(childShapeindex, 1);
 		}
 
+		/**
+		 *get the children list
+		 */
 		public function get children() : Vector.<AWPShape> {
 			return m_children;
 		}

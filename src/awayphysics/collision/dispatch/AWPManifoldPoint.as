@@ -20,18 +20,30 @@ package awayphysics.collision.dispatch
 			m_normalWorldOnB = new AWPVector3(ptr + 64);
 		}
 
+		/**
+		 *get the collision position in objectA's local coordinates
+		 */
 		public function get localPointA() : Vector3D {
 			return m_localPointA.sv3d;
 		}
 
+		/**
+		 *get the collision position in objectB's local coordinates
+		 */
 		public function get localPointB() : Vector3D {
 			return m_localPointB.sv3d;
 		}
 
+		/**
+		 *get the collision normal in world coordinates
+		 */
 		public function get normalWorldOnB() : Vector3D {
 			return m_normalWorldOnB.v3d;
 		}
 
+		/**
+		 *get the value of collision impulse
+		 */
 		public function get appliedImpulse() : Number {
 			return memUser._mrf(pointer + 112) * _scaling;
 		}

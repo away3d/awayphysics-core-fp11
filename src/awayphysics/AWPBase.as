@@ -31,8 +31,10 @@ package awayphysics
 			alchemyMemory = (ns::gstate).ds;
 		}
 
-		// 1 visual units equal to 0.01 bullet meters by default
-		// refer to http://www.bulletphysics.org/mediawiki-1.5.8/index.php?title=Scaling_The_World
+		/**
+		 * 1 visual units equal to 0.01 bullet meters by default
+		 * refer to http://www.bulletphysics.org/mediawiki-1.5.8/index.php?title=Scaling_The_World
+		 */
 		protected static var _scaling : Number = 100;
 		public var pointer : uint;
 	}

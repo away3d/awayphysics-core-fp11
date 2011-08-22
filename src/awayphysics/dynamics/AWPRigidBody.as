@@ -22,7 +22,9 @@ package awayphysics.dynamics
 		private var m_totalForce : AWPVector3;
 		private var m_totalTorque : AWPVector3;
 
-		// rigidbody is static if mass is zero, otherwise is dynamic
+		/*
+		 * rigidbody is static if mass is zero, otherwise is dynamic
+		 */
 		public function AWPRigidBody(shape : AWPShape, skin : IMesh3D = null, mass : Number = 0)
 		{
 			pointer = bullet.createBodyMethod(this, shape.pointer, mass);
@@ -61,7 +63,9 @@ package awayphysics.dynamics
 			}
 		}
 
-		// add a center force to the rigidbody
+		/*
+		 * add force to the rigidbody's mass center
+		 */
 		public function applyCentralForce(force : Vector3D) : void
 		{
 			var vec : Vector3D = force.clone();
@@ -69,7 +73,9 @@ package awayphysics.dynamics
 			activate();
 		}
 
-		// add torque to the rigidbody
+		/*
+		 * add torque to the rigidbody
+		 */
 		public function applyTorque(torque : Vector3D) : void
 		{
 			var vec : Vector3D = torque.clone();
@@ -78,14 +84,18 @@ package awayphysics.dynamics
 			activate();
 		}
 
-		// add a force to the rigidbody
+		/*
+		 * add force to the rigidbody, rel_pos is the position in body's local coordinates
+		 */
 		public function applyForce(force : Vector3D, rel_pos : Vector3D) : void
 		{
 			applyCentralForce(force);
 			applyTorque(rel_pos.crossProduct(force));
 		}
 
-		// add a center impulse to the rigidbody
+		/*
+		 * add impulse to the rigidbody's mass center
+		 */
 		public function applyCentralImpulse(impulse : Vector3D) : void
 		{
 			var vec : Vector3D = impulse.clone();
@@ -95,7 +105,9 @@ package awayphysics.dynamics
 			activate();
 		}
 
-		// add a torque impulse to the rigidbody
+		/*
+		 * add a torque impulse to the rigidbody
+		 */
 		public function applyTorqueImpulse(torque : Vector3D) : void
 		{
 			var tor : Vector3D = torque.clone();
@@ -105,7 +117,9 @@ package awayphysics.dynamics
 			activate();
 		}
 
-		// add a impulse to the rigidbody
+		/*
+		 * add a impulse to the rigidbody, rel_pos is the position in body's local coordinates
+		 */
 		public function applyImpulse(impulse : Vector3D, rel_pos : Vector3D) : void
 		{
 			if (inverseMass != 0) {
@@ -114,14 +128,18 @@ package awayphysics.dynamics
 			}
 		}
 
-		// clear all force and torque to zero
+		/*
+		 * clear all force and torque to zero
+		 */
 		public function clearForces() : void
 		{
 			m_totalForce.v3d = new Vector3D();
 			m_totalTorque.v3d = new Vector3D();
 		}
 
-		// set the gravity of this rigidbody
+		/*
+		 * set the gravity of this rigidbody
+		 */
 		public function set gravity(acceleration : Vector3D) : void {
 			if (inverseMass != 0) {
 				acceleration.scaleBy(1 / inverseMass);
