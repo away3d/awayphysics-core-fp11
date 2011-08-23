@@ -16,11 +16,13 @@ package awayphysics.dynamics
 		private var m_linearVelocity : AWPVector3;
 		private var m_angularVelocity : AWPVector3;
 		private var m_linearFactor : AWPVector3;
+		private var m_angularFactor : AWPVector3;
 		private var m_gravity : AWPVector3;
 		private var m_gravity_acceleration : AWPVector3;
 		private var m_invInertiaLocal : AWPVector3;
 		private var m_totalForce : AWPVector3;
 		private var m_totalTorque : AWPVector3;
+		private var m_invMass : AWPVector3;
 
 		/*
 		 * rigidbody is static if mass is zero, otherwise is dynamic
@@ -29,16 +31,18 @@ package awayphysics.dynamics
 		{
 			pointer = bullet.createBodyMethod(this, shape.pointer, mass);
 			super(pointer, shape, skin);
-
+			
 			m_invInertiaTensorWorld = new AWPMatrix3x3(pointer + 256);
 			m_linearVelocity = new AWPVector3(pointer + 304);
 			m_angularVelocity = new AWPVector3(pointer + 320);
 			m_linearFactor = new AWPVector3(pointer + 340);
+			m_angularFactor = new AWPVector3(pointer + 504);
 			m_gravity = new AWPVector3(pointer + 356);
 			m_gravity_acceleration = new AWPVector3(pointer + 372);
 			m_invInertiaLocal = new AWPVector3(pointer + 388);
 			m_totalForce = new AWPVector3(pointer + 404);
 			m_totalTorque = new AWPVector3(pointer + 420);
+			m_invMass = new AWPVector3(pointer + 520);
 		}
 
 		override public function set position(pos : Vector3D) : void {
@@ -69,6 +73,9 @@ package awayphysics.dynamics
 		public function applyCentralForce(force : Vector3D) : void
 		{
 			var vec : Vector3D = force.clone();
+			vec.x *= m_linearFactor.x;
+			vec.y *= m_linearFactor.y;
+			vec.z *= m_linearFactor.z;
 			m_totalForce.v3d = vec.add(m_totalForce.v3d);
 			activate();
 		}
@@ -80,6 +87,9 @@ package awayphysics.dynamics
 		{
 			var vec : Vector3D = torque.clone();
 			vec.scaleBy(1 / _scaling);
+			vec.x *= m_angularFactor.x;
+			vec.y *= m_angularFactor.y;
+			vec.z *= m_angularFactor.z;
 			m_totalTorque.v3d = vec.add(m_totalTorque.v3d);
 			activate();
 		}
@@ -90,7 +100,12 @@ package awayphysics.dynamics
 		public function applyForce(force : Vector3D, rel_pos : Vector3D) : void
 		{
 			applyCentralForce(force);
-			applyTorque(rel_pos.crossProduct(force));
+			
+			var vec : Vector3D = force.clone();
+			vec.x *= m_linearFactor.x;
+			vec.y *= m_linearFactor.y;
+			vec.z *= m_linearFactor.z;
+			applyTorque(rel_pos.crossProduct(vec));
 		}
 
 		/*
@@ -101,6 +116,9 @@ package awayphysics.dynamics
 			var vec : Vector3D = impulse.clone();
 			vec.scaleBy(1 / _scaling);
 			vec.scaleBy(inverseMass);
+			vec.x *= m_linearFactor.x;
+			vec.y *= m_linearFactor.y;
+			vec.z *= m_linearFactor.z;
 			m_linearVelocity.v3d = vec.add(m_linearVelocity.v3d);
 			activate();
 		}
@@ -113,6 +131,9 @@ package awayphysics.dynamics
 			var tor : Vector3D = torque.clone();
 			tor.scaleBy(1 / _scaling);
 			var vec : Vector3D = new Vector3D(m_invInertiaTensorWorld.col1.v3d.dotProduct(tor), m_invInertiaTensorWorld.col2.v3d.dotProduct(tor), m_invInertiaTensorWorld.col3.v3d.dotProduct(tor));
+			vec.x *= m_angularFactor.x;
+			vec.y *= m_angularFactor.y;
+			vec.z *= m_angularFactor.z;
 			m_angularVelocity.v3d = vec.add(m_angularVelocity.v3d);
 			activate();
 		}
@@ -124,7 +145,12 @@ package awayphysics.dynamics
 		{
 			if (inverseMass != 0) {
 				applyCentralImpulse(impulse);
-				applyTorqueImpulse(rel_pos.crossProduct(impulse));
+				
+				var vec : Vector3D = impulse.clone();
+				vec.x *= m_linearFactor.x;
+				vec.y *= m_linearFactor.y;
+				vec.z *= m_linearFactor.z;
+				applyTorqueImpulse(rel_pos.crossProduct(vec));
 			}
 		}
 
@@ -142,8 +168,9 @@ package awayphysics.dynamics
 		 */
 		public function set gravity(acceleration : Vector3D) : void {
 			if (inverseMass != 0) {
-				acceleration.scaleBy(1 / inverseMass);
-				m_gravity.v3d = acceleration;
+				var vec:Vector3D = acceleration.clone();
+				vec.scaleBy(1 / inverseMass);
+				m_gravity.v3d = vec;
 				activate();
 			}
 			m_gravity_acceleration.v3d = acceleration;
@@ -172,6 +199,22 @@ package awayphysics.dynamics
 		public function get linearFactor() : Vector3D {
 			return m_linearFactor.v3d;
 		}
+		
+		public function set linearFactor(v:Vector3D):void {
+			m_linearFactor.v3d = v;
+			
+			var vec:Vector3D = v.clone();
+			vec.scaleBy(inverseMass);
+			m_invMass.v3d = vec;
+		}
+		
+		public function get angularFactor():Vector3D {
+			return m_angularFactor.v3d;
+		}
+		
+		public function set angularFactor(v:Vector3D):void {
+			m_angularFactor.v3d = v;
+		}
 
 		public function get gravity() : Vector3D {
 			return m_gravity.v3d;
@@ -184,6 +227,10 @@ package awayphysics.dynamics
 		public function get invInertiaLocal() : Vector3D {
 			return m_invInertiaLocal.v3d;
 		}
+		
+		public function set invInertiaLocal(v:Vector3D):void {
+			m_invInertiaLocal.v3d = v;
+		}
 
 		public function get totalForce() : Vector3D {
 			return m_totalForce.v3d;
@@ -195,6 +242,24 @@ package awayphysics.dynamics
 
 		public function get mass() : Number {
 			return 1 / inverseMass;
+		}
+		
+		public function set mass(v:Number):void {
+			if (v == 0) {
+				this.collisionFlags |= AWPCollisionFlags.CF_STATIC_OBJECT;
+				inverseMass = 0;
+			} else {
+				this.collisionFlags &= (~AWPCollisionFlags.CF_STATIC_OBJECT);
+				inverseMass = 1 / v;
+			}
+			
+			var vec:Vector3D = m_gravity_acceleration.v3d;
+			vec.scaleBy(v);
+			m_gravity.v3d = vec;
+			
+			vec = m_linearFactor.v3d;
+			vec.scaleBy(inverseMass);
+			m_invMass.v3d = vec;
 		}
 
 		public function get inverseMass() : Number {

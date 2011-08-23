@@ -91,13 +91,13 @@ public:
 	
 	int				m_debugBodyId;
 	
+	btVector3		m_angularFactor;
+	btVector3		m_invMass;
 
 protected:
 
 	ATTRIBUTE_ALIGNED64(btVector3		m_deltaLinearVelocity);
 	btVector3		m_deltaAngularVelocity;
-	btVector3		m_angularFactor;
-	btVector3		m_invMass;
 	btVector3		m_pushVelocity;
 	btVector3		m_turnVelocity;
 

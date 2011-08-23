@@ -1,6 +1,6 @@
 
 /*
-compile: g++ -I./ AwayPhyiscs.c libbulletdynamics.a libbulletcollision.a libbulletmath.a -O3 -Wall -swc -o AwayPhyiscs.swc
+compile: g++ -I./ AwayPhysics.c libbulletdynamics.a libbulletcollision.a libbulletmath.a -O3 -Wall -swc -o AwayPhysics.swc
 */
 
 #include <stdlib.h>
@@ -307,7 +307,7 @@ AS3_Val createBody(void* data, AS3_Val args){
 	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass,myMotionState,shape,localInertia);
 	btRigidBody* body = new btRigidBody(rbInfo);
 	body->setUserPointer(as3_Body);
-	
+
 	return_as3_ptr(body);
 }
 

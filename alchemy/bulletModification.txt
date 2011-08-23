@@ -2,6 +2,8 @@ linearmath/btSerializer.h line memory.h to memory
 bulletcollision/broadphsecollision/btDbvt.h line memory.h to memory
 BulletCollision/CollisionDispatch/btCollisionObject.h line52 changed protected to public
 BulletDynamics/Dynamics/btRigidBody.h line57 added public
+BulletDynamics/Dynamics/btRigidBody.h line94 move m_angularFactor to public
+BulletDynamics/Dynamics/btRigidBody.h line95 move m_invMass to public
 BulletDynamics/Character/btKinematicCharacterController.h line38 changed protected to public
 BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h line38 changed protected to public 
 BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h line57 added bool  m_collisionCallbackOn;
