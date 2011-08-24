@@ -28,6 +28,11 @@ package awayphysics.collision.dispatch
 		private var m_anisotropicFriction : AWPVector3;
 		private var dispatcher : EventDispatcher;
 
+		private var pos : Vector3D;
+		private var rot : Vector.<Number>;
+		private var tr : Matrix3D = new Matrix3D();
+		private var raw : Vector.<Number> = new Vector.<Number>(16);
+
 		public function AWPCollisionObject(ptr : uint, shape : AWPShape, skin : IMesh3D)
 		{
 			m_shape = shape;
@@ -55,10 +60,26 @@ package awayphysics.collision.dispatch
 		 */
 		public function updateTransform() : void
 		{
-			var pos : Vector3D = this.position;
-			var rot : Vector.<Number> = this.rotation.rawData;
-
-			var tr : Matrix3D = new Matrix3D(Vector.<Number>([rot[0], rot[1], rot[2], rot[3], rot[4], rot[5], rot[6], rot[7], rot[8], rot[9], rot[10], rot[11], pos.x, pos.y, pos.z, 1]));
+			pos = this.position;
+			rot = this.rotation.rawData;
+			tr.identity();
+			raw[uint(0)] = rot[0];
+			raw[uint(1)] = rot[1];
+			raw[uint(2)] = rot[2];
+			raw[uint(3)] = rot[3];
+			raw[uint(4)] = rot[4];
+			raw[uint(5)] = rot[5];
+			raw[uint(6)] = rot[6];
+			raw[uint(7)] = rot[7];
+			raw[uint(8)] = rot[8];
+			raw[uint(9)] = rot[9];
+			raw[uint(10)] = rot[10];
+			raw[uint(11)] = rot[11];
+			raw[uint(12)] = pos.x;
+			raw[uint(13)] = pos.y;
+			raw[uint(14)] = pos.z;
+			raw[uint(15)] = 1;
+			tr.copyRawDataFrom(raw);
 
 			if (m_skin) {
 				m_skin.transform = tr;
