@@ -20,6 +20,9 @@ package awayphysics.dynamics.vehicle
 		private var m_chassisConnectionPointCS : AWPVector3;
 		private var m_wheelDirectionCS : AWPVector3;
 		private var m_wheelAxleCS : AWPVector3;
+		
+		private var _pos : Vector3D;
+		private var _transform:Matrix3D = new Matrix3D();
 
 		public function AWPWheelInfo(ptr : uint, _skin : IMesh3D = null)
 		{
@@ -59,13 +62,13 @@ package awayphysics.dynamics.vehicle
 
 		public function updateTransform() : void
 		{
-			var pos : Vector3D = this.worldPosition;
-			var rot : Vector.<Number> = this.worldRotation.rawData;
-
-			var tr : Matrix3D = new Matrix3D(Vector.<Number>([rot[0], rot[1], rot[2], rot[3], rot[4], rot[5], rot[6], rot[7], rot[8], rot[9], rot[10], rot[11], pos.x, pos.y, pos.z, 1]));
-
+			_pos = this.worldPosition;
+			_transform.identity();
+			_transform.append(worldRotation);
+			_transform.appendTranslation(_pos.x,_pos.y,_pos.z);
+			
 			if (m_skin) {
-				m_skin.transform = tr;
+				m_skin.transform = _transform;
 			}
 		}
 

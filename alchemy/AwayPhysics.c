@@ -760,7 +760,7 @@ AS3_Val step(void* data, AS3_Val args) {
 			btCollisionObject* obA = static_cast<btCollisionObject*>(contactManifold->getBody0());
 			btCollisionObject* obB = static_cast<btCollisionObject*>(contactManifold->getBody1());
 
-			if (obA->getCollisionFlags() & btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK){
+			if ((obA->getCollisionFlags() & btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK) && !(obB->getCollisionFlags() & btCollisionObject::CF_STATIC_OBJECT)){
 				int numContacts = contactManifold->getNumContacts();
 				if(numContacts>0){
 					btManifoldPoint* mpt=new btManifoldPoint();
@@ -786,7 +786,7 @@ AS3_Val step(void* data, AS3_Val args) {
 					delete mpt;
 				}
 			}
-			if(obB->getCollisionFlags() & btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK){
+			if((obB->getCollisionFlags() & btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK) && !(obA->getCollisionFlags() & btCollisionObject::CF_STATIC_OBJECT)){
 				int numContacts = contactManifold->getNumContacts();
 				if(numContacts>0){
 					btManifoldPoint* mpt=new btManifoldPoint();
