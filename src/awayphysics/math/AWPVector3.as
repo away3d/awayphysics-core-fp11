@@ -1,15 +1,12 @@
-package awayphysics.math
-{
+package awayphysics.math {
 	import awayphysics.AWPBase;
 
 	import flash.geom.Vector3D;
 
-	public class AWPVector3 extends AWPBase
-	{
-		private var _v3d:Vector3D = new Vector3D();
-		
-		public function AWPVector3(ptr : uint)
-		{
+	public class AWPVector3 extends AWPBase {
+		private var _v3d : Vector3D = new Vector3D();
+
+		public function AWPVector3(ptr : uint) {
 			pointer = ptr;
 		}
 

@@ -1,9 +1,9 @@
-package awayphysics.dynamics.vehicle
-{
+package awayphysics.dynamics.vehicle {
+	import away3d.containers.ObjectContainer3D;
+
 	import awayphysics.AWPBase;
 	import awayphysics.math.AWPTransform;
 	import awayphysics.math.AWPVector3;
-	import awayphysics.plugin.IMesh3D;
 
 	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
@@ -12,20 +12,17 @@ package awayphysics.dynamics.vehicle
 	 * defining suspension and wheel parameters
 	 * refer to https://docs.google.com/document/edit?id=18edpOwtGgCwNyvakS78jxMajCuezotCU_0iezcwiFQc
 	 */
-	public class AWPWheelInfo extends AWPBase
-	{
-		private var m_skin : IMesh3D;
+	public class AWPWheelInfo extends AWPBase {
+		private var m_skin : ObjectContainer3D;
 		private var m_raycastInfo : AWPRaycastInfo;
 		private var m_worldTransform : AWPTransform;
 		private var m_chassisConnectionPointCS : AWPVector3;
 		private var m_wheelDirectionCS : AWPVector3;
 		private var m_wheelAxleCS : AWPVector3;
-		
 		private var _pos : Vector3D;
-		private var _transform:Matrix3D = new Matrix3D();
+		private var _transform : Matrix3D = new Matrix3D();
 
-		public function AWPWheelInfo(ptr : uint, _skin : IMesh3D = null)
-		{
+		public function AWPWheelInfo(ptr : uint, _skin : ObjectContainer3D = null) {
 			pointer = ptr;
 			m_skin = _skin;
 
@@ -36,7 +33,7 @@ package awayphysics.dynamics.vehicle
 			m_wheelAxleCS = new AWPVector3(ptr + 188);
 		}
 
-		public function get skin() : IMesh3D {
+		public function get skin() : ObjectContainer3D {
 			return m_skin;
 		}
 
@@ -60,13 +57,12 @@ package awayphysics.dynamics.vehicle
 			return m_worldTransform.rotation.m3d;
 		}
 
-		public function updateTransform() : void
-		{
+		public function updateTransform() : void {
 			_pos = this.worldPosition;
 			_transform.identity();
 			_transform.append(worldRotation);
-			_transform.appendTranslation(_pos.x,_pos.y,_pos.z);
-			
+			_transform.appendTranslation(_pos.x, _pos.y, _pos.z);
+
 			if (m_skin) {
 				m_skin.transform = _transform;
 			}

@@ -1,16 +1,12 @@
-package awayphysics.dynamics.constraintsolver
-{
+package awayphysics.dynamics.constraintsolver {
 	import awayphysics.AWPBase;
 
-	public class AWPAngularLimit extends AWPBase
-	{
-		public function AWPAngularLimit(ptr : uint)
-		{
+	public class AWPAngularLimit extends AWPBase {
+		public function AWPAngularLimit(ptr : uint) {
 			pointer = ptr;
 		}
 
-		public function setLimit(low : Number, high : Number, _softness : Number = 0.9, _biasFactor : Number = 0.3, _relaxationFactor : Number = 1.0) : void
-		{
+		public function setLimit(low : Number, high : Number, _softness : Number = 0.9, _biasFactor : Number = 0.3, _relaxationFactor : Number = 1.0) : void {
 			halfRange = (high - low) / 2;
 			center = normalizeAngle(low + halfRange);
 			softness = _softness;
@@ -66,8 +62,7 @@ package awayphysics.dynamics.constraintsolver
 			return memUser._mrf(pointer + 24);
 		}
 
-		private function normalizeAngle(angleInRadians : Number) : Number
-		{
+		private function normalizeAngle(angleInRadians : Number) : Number {
 			var pi2 : Number = 2 * Math.PI;
 			var result : Number = angleInRadians % pi2;
 			if (result < -Math.PI) {

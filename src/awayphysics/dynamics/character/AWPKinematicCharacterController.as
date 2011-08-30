@@ -1,5 +1,4 @@
-package awayphysics.dynamics.character
-{
+package awayphysics.dynamics.character {
 	import awayphysics.AWPBase;
 	import awayphysics.collision.dispatch.AWPGhostObject;
 	import awayphysics.collision.shapes.AWPShape;
@@ -7,15 +6,13 @@ package awayphysics.dynamics.character
 
 	import flash.geom.Vector3D;
 
-	public class AWPKinematicCharacterController extends AWPBase
-	{
+	public class AWPKinematicCharacterController extends AWPBase {
 		private var m_shape : AWPShape;
 		private var m_ghostObject : AWPGhostObject;
 		private var m_walkDirection : AWPVector3;
 		private var m_normalizedDirection : AWPVector3;
 
-		public function AWPKinematicCharacterController(ghostObject : AWPGhostObject, shape : AWPShape, stepHeight : Number)
-		{
+		public function AWPKinematicCharacterController(ghostObject : AWPGhostObject, shape : AWPShape, stepHeight : Number) {
 			m_ghostObject = ghostObject;
 			m_shape = shape;
 
@@ -36,16 +33,14 @@ package awayphysics.dynamics.character
 		/*
 		 * called by dynamicsWorld
 		 */
-		public function updateTransform() : void
-		{
+		public function updateTransform() : void {
 			m_ghostObject.updateTransform();
 		}
 
 		/*
 		 * set the walk direction and speed
 		 */
-		public function setWalkDirection(walkDirection : Vector3D) : void
-		{
+		public function setWalkDirection(walkDirection : Vector3D) : void {
 			useWalkDirection = true;
 			m_walkDirection.sv3d = walkDirection;
 			var vec : Vector3D = walkDirection.clone();
@@ -56,8 +51,7 @@ package awayphysics.dynamics.character
 		/*
 		 * set the walk direction and speed with time interval
 		 */
-		public function setVelocityForTimeInterval(velocity : Vector3D, timeInterval : Number) : void
-		{
+		public function setVelocityForTimeInterval(velocity : Vector3D, timeInterval : Number) : void {
 			useWalkDirection = false;
 			m_walkDirection.sv3d = velocity;
 			var vec : Vector3D = velocity.clone();
@@ -69,29 +63,25 @@ package awayphysics.dynamics.character
 		/*
 		 * set the character's position in world coordinates
 		 */
-		public function warp(origin : Vector3D) : void
-		{
+		public function warp(origin : Vector3D) : void {
 			m_ghostObject.position = origin;
 		}
 
 		/*
 		 * whether character contact with ground
 		 */
-		public function onGround() : Boolean
-		{
+		public function onGround() : Boolean {
 			return (verticalVelocity == 0 && verticalOffset == 0);
 		}
 
 		/*
 		 * whether character can jump (on the ground)
 		 */
-		public function canJump() : Boolean
-		{
+		public function canJump() : Boolean {
 			return onGround();
 		}
 
-		public function jump() : void
-		{
+		public function jump() : void {
 			if (!canJump())
 				return;
 
@@ -101,16 +91,14 @@ package awayphysics.dynamics.character
 
 		/*
 		 * The max slope determines the maximum angle that the controller can walk up.
-	     * The slope angle is measured in radians.
+		 * The slope angle is measured in radians.
 		 */
-		public function setMaxSlope(slopeRadians : Number) : void
-		{
+		public function setMaxSlope(slopeRadians : Number) : void {
 			maxSlopeRadians = slopeRadians;
 			maxSlopeCosine = Math.cos(slopeRadians);
 		}
 
-		public function getMaxSlope() : Number
-		{
+		public function getMaxSlope() : Number {
 			return maxSlopeRadians;
 		}
 

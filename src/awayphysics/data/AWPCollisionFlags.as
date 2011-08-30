@@ -1,7 +1,5 @@
-package awayphysics.data
-{
-	public class AWPCollisionFlags
-	{
+package awayphysics.data {
+	public class AWPCollisionFlags {
 		public static var CF_STATIC_OBJECT : int = 1;
 		public static var CF_KINEMATIC_OBJECT : int = 2;
 		public static var CF_NO_CONTACT_RESPONSE : int = 4;

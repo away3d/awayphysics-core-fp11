@@ -1,38 +1,34 @@
-package awayphysics.collision.dispatch
-{
+package awayphysics.collision.dispatch {
+	import away3d.containers.ObjectContainer3D;
+
 	import awayphysics.AWPBase;
 	import awayphysics.collision.shapes.AWPShape;
 	import awayphysics.data.AWPCollisionFlags;
 	import awayphysics.events.AWPCollisionEvent;
 	import awayphysics.math.AWPTransform;
 	import awayphysics.math.AWPVector3;
-	import awayphysics.plugin.IMesh3D;
-	
+
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	import flash.events.IEventDispatcher;
 	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
 
-	public class AWPCollisionObject extends AWPBase implements IEventDispatcher
-	{
+	public class AWPCollisionObject extends AWPBase implements IEventDispatcher {
 		public static var ACTIVE_TAG : int = 1;
 		public static var ISLAND_SLEEPING : int = 2;
 		public static var WANTS_DEACTIVATION : int = 3;
 		public static var DISABLE_DEACTIVATION : int = 4;
 		public static var DISABLE_SIMULATION : int = 5;
-		
 		private var m_shape : AWPShape;
-		private var m_skin : IMesh3D;
+		private var m_skin : ObjectContainer3D;
 		private var m_worldTransform : AWPTransform;
 		private var m_anisotropicFriction : AWPVector3;
 		private var dispatcher : EventDispatcher;
-
 		private var _pos : Vector3D;
-		private var _transform:Matrix3D = new Matrix3D();
+		private var _transform : Matrix3D = new Matrix3D();
 
-		public function AWPCollisionObject(ptr : uint, shape : AWPShape, skin : IMesh3D)
-		{
+		public function AWPCollisionObject(ptr : uint, shape : AWPShape, skin : ObjectContainer3D) {
 			m_shape = shape;
 			m_skin = skin;
 
@@ -48,7 +44,7 @@ package awayphysics.collision.dispatch
 			return m_shape;
 		}
 
-		public function get skin() : IMesh3D {
+		public function get skin() : ObjectContainer3D {
 			return m_skin;
 		}
 
@@ -56,13 +52,12 @@ package awayphysics.collision.dispatch
 		 * update the transform of skin mesh
 		 * called by dynamicsWorld
 		 */
-		public function updateTransform() : void
-		{
+		public function updateTransform() : void {
 			_pos = this.position;
 			_transform.identity();
 			_transform.append(rotation);
 			_transform.appendTranslation(_pos.x, _pos.y, _pos.z);
-			
+
 			if (m_skin) {
 				m_skin.transform = _transform;
 			}
@@ -89,12 +84,11 @@ package awayphysics.collision.dispatch
 		public function get rotation() : Matrix3D {
 			return m_worldTransform.rotation.m3d;
 		}
-		
+
 		/**
-		* set the position and orientation in world coordinates
-		*/
-		public function setWorldTransform(pos : Vector3D, rot : Matrix3D) : void
-		{
+		 * set the position and orientation in world coordinates
+		 */
+		public function setWorldTransform(pos : Vector3D, rot : Matrix3D) : void {
 			m_worldTransform.position.sv3d = pos;
 			m_worldTransform.rotation.m3d = rot;
 		}
@@ -182,13 +176,11 @@ package awayphysics.collision.dispatch
 			}
 		}
 
-		public function forceActivationState(newState : int) : void
-		{
+		public function forceActivationState(newState : int) : void {
 			memUser._mw32(pointer + 216, newState);
 		}
 
-		public function activate(forceActivation : Boolean = false) : void
-		{
+		public function activate(forceActivation : Boolean = false) : void {
 			if (forceActivation || (collisionFlags != AWPCollisionFlags.CF_STATIC_OBJECT && collisionFlags != AWPCollisionFlags.CF_KINEMATIC_OBJECT)) {
 				this.activationState = AWPCollisionObject.ACTIVE_TAG;
 				this.deactivationTime = 0;
@@ -199,38 +191,32 @@ package awayphysics.collision.dispatch
 			return (activationState != AWPCollisionObject.ISLAND_SLEEPING && activationState != AWPCollisionObject.DISABLE_SIMULATION);
 		}
 
-		public function addEventListener(type : String, listener : Function, useCapture : Boolean = false, priority : int = 0, useWeakReference : Boolean = false) : void
-		{
+		public function addEventListener(type : String, listener : Function, useCapture : Boolean = false, priority : int = 0, useWeakReference : Boolean = false) : void {
 			this.collisionFlags |= AWPCollisionFlags.CF_CUSTOM_MATERIAL_CALLBACK;
 			dispatcher.addEventListener(type, listener, useCapture, priority);
 		}
 
-		public function dispatchEvent(evt : Event) : Boolean
-		{
+		public function dispatchEvent(evt : Event) : Boolean {
 			return dispatcher.dispatchEvent(evt);
 		}
 
-		public function hasEventListener(type : String) : Boolean
-		{
+		public function hasEventListener(type : String) : Boolean {
 			return dispatcher.hasEventListener(type);
 		}
 
-		public function removeEventListener(type : String, listener : Function, useCapture : Boolean = false) : void
-		{
+		public function removeEventListener(type : String, listener : Function, useCapture : Boolean = false) : void {
 			this.collisionFlags &= (~AWPCollisionFlags.CF_CUSTOM_MATERIAL_CALLBACK);
 			dispatcher.removeEventListener(type, listener, useCapture);
 		}
 
-		public function willTrigger(type : String) : Boolean
-		{
+		public function willTrigger(type : String) : Boolean {
 			return dispatcher.willTrigger(type);
 		}
 
 		/**
 		 * this function just called by alchemy
 		 */
-		public function collisionCallback(mpt : uint, body : AWPCollisionObject) : void
-		{
+		public function collisionCallback(mpt : uint, body : AWPCollisionObject) : void {
 			var pt : AWPManifoldPoint = new AWPManifoldPoint(mpt);
 			var event : AWPCollisionEvent = new AWPCollisionEvent(AWPCollisionEvent.COLLISION_ADDED);
 			event.manifoldPoint = pt;

@@ -1,14 +1,11 @@
-package awayphysics.dynamics.constraintsolver
-{
+package awayphysics.dynamics.constraintsolver {
 	import awayphysics.dynamics.AWPRigidBody;
 
 	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
 
-	public class AWPConeTwistConstraint extends AWPTypedConstraint
-	{
-		public function AWPConeTwistConstraint(rbA : AWPRigidBody, pivotInA : Vector3D, rotationInA : Matrix3D, rbB : AWPRigidBody = null, pivotInB : Vector3D = null, rotationInB : Matrix3D = null)
-		{
+	public class AWPConeTwistConstraint extends AWPTypedConstraint {
+		public function AWPConeTwistConstraint(rbA : AWPRigidBody, pivotInA : Vector3D, rotationInA : Matrix3D, rbB : AWPRigidBody = null, pivotInB : Vector3D = null, rotationInB : Matrix3D = null) {
 			m_rbA = rbA;
 			m_rbB = rbB;
 
@@ -25,8 +22,7 @@ package awayphysics.dynamics.constraintsolver
 			}
 		}
 
-		public function setLimit(_swingSpan1 : Number, _swingSpan2 : Number, _twistSpan : Number, _softness : Number = 1, _biasFactor : Number = 0.3, _relaxationFactor : Number = 1) : void
-		{
+		public function setLimit(_swingSpan1 : Number, _swingSpan2 : Number, _twistSpan : Number, _softness : Number = 1, _biasFactor : Number = 0.3, _relaxationFactor : Number = 1) : void {
 			swingSpan1 = _swingSpan1;
 			swingSpan2 = _swingSpan2;
 			twistSpan = _twistSpan;
