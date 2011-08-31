@@ -201,5 +201,10 @@ package awayphysics.dynamics.character
 		private function set maxSlopeCosine(v : Number) : void {
 			memUser._mwf(pointer + 40, v);
 		}
+
+		public function get walkDirection():AWPVector3
+		{
+			return m_walkDirection;
+		}
 	}
 }
