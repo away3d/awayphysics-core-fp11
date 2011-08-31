@@ -1,7 +1,5 @@
-package awayphysics.data
-{
-	public class AWPCollisionFilterGroups
-	{
+package awayphysics.data {
+	public class AWPCollisionFilterGroups {
 		public static var DefaultFilter : int = 1;
 		public static var StaticFilter : int = 2;
 		public static var KinematicFilter : int = 4;

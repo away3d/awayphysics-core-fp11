@@ -1,15 +1,12 @@
-package awayphysics.dynamics.constraintsolver
-{
+package awayphysics.dynamics.constraintsolver {
 	import awayphysics.dynamics.AWPRigidBody;
 
 	import flash.geom.Vector3D;
 
-	public class AWPHingeConstraint extends AWPTypedConstraint
-	{
+	public class AWPHingeConstraint extends AWPTypedConstraint {
 		private var m_limit : AWPAngularLimit;
 
-		public function AWPHingeConstraint(rbA : AWPRigidBody, pivotInA : Vector3D, axisInA : Vector3D, rbB : AWPRigidBody = null, pivotInB : Vector3D = null, axisInB : Vector3D = null, useReferenceFrameA : Boolean = false)
-		{
+		public function AWPHingeConstraint(rbA : AWPRigidBody, pivotInA : Vector3D, axisInA : Vector3D, rbB : AWPRigidBody = null, pivotInB : Vector3D = null, axisInB : Vector3D = null, useReferenceFrameA : Boolean = false) {
 			m_rbA = rbA;
 			m_rbB = rbB;
 
@@ -22,13 +19,11 @@ package awayphysics.dynamics.constraintsolver
 			m_limit = new AWPAngularLimit(pointer + 676);
 		}
 
-		public function setLimit(low : Number, high : Number, _softness : Number = 0.9, _biasFactor : Number = 0.3, _relaxationFactor : Number = 1.0) : void
-		{
+		public function setLimit(low : Number, high : Number, _softness : Number = 0.9, _biasFactor : Number = 0.3, _relaxationFactor : Number = 1.0) : void {
 			m_limit.setLimit(low, high, _softness, _biasFactor, _relaxationFactor);
 		}
 
-		public function setAngularMotor(_enableMotor : Boolean, _targetVelocity : Number, _maxMotorImpulse : Number) : void
-		{
+		public function setAngularMotor(_enableMotor : Boolean, _targetVelocity : Number, _maxMotorImpulse : Number) : void {
 			enableAngularMotor = _enableMotor;
 			motorTargetVelocity = _targetVelocity;
 			maxMotorImpulse = _maxMotorImpulse;

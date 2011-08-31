@@ -1,20 +1,17 @@
-package awayphysics.dynamics.vehicle
-{
+package awayphysics.dynamics.vehicle {
 	import awayphysics.AWPBase;
 	import awayphysics.math.AWPVector3;
 
 	import flash.geom.Vector3D;
 
-	public class AWPRaycastInfo extends AWPBase
-	{
+	public class AWPRaycastInfo extends AWPBase {
 		private var m_contactNormalWS : AWPVector3;
 		private var m_contactPointWS : AWPVector3;
 		private var m_hardPointWS : AWPVector3;
 		private var m_wheelDirectionWS : AWPVector3;
 		private var m_wheelAxleWS : AWPVector3;
 
-		public function AWPRaycastInfo(ptr : uint)
-		{
+		public function AWPRaycastInfo(ptr : uint) {
 			pointer = ptr;
 
 			m_contactNormalWS = new AWPVector3(ptr + 0);

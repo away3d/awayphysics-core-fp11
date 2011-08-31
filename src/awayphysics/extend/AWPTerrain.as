@@ -1,21 +1,16 @@
-package awayphysics.plugin.away3d
-{
+package awayphysics.extend {
 	import away3d.extrusions.Elevation;
 	import away3d.materials.MaterialBase;
 
-	import awayphysics.plugin.ITerrain;
-
 	import flash.display.BitmapData;
 
-	public class Away3DTerrain extends Elevation implements ITerrain
-	{
+	public class AWPTerrain extends Elevation {
 		private var _segmentsW : int;
 		private var _segmentsH : int;
 		private var _maxHeight : Number;
 		private var _heights : Vector.<Number>;
 
-		public function Away3DTerrain(material : MaterialBase, heightMap : BitmapData, width : Number = 1000, height : Number = 100, depth : Number = 1000, segmentsW : uint = 30, segmentsH : uint = 30, maxElevation : uint = 255, minElevation : uint = 0, smoothMap : Boolean = false)
-		{
+		public function AWPTerrain(material : MaterialBase, heightMap : BitmapData, width : Number = 1000, height : Number = 100, depth : Number = 1000, segmentsW : uint = 30, segmentsH : uint = 30, maxElevation : uint = 255, minElevation : uint = 0, smoothMap : Boolean = false) {
 			super(material, heightMap, width, height, depth, segmentsW, segmentsH, maxElevation, minElevation, smoothMap);
 
 			_segmentsW = segmentsW;

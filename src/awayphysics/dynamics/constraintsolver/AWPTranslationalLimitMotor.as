@@ -1,12 +1,10 @@
-package awayphysics.dynamics.constraintsolver
-{
+package awayphysics.dynamics.constraintsolver {
 	import awayphysics.AWPBase;
 	import awayphysics.math.AWPVector3;
 
 	import flash.geom.Vector3D;
 
-	public class AWPTranslationalLimitMotor extends AWPBase
-	{
+	public class AWPTranslationalLimitMotor extends AWPBase {
 		private var m_lowerLimit : AWPVector3;
 		private var m_upperLimit : AWPVector3;
 		private var m_accumulatedImpulse : AWPVector3;
@@ -18,8 +16,7 @@ package awayphysics.dynamics.constraintsolver
 		private var m_currentLimitError : AWPVector3;
 		private var m_currentLinearDiff : AWPVector3;
 
-		public function AWPTranslationalLimitMotor(ptr : uint)
-		{
+		public function AWPTranslationalLimitMotor(ptr : uint) {
 			pointer = ptr;
 
 			m_lowerLimit = new AWPVector3(ptr + 0);

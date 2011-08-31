@@ -1,18 +1,15 @@
-package awayphysics.collision.dispatch
-{
+package awayphysics.collision.dispatch {
 	import awayphysics.AWPBase;
 	import awayphysics.math.AWPVector3;
 
 	import flash.geom.Vector3D;
 
-	public class AWPManifoldPoint extends AWPBase
-	{
+	public class AWPManifoldPoint extends AWPBase {
 		private var m_localPointA : AWPVector3;
 		private var m_localPointB : AWPVector3;
 		private var m_normalWorldOnB : AWPVector3;
 
-		public function AWPManifoldPoint(ptr : uint)
-		{
+		public function AWPManifoldPoint(ptr : uint) {
 			pointer = ptr;
 
 			m_localPointA = new AWPVector3(ptr + 0);

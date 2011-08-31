@@ -1,13 +1,10 @@
-package awayphysics.dynamics.constraintsolver
-{
+package awayphysics.dynamics.constraintsolver {
 	import awayphysics.dynamics.AWPRigidBody;
 
 	import flash.geom.Vector3D;
 
-	public class AWPPoint2PointConstraint extends AWPTypedConstraint
-	{
-		public function AWPPoint2PointConstraint(rbA : AWPRigidBody, pivotInA : Vector3D, rbB : AWPRigidBody = null, pivotInB : Vector3D = null)
-		{
+	public class AWPPoint2PointConstraint extends AWPTypedConstraint {
+		public function AWPPoint2PointConstraint(rbA : AWPRigidBody, pivotInA : Vector3D, rbB : AWPRigidBody = null, pivotInB : Vector3D = null) {
 			m_rbA = rbA;
 			m_rbB = rbB;
 

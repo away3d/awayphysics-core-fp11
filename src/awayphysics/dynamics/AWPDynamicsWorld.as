@@ -1,16 +1,14 @@
-package awayphysics.dynamics
-{
+package awayphysics.dynamics {
 	import awayphysics.AWPBase;
 	import awayphysics.data.AWPCollisionFlags;
 	import awayphysics.dynamics.character.AWPKinematicCharacterController;
 	import awayphysics.dynamics.constraintsolver.AWPTypedConstraint;
 	import awayphysics.dynamics.vehicle.AWPRaycastVehicle;
 	import awayphysics.math.AWPVector3;
+
 	import flash.geom.Vector3D;
 
-
-	public class AWPDynamicsWorld extends AWPBase
-	{
+	public class AWPDynamicsWorld extends AWPBase {
 		private static var currentDynamicsWorld : AWPDynamicsWorld;
 		private var m_gravity : AWPVector3;
 		private var m_rigidBodies : Vector.<AWPRigidBody>;
@@ -18,8 +16,7 @@ package awayphysics.dynamics
 		private var m_vehicles : Vector.<AWPRaycastVehicle>;
 		private var m_characters : Vector.<AWPKinematicCharacterController>;
 
-		public static function getInstance() : AWPDynamicsWorld
-		{
+		public static function getInstance() : AWPDynamicsWorld {
 			if (!currentDynamicsWorld) {
 				trace("version: AwayPhysics v0.62 (25-8-2011)");
 				currentDynamicsWorld = new AWPDynamicsWorld();
@@ -27,8 +24,7 @@ package awayphysics.dynamics
 			return currentDynamicsWorld;
 		}
 
-		public function AWPDynamicsWorld()
-		{
+		public function AWPDynamicsWorld() {
 			AWPBase.initialize();
 
 			m_rigidBodies = new Vector.<AWPRigidBody>();
@@ -41,8 +37,7 @@ package awayphysics.dynamics
 		 * init the physics world with btDbvtBroadphase
 		 * refer to http://bulletphysics.org/mediawiki-1.5.8/index.php/Broadphase
 		 */
-		public function initWithDbvtBroadphase() : void
-		{
+		public function initWithDbvtBroadphase() : void {
 			pointer = bullet.createDiscreteDynamicsWorldWithDbvtMethod();
 			m_gravity = new AWPVector3(pointer + 224);
 			this.gravity = new Vector3D(0, -10, 0);
@@ -52,8 +47,7 @@ package awayphysics.dynamics
 		 * init the physics world with btAxisSweep3
 		 * refer to http://bulletphysics.org/mediawiki-1.5.8/index.php/Broadphase
 		 */
-		public function initWithAxisSweep3(worldAabbMin : Vector3D, worldAabbMax : Vector3D) : void
-		{
+		public function initWithAxisSweep3(worldAabbMin : Vector3D, worldAabbMax : Vector3D) : void {
 			pointer = bullet.createDiscreteDynamicsWorldWithAxisSweep3Method(worldAabbMin.x / _scaling, worldAabbMin.y / _scaling, worldAabbMin.z / _scaling, worldAabbMax.x / _scaling, worldAabbMax.y / _scaling, worldAabbMax.z / _scaling);
 			m_gravity = new AWPVector3(pointer + 224);
 			this.gravity = new Vector3D(0, -10, 0);
@@ -62,8 +56,7 @@ package awayphysics.dynamics
 		/*
 		 * add a rigidbody to physics world
 		 */
-		public function addRigidBody(body : AWPRigidBody) : void
-		{
+		public function addRigidBody(body : AWPRigidBody) : void {
 			bullet.addBodyMethod(body.pointer);
 
 			if (body.collisionFlags != AWPCollisionFlags.CF_STATIC_OBJECT) {
@@ -80,8 +73,7 @@ package awayphysics.dynamics
 		 * add a rigidbody to physics world with group and mask
 		 * refer to: http://bulletphysics.org/mediawiki-1.5.8/index.php/Collision_Filtering
 		 */
-		public function addRigidBodyWithGroup(body : AWPRigidBody, group : int, mask : int) : void
-		{
+		public function addRigidBodyWithGroup(body : AWPRigidBody, group : int, mask : int) : void {
 			bullet.addBodyWithGroupMethod(body.pointer, group, mask);
 
 			if (body.collisionFlags != AWPCollisionFlags.CF_STATIC_OBJECT) {
@@ -97,8 +89,7 @@ package awayphysics.dynamics
 		/*
 		 * remove a rigidbody from physics world
 		 */
-		public function removeRigidBody(body : AWPRigidBody) : void
-		{
+		public function removeRigidBody(body : AWPRigidBody) : void {
 			bullet.removeBodyMethod(body.pointer);
 
 			if (m_nonStaticRigidBodies.indexOf(body) >= 0) {
@@ -109,18 +100,15 @@ package awayphysics.dynamics
 			}
 		}
 
-		public function addConstraint(constraint : AWPTypedConstraint, disableCollisionsBetweenLinkedBodies : Boolean = false) : void
-		{
+		public function addConstraint(constraint : AWPTypedConstraint, disableCollisionsBetweenLinkedBodies : Boolean = false) : void {
 			bullet.addConstraintMethod(constraint.pointer, disableCollisionsBetweenLinkedBodies ? 1 : 0);
 		}
 
-		public function removeConstraint(constraint : AWPTypedConstraint) : void
-		{
+		public function removeConstraint(constraint : AWPTypedConstraint) : void {
 			bullet.removeConstraintMethod(constraint.pointer);
 		}
 
-		public function addVehicle(vehicle : AWPRaycastVehicle) : void
-		{
+		public function addVehicle(vehicle : AWPRaycastVehicle) : void {
 			bullet.addVehicleMethod(vehicle.pointer);
 
 			if (m_vehicles.indexOf(vehicle) < 0) {
@@ -128,8 +116,7 @@ package awayphysics.dynamics
 			}
 		}
 
-		public function removeVehicle(vehicle : AWPRaycastVehicle) : void
-		{
+		public function removeVehicle(vehicle : AWPRaycastVehicle) : void {
 			bullet.removeVehicleMethod(vehicle.pointer);
 
 			if (m_vehicles.indexOf(vehicle) >= 0) {
@@ -137,8 +124,7 @@ package awayphysics.dynamics
 			}
 		}
 
-		public function addCharacter(character : AWPKinematicCharacterController, group : int = 32, mask : int = -1) : void
-		{
+		public function addCharacter(character : AWPKinematicCharacterController, group : int = 32, mask : int = -1) : void {
 			bullet.addCharacterMethod(character.pointer, group, mask);
 
 			if (m_characters.indexOf(character) < 0) {
@@ -146,8 +132,7 @@ package awayphysics.dynamics
 			}
 		}
 
-		public function removeCharacter(character : AWPKinematicCharacterController) : void
-		{
+		public function removeCharacter(character : AWPKinematicCharacterController) : void {
 			bullet.removeCharacterMethod(character.pointer);
 
 			if (m_characters.indexOf(character) >= 0) {
@@ -227,8 +212,7 @@ package awayphysics.dynamics
 		 * set time step and simulate the physics world
 		 * refer to: http://bulletphysics.org/mediawiki-1.5.8/index.php/Stepping_the_World
 		 */
-		public function step(timeStep : Number, maxSubSteps : int = 1, fixedTimeStep : Number = 1.0 / 60) : void
-		{
+		public function step(timeStep : Number, maxSubSteps : int = 1, fixedTimeStep : Number = 1.0 / 60) : void {
 			bullet.stepMethod(timeStep, maxSubSteps, fixedTimeStep);
 
 			for each (var body:AWPRigidBody in m_nonStaticRigidBodies) {

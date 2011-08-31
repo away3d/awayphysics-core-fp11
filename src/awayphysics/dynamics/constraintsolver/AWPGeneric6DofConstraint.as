@@ -1,17 +1,14 @@
-package awayphysics.dynamics.constraintsolver
-{
+package awayphysics.dynamics.constraintsolver {
 	import awayphysics.dynamics.AWPRigidBody;
 
 	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
 
-	public class AWPGeneric6DofConstraint extends AWPTypedConstraint
-	{
+	public class AWPGeneric6DofConstraint extends AWPTypedConstraint {
 		private var m_linearLimits : AWPTranslationalLimitMotor;
 		private var m_angularLimits : Vector.<AWPRotationalLimitMotor>;
 
-		public function AWPGeneric6DofConstraint(rbA : AWPRigidBody, pivotInA : Vector3D, rotationInA : Matrix3D, rbB : AWPRigidBody = null, pivotInB : Vector3D = null, rotationInB : Matrix3D = null, useLinearReferenceFrameA : Boolean = false)
-		{
+		public function AWPGeneric6DofConstraint(rbA : AWPRigidBody, pivotInA : Vector3D, rotationInA : Matrix3D, rbB : AWPRigidBody = null, pivotInB : Vector3D = null, rotationInB : Matrix3D = null, useLinearReferenceFrameA : Boolean = false) {
 			m_rbA = rbA;
 			m_rbB = rbB;
 
@@ -35,25 +32,21 @@ package awayphysics.dynamics.constraintsolver
 			m_angularLimits[2] = new AWPRotationalLimitMotor(pointer + 984);
 		}
 
-		public function getTranslationalLimitMotor() : AWPTranslationalLimitMotor
-		{
+		public function getTranslationalLimitMotor() : AWPTranslationalLimitMotor {
 			return m_linearLimits;
 		}
 
-		public function getRotationalLimitMotor(index : int) : AWPRotationalLimitMotor
-		{
+		public function getRotationalLimitMotor(index : int) : AWPRotationalLimitMotor {
 			if (index > 2) return null;
 			else return m_angularLimits[index];
 		}
 
-		public function setLinearLimit(low : Vector3D, high : Vector3D) : void
-		{
+		public function setLinearLimit(low : Vector3D, high : Vector3D) : void {
 			m_linearLimits.lowerLimit = low;
 			m_linearLimits.upperLimit = high;
 		}
 
-		public function setAngularLimit(low : Vector3D, high : Vector3D) : void
-		{
+		public function setAngularLimit(low : Vector3D, high : Vector3D) : void {
 			m_angularLimits[0].loLimit = normalizeAngle(low.x);
 			m_angularLimits[0].hiLimit = normalizeAngle(high.x);
 			m_angularLimits[1].loLimit = normalizeAngle(low.y);
@@ -62,8 +55,7 @@ package awayphysics.dynamics.constraintsolver
 			m_angularLimits[2].hiLimit = normalizeAngle(high.z);
 		}
 
-		private function normalizeAngle(angleInRadians : Number) : Number
-		{
+		private function normalizeAngle(angleInRadians : Number) : Number {
 			var pi2 : Number = 2 * Math.PI;
 			var result : Number = angleInRadians % pi2;
 			if (result < -Math.PI) {

@@ -1,18 +1,15 @@
-package awayphysics.collision.shapes
-{
-	import awayphysics.plugin.IMesh3D;
+package awayphysics.collision.shapes {
+	import away3d.entities.Mesh;
 
-	public class AWPBvhTriangleMeshShape extends AWPShape
-	{
+	public class AWPBvhTriangleMeshShape extends AWPShape {
 		private var indexDataPtr : uint;
 		private var vertexDataPtr : uint;
 
 		/**
 		 *create a static triangle mesh shape with a 3D mesh object
 		 */
-		public function AWPBvhTriangleMeshShape(mesh : IMesh3D, useQuantizedAabbCompression : Boolean = true)
-		{
-			var indexData : Vector.<uint> = mesh.indices;
+		public function AWPBvhTriangleMeshShape(mesh : Mesh, useQuantizedAabbCompression : Boolean = true) {
+			var indexData : Vector.<uint> = mesh.geometry.subGeometries[0].indexData;
 			var indexDataLen : int = indexData.length;
 			indexDataPtr = bullet.createTriangleIndexDataBufferMethod(indexDataLen);
 
@@ -21,7 +18,7 @@ package awayphysics.collision.shapes
 				alchemyMemory.writeInt(indexData[i]);
 			}
 
-			var vertexData : Vector.<Number> = mesh.vertices;
+			var vertexData : Vector.<Number> = mesh.geometry.subGeometries[0].vertexData;
 			var vertexDataLen : int = vertexData.length;
 			vertexDataPtr = bullet.createTriangleVertexDataBufferMethod(vertexDataLen);
 
@@ -38,8 +35,7 @@ package awayphysics.collision.shapes
 		/**
 		 *release the memory of index/vertex buffer
 		 */
-		public function deleteBvhTriangleMeshShapeBuffer() : void
-		{
+		public function deleteBvhTriangleMeshShapeBuffer() : void {
 			bullet.removeTriangleIndexDataBufferMethod(indexDataPtr);
 			bullet.removeTriangleVertexDataBufferMethod(vertexDataPtr);
 		}

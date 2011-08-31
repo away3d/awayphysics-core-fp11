@@ -1,11 +1,9 @@
-package awayphysics
-{
+package awayphysics {
 	import cmodule.AwayPhysics.*;
 
 	import flash.utils.ByteArray;
 
-	public class AWPBase
-	{
+	public class AWPBase {
 		protected static var loader : CLibInit;
 		protected static var bullet : Object;
 		protected static var memUser : MemUser;
@@ -15,8 +13,7 @@ package awayphysics
 		/**
 		 * Initialize the Alchemy Memory and get the pointer of the buffer
 		 */
-		public static function initialize() : void
-		{
+		public static function initialize() : void {
 			if (initialized) {
 				return;
 			}

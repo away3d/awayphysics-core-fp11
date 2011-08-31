@@ -1,11 +1,8 @@
-package awayphysics.collision.shapes
-{
+package awayphysics.collision.shapes {
 	import awayphysics.AWPBase;
 
-	public class AWPShape extends AWPBase
-	{
-		public function AWPShape()
-		{
+	public class AWPShape extends AWPBase {
+		public function AWPShape() {
 		}
 	}
 }

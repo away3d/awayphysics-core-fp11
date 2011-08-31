@@ -1,16 +1,12 @@
-package awayphysics.dynamics.constraintsolver
-{
+package awayphysics.dynamics.constraintsolver {
 	import awayphysics.AWPBase;
 
-	public class AWPRotationalLimitMotor extends AWPBase
-	{
-		public function AWPRotationalLimitMotor(ptr : uint)
-		{
+	public class AWPRotationalLimitMotor extends AWPBase {
+		public function AWPRotationalLimitMotor(ptr : uint) {
 			pointer = ptr;
 		}
 
-		public function isLimited() : Boolean
-		{
+		public function isLimited() : Boolean {
 			if (loLimit > hiLimit) return false;
 
 			return true;
