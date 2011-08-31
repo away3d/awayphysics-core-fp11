@@ -1,5 +1,5 @@
 package awayphysics.collision.shapes {
-	import awayphysics.AWPTerrain;
+	import awayphysics.extend.AWPTerrain;
 
 	public class AWPHeightfieldTerrainShape extends AWPShape {
 		private var dataPtr : uint;
