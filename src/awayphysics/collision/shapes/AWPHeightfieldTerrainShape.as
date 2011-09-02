@@ -4,9 +4,9 @@ package awayphysics.collision.shapes {
 	public class AWPHeightfieldTerrainShape extends AWPShape {
 		private var dataPtr : uint;
 
-		/*
-		 * create terrain with the heightmap data
-		 */
+		 /**
+		  * create terrain with the heightmap data
+		  */
 		public function AWPHeightfieldTerrainShape(terrain : AWPTerrain) {
 			var dataLen : int = terrain.sw * terrain.sh;
 			dataPtr = bullet.createHeightmapDataBufferMethod(dataLen);
@@ -20,7 +20,7 @@ package awayphysics.collision.shapes {
 			pointer = bullet.createTerrainShapeMethod(dataPtr, terrain.sw, terrain.sh, terrain.lw / _scaling, terrain.lh / _scaling, 1, -terrain.maxHeight / _scaling, terrain.maxHeight / _scaling, 1);
 		}
 
-		/*
+		/**
 		 * release the heightmap data buffer
 		 */
 		public function deleteHeightfieldTerrainShapeBuffer() : void {

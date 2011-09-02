@@ -23,7 +23,7 @@ package awayphysics.dynamics {
 		private var m_totalTorque : AWPVector3;
 		private var m_invMass : AWPVector3;
 
-		/*
+		/**
 		 * rigidbody is static if mass is zero, otherwise is dynamic
 		 */
 		public function AWPRigidBody(shape : AWPShape, skin : ObjectContainer3D = null, mass : Number = 0) {
@@ -64,7 +64,7 @@ package awayphysics.dynamics {
 			}
 		}
 
-		/*
+		/**
 		 * add force to the rigidbody's mass center
 		 */
 		public function applyCentralForce(force : Vector3D) : void {
@@ -76,7 +76,7 @@ package awayphysics.dynamics {
 			activate();
 		}
 
-		/*
+		/**
 		 * add torque to the rigidbody
 		 */
 		public function applyTorque(torque : Vector3D) : void {
@@ -89,7 +89,7 @@ package awayphysics.dynamics {
 			activate();
 		}
 
-		/*
+		/**
 		 * add force to the rigidbody, rel_pos is the position in body's local coordinates
 		 */
 		public function applyForce(force : Vector3D, rel_pos : Vector3D) : void {
@@ -102,7 +102,7 @@ package awayphysics.dynamics {
 			applyTorque(rel_pos.crossProduct(vec));
 		}
 
-		/*
+		/**
 		 * add impulse to the rigidbody's mass center
 		 */
 		public function applyCentralImpulse(impulse : Vector3D) : void {
@@ -116,7 +116,7 @@ package awayphysics.dynamics {
 			activate();
 		}
 
-		/*
+		/**
 		 * add a torque impulse to the rigidbody
 		 */
 		public function applyTorqueImpulse(torque : Vector3D) : void {
@@ -130,7 +130,7 @@ package awayphysics.dynamics {
 			activate();
 		}
 
-		/*
+		/**
 		 * add a impulse to the rigidbody, rel_pos is the position in body's local coordinates
 		 */
 		public function applyImpulse(impulse : Vector3D, rel_pos : Vector3D) : void {
@@ -145,7 +145,7 @@ package awayphysics.dynamics {
 			}
 		}
 
-		/*
+		/**
 		 * clear all force and torque to zero
 		 */
 		public function clearForces() : void {
@@ -153,7 +153,7 @@ package awayphysics.dynamics {
 			m_totalTorque.v3d = new Vector3D();
 		}
 
-		/*
+		/**
 		 * set the gravity of this rigidbody
 		 */
 		public function set gravity(acceleration : Vector3D) : void {

@@ -18,7 +18,7 @@ package awayphysics.dynamics {
 
 		public static function getInstance() : AWPDynamicsWorld {
 			if (!currentDynamicsWorld) {
-				trace("version: AwayPhysics v0.62 (25-8-2011)");
+				trace("version: AwayPhysics v0.63 (2-9-2011)");
 				currentDynamicsWorld = new AWPDynamicsWorld();
 			}
 			return currentDynamicsWorld;
@@ -33,7 +33,7 @@ package awayphysics.dynamics {
 			m_characters = new Vector.<AWPKinematicCharacterController>();
 		}
 
-		/*
+		/**
 		 * init the physics world with btDbvtBroadphase
 		 * refer to http://bulletphysics.org/mediawiki-1.5.8/index.php/Broadphase
 		 */
@@ -43,7 +43,7 @@ package awayphysics.dynamics {
 			this.gravity = new Vector3D(0, -10, 0);
 		}
 
-		/*
+		/**
 		 * init the physics world with btAxisSweep3
 		 * refer to http://bulletphysics.org/mediawiki-1.5.8/index.php/Broadphase
 		 */
@@ -53,7 +53,7 @@ package awayphysics.dynamics {
 			this.gravity = new Vector3D(0, -10, 0);
 		}
 
-		/*
+		/**
 		 * add a rigidbody to physics world
 		 */
 		public function addRigidBody(body : AWPRigidBody) : void {
@@ -69,7 +69,7 @@ package awayphysics.dynamics {
 			}
 		}
 
-		/*
+		/**
 		 * add a rigidbody to physics world with group and mask
 		 * refer to: http://bulletphysics.org/mediawiki-1.5.8/index.php/Collision_Filtering
 		 */
@@ -86,7 +86,7 @@ package awayphysics.dynamics {
 			}
 		}
 
-		/*
+		/**
 		 * remove a rigidbody from physics world
 		 */
 		public function removeRigidBody(body : AWPRigidBody) : void {
@@ -140,14 +140,14 @@ package awayphysics.dynamics {
 			}
 		}
 
-		/*
+		/**
 		 * get the gravity of physics world
 		 */
 		public function get gravity() : Vector3D {
 			return m_gravity.v3d;
 		}
 
-		/*
+		/**
 		 * set the gravity of physics world
 		 */
 		public function set gravity(g : Vector3D) : void {
@@ -157,14 +157,14 @@ package awayphysics.dynamics {
 			}
 		}
 
-		/*
+		/**
 		 * get all rigidbodies
 		 */
 		public function get rigidBodies() : Vector.<AWPRigidBody> {
 			return m_rigidBodies;
 		}
 
-		/*
+		/**
 		 * get all non static rigidbodies
 		 */
 		public function get nonStaticRigidBodies() : Vector.<AWPRigidBody> {
@@ -179,7 +179,7 @@ package awayphysics.dynamics {
 			return m_characters;
 		}
 
-		/*
+		/**
 		 * set physics world scaling
 		 * refer to http://www.bulletphysics.org/mediawiki-1.5.8/index.php?title=Scaling_The_World
 		 */
@@ -187,28 +187,28 @@ package awayphysics.dynamics {
 			_scaling = v;
 		}
 
-		/*
+		/**
 		 * get physics world scaling
 		 */
 		public function get scaling() : Number {
 			return _scaling;
 		}
 
-		/*
+		/**
 		 * get if implement object collision callback
 		 */
 		public function get collisionCallbackOn() : Boolean {
 			return memUser._mru8(pointer + 247) == 1;
 		}
 
-		/*
+		/**
 		 * set this to true if need add a collision event to object, default is false
 		 */
 		public function set collisionCallbackOn(v : Boolean) : void {
 			memUser._mw8(pointer + 247, v ? 1 : 0);
 		}
 
-		/*
+		/**
 		 * set time step and simulate the physics world
 		 * refer to: http://bulletphysics.org/mediawiki-1.5.8/index.php/Stepping_the_World
 		 */

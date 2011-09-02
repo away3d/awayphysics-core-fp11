@@ -8,7 +8,7 @@ package awayphysics.dynamics.vehicle {
 	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
 
-	/*
+	/**
 	 * defining suspension and wheel parameters
 	 * refer to https://docs.google.com/document/edit?id=18edpOwtGgCwNyvakS78jxMajCuezotCU_0iezcwiFQc
 	 */
