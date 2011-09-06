@@ -11,7 +11,7 @@ compile: g++ -I./ AwayPhysics.c libbulletdynamics.a libbulletcollision.a libbull
 #include "BulletCollision/CollisionShapes/btHeightfieldTerrainShape.h"
 #include "BulletCollision/CollisionDispatch/btGhostObject.h"
 #include "BulletCollision/Gimpact/btGImpactShape.h"
-#include "BulletCollision/Gimpact/btGImpactCollisionAlgorithm.h"
+//#include "BulletCollision/Gimpact/btGImpactCollisionAlgorithm.h"
 #include "BulletDynamics/Character/btKinematicCharacterController.h"
 
 
@@ -187,37 +187,6 @@ AS3_Val removeCompoundChild(void* data, AS3_Val args){
 	return AS3_Null();
 }
 
-AS3_Val createTriangleShape(void* data, AS3_Val args){
-	AS3_Val p0;
-	AS3_Val p1;
-	AS3_Val p2;
-
-	AS3_ArrayValue(args, "AS3ValType,AS3ValType,AS3ValType",&p0,&p1,&p2);
-
-	double p0x,p0y,p0z;
-	p0x=AS3_NumberValue( AS3_GetS( p0, "x" ) );
-	p0y=AS3_NumberValue( AS3_GetS( p0, "y" ) );
-	p0z=AS3_NumberValue( AS3_GetS( p0, "z" ) );
-
-	double p1x,p1y,p1z;
-	p1x=AS3_NumberValue( AS3_GetS( p1, "x" ) );
-	p1y=AS3_NumberValue( AS3_GetS( p1, "y" ) );
-	p1z=AS3_NumberValue( AS3_GetS( p1, "z" ) );
-
-	double p2x,p2y,p2z;
-	p2x=AS3_NumberValue( AS3_GetS( p2, "x" ) );
-	p2y=AS3_NumberValue( AS3_GetS( p2, "y" ) );
-	p2z=AS3_NumberValue( AS3_GetS( p2, "z" ) );
-
-	btTriangleShapeEx* triangleShape=new btTriangleShapeEx(btVector3(p0x,p0y,p0z),btVector3(p1x,p1y,p1z),btVector3(p2x,p2y,p2z));
-
-	AS3_Release( p0 );
-	AS3_Release( p1 );
-	AS3_Release( p2 );
-
-	return_as3_ptr(triangleShape);
-}
-
 AS3_Val createHeightmapDataBuffer(void* data, AS3_Val args){
 	int size;
 	AS3_ArrayValue(args, "IntType",&size);
@@ -345,6 +314,37 @@ AS3_Val createGImpactMeshShape(void* data, AS3_Val args){
 	//btGImpactCollisionAlgorithm::registerAlgorithm(dispatcher);
 
 	return_as3_ptr(gimpactMesh);
+}
+
+AS3_Val createTriangleShape(void* data, AS3_Val args){
+	AS3_Val p0;
+	AS3_Val p1;
+	AS3_Val p2;
+
+	AS3_ArrayValue(args, "AS3ValType,AS3ValType,AS3ValType",&p0,&p1,&p2);
+
+	double p0x,p0y,p0z;
+	p0x=AS3_NumberValue( AS3_GetS( p0, "x" ) );
+	p0y=AS3_NumberValue( AS3_GetS( p0, "y" ) );
+	p0z=AS3_NumberValue( AS3_GetS( p0, "z" ) );
+
+	double p1x,p1y,p1z;
+	p1x=AS3_NumberValue( AS3_GetS( p1, "x" ) );
+	p1y=AS3_NumberValue( AS3_GetS( p1, "y" ) );
+	p1z=AS3_NumberValue( AS3_GetS( p1, "z" ) );
+
+	double p2x,p2y,p2z;
+	p2x=AS3_NumberValue( AS3_GetS( p2, "x" ) );
+	p2y=AS3_NumberValue( AS3_GetS( p2, "y" ) );
+	p2z=AS3_NumberValue( AS3_GetS( p2, "z" ) );
+
+	btTriangleShapeEx* triangleShape=new btTriangleShapeEx(btVector3(p0x,p0y,p0z),btVector3(p1x,p1y,p1z),btVector3(p2x,p2y,p2z));
+
+	AS3_Release( p0 );
+	AS3_Release( p1 );
+	AS3_Release( p2 );
+
+	return_as3_ptr(triangleShape);
 }
 
 // create rigidbody
@@ -819,7 +819,7 @@ AS3_Val step(void* data, AS3_Val args) {
 			btCollisionObject* obA = static_cast<btCollisionObject*>(contactManifold->getBody0());
 			btCollisionObject* obB = static_cast<btCollisionObject*>(contactManifold->getBody1());
 
-			if ((obA->getCollisionFlags() & btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK) && !(obB->getCollisionFlags() & btCollisionObject::CF_STATIC_OBJECT)){
+			if (obA->getCollisionFlags() & btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK){
 				int numContacts = contactManifold->getNumContacts();
 				if(numContacts>0){
 					btManifoldPoint* mpt=new btManifoldPoint();
@@ -846,7 +846,7 @@ AS3_Val step(void* data, AS3_Val args) {
 				}
 			}
 
-			if((obB->getCollisionFlags() & btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK) && !(obA->getCollisionFlags() & btCollisionObject::CF_STATIC_OBJECT)){
+			if(obB->getCollisionFlags() & btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK){
 				int numContacts = contactManifold->getNumContacts();
 				if(numContacts>0){
 					btManifoldPoint* mpt=new btManifoldPoint();
@@ -892,7 +892,6 @@ int main() {
 	AS3_Val createCompoundShapeMethod = AS3_Function( NULL, createCompoundShape );
 	AS3_Val addCompoundChildMethod = AS3_Function( NULL, addCompoundChild );
 	AS3_Val removeCompoundChildMethod = AS3_Function( NULL, removeCompoundChild );
-	AS3_Val createTriangleShapeMethod = AS3_Function( NULL, createTriangleShape );
 	AS3_Val createHeightmapDataBufferMethod = AS3_Function( NULL, createHeightmapDataBuffer );
 	AS3_Val removeHeightmapDataBufferMethod = AS3_Function( NULL, removeHeightmapDataBuffer );
 	AS3_Val createTerrainShapeMethod = AS3_Function( NULL, createTerrainShape );
@@ -904,6 +903,7 @@ int main() {
 	AS3_Val createBvhTriangleMeshShapeMethod = AS3_Function( NULL, createBvhTriangleMeshShape );
 	AS3_Val createConvexHullShapeMethod = AS3_Function( NULL, createConvexHullShape );
 	AS3_Val createGImpactMeshShapeMethod = AS3_Function( NULL, createGImpactMeshShape );
+	AS3_Val createTriangleShapeMethod = AS3_Function( NULL, createTriangleShape );
 	AS3_Val createBodyMethod = AS3_Function( NULL, createBody );
 	AS3_Val addBodyWithGroupMethod = AS3_Function( NULL, addBodyWithGroup );
 	AS3_Val addBodyMethod = AS3_Function( NULL, addBody );
@@ -939,7 +939,6 @@ int main() {
 								 "createCompoundShapeMethod:AS3ValType,"
 								 "addCompoundChildMethod:AS3ValType,"
 								 "removeCompoundChildMethod:AS3ValType,"
-								 "createTriangleShapeMethod:AS3ValType,"
 								 "createHeightmapDataBufferMethod:AS3ValType,"
 								 "removeHeightmapDataBufferMethod:AS3ValType,"
 								 "createTerrainShapeMethod:AS3ValType,"
@@ -951,6 +950,7 @@ int main() {
 								 "createBvhTriangleMeshShapeMethod:AS3ValType,"
 								 "createConvexHullShapeMethod:AS3ValType,"
 								 "createGImpactMeshShapeMethod:AS3ValType,"
+								 "createTriangleShapeMethod:AS3ValType,"
 								 "createBodyMethod:AS3ValType,"
 								 "addBodyWithGroupMethod:AS3ValType,"
 								 "addBodyMethod:AS3ValType,"
@@ -986,7 +986,6 @@ int main() {
 								 createCompoundShapeMethod,
 								 addCompoundChildMethod,
 								 removeCompoundChildMethod,
-								 createTriangleShapeMethod,
 								 createHeightmapDataBufferMethod,
 								 removeHeightmapDataBufferMethod,
 								 createTerrainShapeMethod,
@@ -998,6 +997,7 @@ int main() {
 								 createBvhTriangleMeshShapeMethod,
 								 createConvexHullShapeMethod,
 								 createGImpactMeshShapeMethod,
+								 createTriangleShapeMethod,
 								 createBodyMethod,
 								 addBodyWithGroupMethod,
 								 addBodyMethod,
@@ -1033,7 +1033,6 @@ int main() {
 	AS3_Release( createCompoundShapeMethod );
 	AS3_Release( addCompoundChildMethod );
 	AS3_Release( removeCompoundChildMethod );
-	AS3_Release( createTriangleShapeMethod );
 	AS3_Release( createHeightmapDataBufferMethod );
 	AS3_Release( removeHeightmapDataBufferMethod );
 	AS3_Release( createTerrainShapeMethod );
@@ -1045,6 +1044,7 @@ int main() {
 	AS3_Release( createBvhTriangleMeshShapeMethod );
 	AS3_Release( createConvexHullShapeMethod );
 	AS3_Release( createGImpactMeshShapeMethod );
+	AS3_Release( createTriangleShapeMethod );
 	AS3_Release( createBodyMethod );
 	AS3_Release( addBodyWithGroupMethod );
 	AS3_Release( addBodyMethod );
