@@ -1,9 +1,10 @@
 import os
 import glob
+import time
 	
 env = Environment(ENV = os.environ)
 
-env['CCFLAGS'] = '-I. -llvm-emit -O3 -Wall -malign-double'
+env['CCFLAGS'] = '-I. -llvm-emit -Wall -malign-double'
 
 BULLET_MATH_SRCS = glob.glob("LinearMath/*.cpp")
 BULLET_COLLISION_SRCS = glob.glob("BulletCollision/*/*.cpp")
@@ -24,7 +25,12 @@ swc = env.Command(
 		'libbulletmath.a'],
 	'g++ -I. -O3 -Wall AwayPhysics.c libbulletdynamics.a libbulletcollision.a libbulletmath.a -swc -o AwayPhysics.swc')
 
+tag = "%s__%s" % (
+	time.strftime("%Y%m%d-%H%M%S"),
+	env['CCFLAGS'].replace(" ", "_"))
+
 env.Alias('install', env.Install("../lib", swc))
+env.Alias('install', env.Install("/is/w2/swcs/%s" % tag, swc))
 Default(swc)
 
 # vim: set ai ts=2 sts=2 filetype=python syntax=python:
