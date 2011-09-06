@@ -1,9 +1,10 @@
 import os
 import glob
+import time
 	
 env = Environment(ENV = os.environ)
 
-env['CCFLAGS'] = '-I. -llvm-emit -O3 -Wall -malign-double'
+env['CCFLAGS'] = '-I. -llvm-emit -Wall -malign-double'
 
 BULLET_MATH_SRCS = glob.glob("LinearMath/*.cpp")
 BULLET_COLLISION_SRCS = glob.glob("BulletCollision/*/*.cpp")
