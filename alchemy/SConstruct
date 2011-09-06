@@ -25,12 +25,7 @@ swc = env.Command(
 		'libbulletmath.a'],
 	'g++ -I. -O3 -Wall AwayPhysics.c libbulletdynamics.a libbulletcollision.a libbulletmath.a -swc -o AwayPhysics.swc')
 
-tag = "%s__%s" % (
-	time.strftime("%Y%m%d-%H%M%S"),
-	env['CCFLAGS'].replace(" ", "_"))
-
 env.Alias('install', env.Install("../lib", swc))
-env.Alias('install', env.Install("/is/w2/swcs/%s" % tag, swc))
 Default(swc)
 
 # vim: set ai ts=2 sts=2 filetype=python syntax=python:
