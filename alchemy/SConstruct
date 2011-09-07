@@ -1,9 +1,16 @@
-import os
+import os, sys
 import glob
+import time
 	
-env = Environment(ENV = os.environ)
+if sys.platform.startswith("linux"):
+	CCFLAGS = '-I. -llvm-emit -Wall -malign-double'
+else:
+	CCFLAGS = '-I. -llvm-emit -O3 -Wall'
 
-env['CCFLAGS'] = '-I. -llvm-emit -O3 -Wall'
+LCCFLAGS = '-I. -llvm-emit -O3 -Wall'
+
+env = Environment(ENV = os.environ)
+env['CCFLAGS'] = CCFLAGS
 
 BULLET_MATH_SRCS = glob.glob("LinearMath/*.cpp")
 BULLET_COLLISION_SRCS = glob.glob("BulletCollision/*/*.cpp")
@@ -13,13 +20,17 @@ env.StaticLibrary('bulletmath',  BULLET_MATH_SRCS)
 env.StaticLibrary('bulletdynamics', BULLET_DYNAMICS_SRCS)
 env.StaticLibrary('bulletcollision', BULLET_COLLISION_SRCS)
 
+for L in (BULLET_MATH_SRCS, BULLET_COLLISION_SRCS, BULLET_DYNAMICS_SRCS):
+	L.sort(key = os.path.basename)
+
 swc = env.Command(
 	'AwayPhysics.swc', 
 	[ 'AwayPhysics.c', 
 		'libbulletdynamics.a', 
 		'libbulletcollision.a', 
 		'libbulletmath.a'],
-	'g++ -I. -O3 -Wall AwayPhysics.c libbulletdynamics.a libbulletcollision.a libbulletmath.a -swc -o AwayPhysics.swc')
+	'g++ %s AwayPhysics.c libbulletdynamics.a libbulletcollision.a libbulletmath.a -swc -o AwayPhysics.swc' % (LCCFLAGS))
+	#'g++ -I. -llvm-emit -O3 -Wall AwayPhysics.c libbulletdynamics.a libbulletcollision.a libbulletmath.a -swc -o AwayPhysics.swc')
 
 env.Alias('install', env.Install("../lib", swc))
 Default(swc)
