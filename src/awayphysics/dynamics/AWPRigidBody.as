@@ -122,7 +122,7 @@ package awayphysics.dynamics {
 		public function applyTorqueImpulse(torque : Vector3D) : void {
 			var tor : Vector3D = torque.clone();
 			tor.scaleBy(1 / _scaling);
-			var vec : Vector3D = new Vector3D(m_invInertiaTensorWorld.col1.v3d.dotProduct(tor), m_invInertiaTensorWorld.col2.v3d.dotProduct(tor), m_invInertiaTensorWorld.col3.v3d.dotProduct(tor));
+			var vec : Vector3D = new Vector3D(m_invInertiaTensorWorld.row1.v3d.dotProduct(tor), m_invInertiaTensorWorld.row2.v3d.dotProduct(tor), m_invInertiaTensorWorld.row3.v3d.dotProduct(tor));
 			vec.x *= m_angularFactor.x;
 			vec.y *= m_angularFactor.y;
 			vec.z *= m_angularFactor.z;
