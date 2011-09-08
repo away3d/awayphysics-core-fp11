@@ -20,6 +20,7 @@ package awayphysics.collision.dispatch {
 		public static var WANTS_DEACTIVATION : int = 3;
 		public static var DISABLE_DEACTIVATION : int = 4;
 		public static var DISABLE_SIMULATION : int = 5;
+		
 		private var m_shape : AWPShape;
 		private var m_skin : ObjectContainer3D;
 		private var m_worldTransform : AWPTransform;
@@ -33,7 +34,7 @@ package awayphysics.collision.dispatch {
 			m_skin = skin;
 
 			pointer = ptr;
-
+			
 			m_worldTransform = new AWPTransform(ptr + 4);
 			m_anisotropicFriction = new AWPVector3(ptr + 164);
 
@@ -189,6 +190,46 @@ package awayphysics.collision.dispatch {
 
 		public function get isActive() : Boolean {
 			return (activationState != AWPCollisionObject.ISLAND_SLEEPING && activationState != AWPCollisionObject.DISABLE_SIMULATION);
+		}
+		
+		/**
+		 * reserved to distinguish Bullet's btCollisionObject, btRigidBody, btSoftBody, btGhostObject etc.
+		 * the values defined by AWPCollisionObjectTypes
+		 */
+		public function get internalType() : int {
+			return memUser._mr32(pointer + 232);
+		}
+		
+		public function get hitFraction() : Number {
+			return memUser._mrf(pointer + 240);
+		}
+
+		public function set hitFraction(v : Number) : void {
+			memUser._mwf(pointer + 240, v);
+		}
+		
+		public function get ccdSweptSphereRadius() : Number {
+			return memUser._mrf(pointer + 244);
+		}
+
+		/**
+		 * used to motion clamping
+		 * refer to http://bulletphysics.org/mediawiki-1.5.8/index.php/Anti_tunneling_by_Motion_Clamping
+		 */
+		public function set ccdSweptSphereRadius(v : Number) : void {
+			memUser._mwf(pointer + 244, v);
+		}
+		
+		public function get ccdMotionThreshold() : Number {
+			return memUser._mrf(pointer + 248);
+		}
+
+		/**
+		 * used to motion clamping
+		 * refer to http://bulletphysics.org/mediawiki-1.5.8/index.php/Anti_tunneling_by_Motion_Clamping
+		 */
+		public function set ccdMotionThreshold(v : Number) : void {
+			memUser._mwf(pointer + 248, v);
 		}
 
 		public function addEventListener(type : String, listener : Function, useCapture : Boolean = false, priority : int = 0, useWeakReference : Boolean = false) : void {
