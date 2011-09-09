@@ -2,7 +2,7 @@ package awayphysics.collision.dispatch {
 	import away3d.containers.ObjectContainer3D;
 
 	import awayphysics.AWPBase;
-	import awayphysics.collision.shapes.AWPShape;
+	import awayphysics.collision.shapes.AWPCollisionShape;
 	import awayphysics.data.AWPCollisionFlags;
 	import awayphysics.events.AWPCollisionEvent;
 	import awayphysics.math.AWPTransform;
@@ -21,7 +21,7 @@ package awayphysics.collision.dispatch {
 		public static var DISABLE_DEACTIVATION : int = 4;
 		public static var DISABLE_SIMULATION : int = 5;
 		
-		private var m_shape : AWPShape;
+		private var m_shape : AWPCollisionShape;
 		private var m_skin : ObjectContainer3D;
 		private var m_worldTransform : AWPTransform;
 		private var m_anisotropicFriction : AWPVector3;
@@ -29,7 +29,7 @@ package awayphysics.collision.dispatch {
 		private var _pos : Vector3D;
 		private var _transform : Matrix3D = new Matrix3D();
 
-		public function AWPCollisionObject(ptr : uint, shape : AWPShape, skin : ObjectContainer3D) {
+		public function AWPCollisionObject(ptr : uint, shape : AWPCollisionShape, skin : ObjectContainer3D) {
 			m_shape = shape;
 			m_skin = skin;
 
@@ -41,7 +41,7 @@ package awayphysics.collision.dispatch {
 			dispatcher = new EventDispatcher(this);
 		}
 
-		public function get shape() : AWPShape {
+		public function get shape() : AWPCollisionShape {
 			return m_shape;
 		}
 
@@ -54,14 +54,15 @@ package awayphysics.collision.dispatch {
 		 * called by dynamicsWorld
 		 */
 		public function updateTransform() : void {
+			if (!m_skin) return;
+			
 			_pos = this.position;
 			_transform.identity();
+			_transform.appendScale(m_skin.scaleX, m_skin.scaleY, m_skin.scaleZ);
 			_transform.append(rotation);
 			_transform.appendTranslation(_pos.x, _pos.y, _pos.z);
-
-			if (m_skin) {
-				m_skin.transform = _transform;
-			}
+			
+			m_skin.transform = _transform;
 		}
 
 		/**

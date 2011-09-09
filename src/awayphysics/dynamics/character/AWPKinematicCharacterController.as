@@ -1,18 +1,18 @@
 package awayphysics.dynamics.character {
 	import awayphysics.AWPBase;
 	import awayphysics.collision.dispatch.AWPGhostObject;
-	import awayphysics.collision.shapes.AWPShape;
+	import awayphysics.collision.shapes.AWPCollisionShape;
 	import awayphysics.math.AWPVector3;
 
 	import flash.geom.Vector3D;
 
 	public class AWPKinematicCharacterController extends AWPBase {
-		private var m_shape : AWPShape;
+		private var m_shape : AWPCollisionShape;
 		private var m_ghostObject : AWPGhostObject;
 		private var m_walkDirection : AWPVector3;
 		private var m_normalizedDirection : AWPVector3;
 
-		public function AWPKinematicCharacterController(ghostObject : AWPGhostObject, shape : AWPShape, stepHeight : Number) {
+		public function AWPKinematicCharacterController(ghostObject : AWPGhostObject, shape : AWPCollisionShape, stepHeight : Number) {
 			m_ghostObject = ghostObject;
 			m_shape = shape;
 
@@ -26,7 +26,7 @@ package awayphysics.dynamics.character {
 			return m_ghostObject;
 		}
 
-		public function get shape() : AWPShape {
+		public function get shape() : AWPCollisionShape {
 			return m_shape;
 		}
 

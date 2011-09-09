@@ -1,7 +1,7 @@
 package awayphysics.collision.shapes {
 	import awayphysics.extend.AWPTerrain;
 
-	public class AWPHeightfieldTerrainShape extends AWPShape {
+	public class AWPHeightfieldTerrainShape extends AWPCollisionShape {
 		private var dataPtr : uint;
 
 		 /**
@@ -18,6 +18,7 @@ package awayphysics.collision.shapes {
 			}
 
 			pointer = bullet.createTerrainShapeMethod(dataPtr, terrain.sw, terrain.sh, terrain.lw / _scaling, terrain.lh / _scaling, 1, -terrain.maxHeight / _scaling, terrain.maxHeight / _scaling, 1);
+			super(pointer, 10);
 		}
 
 		/**
