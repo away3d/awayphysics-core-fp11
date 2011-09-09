@@ -1,7 +1,7 @@
 package awayphysics.collision.shapes {
 	import away3d.entities.Mesh;
 
-	public class AWPBvhTriangleMeshShape extends AWPShape {
+	public class AWPBvhTriangleMeshShape extends AWPCollisionShape {
 		private var indexDataPtr : uint;
 		private var vertexDataPtr : uint;
 
@@ -30,6 +30,7 @@ package awayphysics.collision.shapes {
 			var triangleIndexVertexArrayPtr : uint = bullet.createTriangleIndexVertexArrayMethod(int(indexDataLen / 3), indexDataPtr, int(vertexDataLen / 3), vertexDataPtr);
 
 			pointer = bullet.createBvhTriangleMeshShapeMethod(triangleIndexVertexArrayPtr, useQuantizedAabbCompression ? 1 : 0, 1);
+			super(pointer, 9);
 		}
 
 		/**

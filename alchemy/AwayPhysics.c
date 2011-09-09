@@ -347,6 +347,17 @@ AS3_Val createTriangleShape(void* data, AS3_Val args){
 	return_as3_ptr(triangleShape);
 }
 
+AS3_Val setShapeScaling(void* data, AS3_Val args){
+	btCollisionShape* shape;
+	double scaleX,scaleY,scaleZ;
+
+	AS3_ArrayValue(args, "PtrType,DoubleType,DoubleType,DoubleType",&shape,&scaleX,&scaleY,&scaleZ);
+
+	shape->setLocalScaling(btVector3(scaleX,scaleY,scaleZ));
+
+	return AS3_Null();
+}
+
 // create rigidbody
 AS3_Val createBody(void* data, AS3_Val args){
 	AS3_Val as3_Body;
@@ -904,6 +915,8 @@ int main() {
 	AS3_Val createConvexHullShapeMethod = AS3_Function( NULL, createConvexHullShape );
 	AS3_Val createGImpactMeshShapeMethod = AS3_Function( NULL, createGImpactMeshShape );
 	AS3_Val createTriangleShapeMethod = AS3_Function( NULL, createTriangleShape );
+	AS3_Val setShapeScalingMethod = AS3_Function( NULL, setShapeScaling );
+
 	AS3_Val createBodyMethod = AS3_Function( NULL, createBody );
 	AS3_Val addBodyWithGroupMethod = AS3_Function( NULL, addBodyWithGroup );
 	AS3_Val addBodyMethod = AS3_Function( NULL, addBody );
@@ -951,6 +964,8 @@ int main() {
 								 "createConvexHullShapeMethod:AS3ValType,"
 								 "createGImpactMeshShapeMethod:AS3ValType,"
 								 "createTriangleShapeMethod:AS3ValType,"
+								 "setShapeScalingMethod:AS3ValType,"
+
 								 "createBodyMethod:AS3ValType,"
 								 "addBodyWithGroupMethod:AS3ValType,"
 								 "addBodyMethod:AS3ValType,"
@@ -998,6 +1013,8 @@ int main() {
 								 createConvexHullShapeMethod,
 								 createGImpactMeshShapeMethod,
 								 createTriangleShapeMethod,
+								 setShapeScalingMethod,
+
 								 createBodyMethod,
 								 addBodyWithGroupMethod,
 								 addBodyMethod,
@@ -1045,6 +1062,8 @@ int main() {
 	AS3_Release( createConvexHullShapeMethod );
 	AS3_Release( createGImpactMeshShapeMethod );
 	AS3_Release( createTriangleShapeMethod );
+	AS3_Release( setShapeScalingMethod );
+
 	AS3_Release( createBodyMethod );
 	AS3_Release( addBodyWithGroupMethod );
 	AS3_Release( addBodyMethod );

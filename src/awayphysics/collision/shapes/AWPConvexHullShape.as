@@ -2,7 +2,7 @@ package awayphysics.collision.shapes
 {
 	import away3d.entities.Mesh;
 	
-	public class AWPConvexHullShape extends AWPShape
+	public class AWPConvexHullShape extends AWPCollisionShape
 	{
 		private var vertexDataPtr : uint;
 		
@@ -17,7 +17,8 @@ package awayphysics.collision.shapes
 				alchemyMemory.writeFloat(vertexData[i] / _scaling);
 			}
 			
-			pointer = bullet.createConvexHullShapeMethod(int(vertexDataLen / 3),vertexDataPtr);
+			pointer = bullet.createConvexHullShapeMethod(int(vertexDataLen / 3), vertexDataPtr);
+			super(pointer, 5);
 		}
 		
 		public function deleteConvexHullShapeBuffer() : void

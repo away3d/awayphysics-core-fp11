@@ -2,7 +2,7 @@ package awayphysics.dynamics {
 	import away3d.containers.ObjectContainer3D;
 
 	import awayphysics.collision.dispatch.AWPCollisionObject;
-	import awayphysics.collision.shapes.AWPShape;
+	import awayphysics.collision.shapes.AWPCollisionShape;
 	import awayphysics.data.AWPCollisionFlags;
 	import awayphysics.math.AWPMatrix3x3;
 	import awayphysics.math.AWPVector3;
@@ -26,7 +26,7 @@ package awayphysics.dynamics {
 		/**
 		 * rigidbody is static if mass is zero, otherwise is dynamic
 		 */
-		public function AWPRigidBody(shape : AWPShape, skin : ObjectContainer3D = null, mass : Number = 0) {
+		public function AWPRigidBody(shape : AWPCollisionShape, skin : ObjectContainer3D = null, mass : Number = 0) {
 			pointer = bullet.createBodyMethod(this, shape.pointer, mass);
 			super(pointer, shape, skin);
 
