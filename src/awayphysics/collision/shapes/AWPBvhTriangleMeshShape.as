@@ -1,6 +1,5 @@
 package awayphysics.collision.shapes {
 	import away3d.core.base.Geometry;
-	import away3d.entities.Mesh;
 
 	public class AWPBvhTriangleMeshShape extends AWPCollisionShape {
 		private var indexDataPtr : uint;

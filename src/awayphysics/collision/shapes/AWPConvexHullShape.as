@@ -1,14 +1,14 @@
 package awayphysics.collision.shapes
 {
-	import away3d.entities.Mesh;
+	import away3d.core.base.Geometry;
 	
 	public class AWPConvexHullShape extends AWPCollisionShape
 	{
 		private var vertexDataPtr : uint;
 		
-		public function AWPConvexHullShape(mesh:Mesh)
+		public function AWPConvexHullShape(geometry : Geometry)
 		{
-			var vertexData : Vector.<Number> = mesh.geometry.subGeometries[0].vertexData;
+			var vertexData : Vector.<Number> = geometry.subGeometries[0].vertexData;
 			var vertexDataLen : int = vertexData.length;
 			vertexDataPtr = bullet.createTriangleVertexDataBufferMethod(vertexDataLen);
 			
