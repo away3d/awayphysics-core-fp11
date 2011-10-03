@@ -49,6 +49,11 @@ package awayphysics.collision.dispatch {
 			return m_skin;
 		}
 
+		public function set skin(value:ObjectContainer3D):void
+		{
+			m_skin = value;
+		}
+
 		/**
 		 * update the transform of skin mesh
 		 * called by dynamicsWorld
