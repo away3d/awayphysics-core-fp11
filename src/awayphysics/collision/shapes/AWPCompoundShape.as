@@ -17,7 +17,14 @@ package awayphysics.collision.shapes {
 		/**
 		 *add a child shape and set its position and rotation in local coordinates
 		 */
-		public function addChildShape(child : AWPCollisionShape, localPos : Vector3D, localRot : Matrix3D) : void {
+		public function addChildShape(child : AWPCollisionShape, localPos : Vector3D = null, localRot : Matrix3D = null) : void {
+
+			if( localPos == null )
+				localPos = new Vector3D();
+
+			if( localRot == null )
+				localRot = new Matrix3D();
+
 			var rotArr : Vector.<Number> = localRot.rawData;
 			bullet.addCompoundChildMethod(pointer, child.pointer, localPos.x / _scaling, localPos.y / _scaling, localPos.z / _scaling, rotArr[0], rotArr[4], rotArr[8], rotArr[1], rotArr[5], rotArr[9], rotArr[2], rotArr[6], rotArr[10]);
 
