@@ -5,8 +5,11 @@ package awayphysics.dynamics.constraintsolver {
 	public class AWPTypedConstraint extends AWPBase {
 		protected var m_rbA : AWPRigidBody;
 		protected var m_rbB : AWPRigidBody;
+		
+		protected var m_constraintType:int;
 
-		public function AWPTypedConstraint() {
+		public function AWPTypedConstraint(type:int) {
+			m_constraintType = type;
 		}
 
 		public function get rigidBodyA() : AWPRigidBody {
@@ -15,6 +18,10 @@ package awayphysics.dynamics.constraintsolver {
 
 		public function get rigidBodyB() : AWPRigidBody {
 			return m_rbB;
+		}
+		
+		public function get constraintType():int {
+			return m_constraintType;
 		}
 	}
 }

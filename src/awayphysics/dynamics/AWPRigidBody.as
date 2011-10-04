@@ -6,6 +6,7 @@ package awayphysics.dynamics {
 	import awayphysics.data.AWPCollisionFlags;
 	import awayphysics.math.AWPMatrix3x3;
 	import awayphysics.math.AWPVector3;
+	import awayphysics.math.AWPMath;
 
 	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
@@ -42,36 +43,12 @@ package awayphysics.dynamics {
 			m_totalTorque = new AWPVector3(pointer + 420);
 			m_invMass = new AWPVector3(pointer + 520);
 		}
-
-		override public function set position(pos : Vector3D) : void {
-			super.position = pos;
-			if (this.collisionFlags == AWPCollisionFlags.CF_STATIC_OBJECT) {
-				updateTransform();
-			}
-		}
-
-		override public function set rotation(rot : Matrix3D) : void {
-			super.rotation = rot;
-			if (this.collisionFlags == AWPCollisionFlags.CF_STATIC_OBJECT) {
-				updateTransform();
-			}
-		}
-
-		override public function setWorldTransform(pos : Vector3D, rot : Matrix3D) : void {
-			super.setWorldTransform(pos, rot);
-			if (this.collisionFlags == AWPCollisionFlags.CF_STATIC_OBJECT) {
-				updateTransform();
-			}
-		}
-
+		
 		/**
 		 * add force to the rigidbody's mass center
 		 */
 		public function applyCentralForce(force : Vector3D) : void {
-			var vec : Vector3D = force.clone();
-			vec.x *= m_linearFactor.x;
-			vec.y *= m_linearFactor.y;
-			vec.z *= m_linearFactor.z;
+			var vec : Vector3D = AWPMath.vectorMultiply(force, m_linearFactor.v3d);
 			m_totalForce.v3d = vec.add(m_totalForce.v3d);
 			activate();
 		}
@@ -80,11 +57,7 @@ package awayphysics.dynamics {
 		 * add torque to the rigidbody
 		 */
 		public function applyTorque(torque : Vector3D) : void {
-			var vec : Vector3D = torque.clone();
-			vec.scaleBy(1 / _scaling);
-			vec.x *= m_angularFactor.x;
-			vec.y *= m_angularFactor.y;
-			vec.z *= m_angularFactor.z;
+			var vec : Vector3D = AWPMath.vectorMultiply(torque, m_angularFactor.v3d);
 			m_totalTorque.v3d = vec.add(m_totalTorque.v3d);
 			activate();
 		}
@@ -94,11 +67,8 @@ package awayphysics.dynamics {
 		 */
 		public function applyForce(force : Vector3D, rel_pos : Vector3D) : void {
 			applyCentralForce(force);
-
-			var vec : Vector3D = force.clone();
-			vec.x *= m_linearFactor.x;
-			vec.y *= m_linearFactor.y;
-			vec.z *= m_linearFactor.z;
+			rel_pos.scaleBy(1 / _scaling);
+			var vec : Vector3D = AWPMath.vectorMultiply(force, m_linearFactor.v3d);
 			applyTorque(rel_pos.crossProduct(vec));
 		}
 
@@ -106,12 +76,8 @@ package awayphysics.dynamics {
 		 * add impulse to the rigidbody's mass center
 		 */
 		public function applyCentralImpulse(impulse : Vector3D) : void {
-			var vec : Vector3D = impulse.clone();
-			vec.scaleBy(1 / _scaling);
+			var vec : Vector3D = AWPMath.vectorMultiply(impulse, m_linearFactor.v3d);
 			vec.scaleBy(inverseMass);
-			vec.x *= m_linearFactor.x;
-			vec.y *= m_linearFactor.y;
-			vec.z *= m_linearFactor.z;
 			m_linearVelocity.v3d = vec.add(m_linearVelocity.v3d);
 			activate();
 		}
@@ -121,11 +87,7 @@ package awayphysics.dynamics {
 		 */
 		public function applyTorqueImpulse(torque : Vector3D) : void {
 			var tor : Vector3D = torque.clone();
-			tor.scaleBy(1 / _scaling);
-			var vec : Vector3D = new Vector3D(m_invInertiaTensorWorld.row1.v3d.dotProduct(tor), m_invInertiaTensorWorld.row2.v3d.dotProduct(tor), m_invInertiaTensorWorld.row3.v3d.dotProduct(tor));
-			vec.x *= m_angularFactor.x;
-			vec.y *= m_angularFactor.y;
-			vec.z *= m_angularFactor.z;
+			var vec : Vector3D = AWPMath.vectorMultiply(new Vector3D(m_invInertiaTensorWorld.row1.dotProduct(tor), m_invInertiaTensorWorld.row2.dotProduct(tor), m_invInertiaTensorWorld.row3.dotProduct(tor)), m_angularFactor.v3d);
 			m_angularVelocity.v3d = vec.add(m_angularVelocity.v3d);
 			activate();
 		}
@@ -136,11 +98,8 @@ package awayphysics.dynamics {
 		public function applyImpulse(impulse : Vector3D, rel_pos : Vector3D) : void {
 			if (inverseMass != 0) {
 				applyCentralImpulse(impulse);
-
-				var vec : Vector3D = impulse.clone();
-				vec.x *= m_linearFactor.x;
-				vec.y *= m_linearFactor.y;
-				vec.z *= m_linearFactor.z;
+				rel_pos.scaleBy(1 / _scaling);
+				var vec : Vector3D = AWPMath.vectorMultiply(impulse, m_linearFactor.v3d);
 				applyTorqueImpulse(rel_pos.crossProduct(vec));
 			}
 		}
@@ -171,11 +130,11 @@ package awayphysics.dynamics {
 		}
 
 		public function get linearVelocity() : Vector3D {
-			return m_linearVelocity.sv3d;
+			return m_linearVelocity.v3d;
 		}
 
 		public function set linearVelocity(v : Vector3D) : void {
-			m_linearVelocity.sv3d = v;
+			m_linearVelocity.v3d = v;
 		}
 
 		public function get angularVelocity() : Vector3D {
@@ -227,7 +186,7 @@ package awayphysics.dynamics {
 		}
 
 		public function get totalTorque() : Vector3D {
-			return m_totalTorque.sv3d;
+			return m_totalTorque.v3d;
 		}
 
 		public function get mass() : Number {
@@ -277,11 +236,11 @@ package awayphysics.dynamics {
 		}
 
 		public function get linearSleepingThreshold() : Number {
-			return memUser._mrf(pointer + 464) * _scaling;
+			return memUser._mrf(pointer + 464);
 		}
 
 		public function set linearSleepingThreshold(v : Number) : void {
-			memUser._mwf(pointer + 464, v / _scaling);
+			memUser._mwf(pointer + 464, v);
 		}
 
 		public function get angularSleepingThreshold() : Number {

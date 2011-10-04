@@ -19,8 +19,8 @@ package awayphysics.dynamics.vehicle {
 		private var m_chassisConnectionPointCS : AWPVector3;
 		private var m_wheelDirectionCS : AWPVector3;
 		private var m_wheelAxleCS : AWPVector3;
-		private var _pos : Vector3D;
-		private var _transform : Matrix3D = new Matrix3D();
+		
+		private var _transform:Matrix3D = new Matrix3D();
 
 		public function AWPWheelInfo(ptr : uint, _skin : ObjectContainer3D = null) {
 			pointer = ptr;
@@ -31,10 +31,15 @@ package awayphysics.dynamics.vehicle {
 			m_chassisConnectionPointCS = new AWPVector3(ptr + 156);
 			m_wheelDirectionCS = new AWPVector3(ptr + 172);
 			m_wheelAxleCS = new AWPVector3(ptr + 188);
+			
 		}
 
 		public function get skin() : ObjectContainer3D {
 			return m_skin;
+		}
+		
+		public function set skin(value:ObjectContainer3D):void {
+			m_skin = value;
 		}
 
 		public function get raycastInfo() : AWPRaycastInfo {
@@ -42,30 +47,29 @@ package awayphysics.dynamics.vehicle {
 		}
 
 		public function set worldPosition(pos : Vector3D) : void {
-			m_worldTransform.position.sv3d = pos;
+			m_worldTransform.position = pos;
 		}
 
 		public function get worldPosition() : Vector3D {
-			return m_worldTransform.position.sv3d;
+			return m_worldTransform.position;
 		}
 
-		public function set worldRotation(rot : Matrix3D) : void {
-			m_worldTransform.rotation.m3d = rot;
+		public function set worldRotation(rot : Vector3D) : void {
+			m_worldTransform.rotation = rot;
 		}
 
-		public function get worldRotation() : Matrix3D {
-			return m_worldTransform.rotation.m3d;
+		public function get worldRotation() : Vector3D {
+			return m_worldTransform.rotation;
 		}
 
 		public function updateTransform() : void {
-			_pos = this.worldPosition;
+			if (!m_skin) return;
+			
 			_transform.identity();
-			_transform.append(worldRotation);
-			_transform.appendTranslation(_pos.x, _pos.y, _pos.z);
-
-			if (m_skin) {
-				m_skin.transform = _transform;
-			}
+			_transform.appendScale(m_skin.scaleX, m_skin.scaleY, m_skin.scaleZ);
+			_transform.append(m_worldTransform.transform);
+			
+			m_skin.transform = _transform;
 		}
 
 		public function get chassisConnectionPointCS() : Vector3D {
@@ -213,7 +217,7 @@ package awayphysics.dynamics.vehicle {
 		}
 
 		public function get suspensionRelativeVelocity() : Number {
-			return memUser._mrf(pointer + 272) * _scaling;
+			return memUser._mrf(pointer + 272);
 		}
 
 		public function get wheelsSuspensionForce() : Number {

@@ -7,6 +7,7 @@ package awayphysics.dynamics.constraintsolver {
 		private var m_limit : AWPAngularLimit;
 
 		public function AWPHingeConstraint(rbA : AWPRigidBody, pivotInA : Vector3D, axisInA : Vector3D, rbB : AWPRigidBody = null, pivotInB : Vector3D = null, axisInB : Vector3D = null, useReferenceFrameA : Boolean = false) {
+			super(1);
 			m_rbA = rbA;
 			m_rbB = rbB;
 
@@ -30,19 +31,19 @@ package awayphysics.dynamics.constraintsolver {
 		}
 
 		public function get motorTargetVelocity() : Number {
-			return memUser._mrf(pointer + 668) * _scaling;
+			return memUser._mrf(pointer + 668);
 		}
 
 		public function set motorTargetVelocity(v : Number) : void {
-			memUser._mwf(pointer + 668, v / _scaling);
+			memUser._mwf(pointer + 668, v);
 		}
 
 		public function get maxMotorImpulse() : Number {
-			return memUser._mrf(pointer + 672) * _scaling;
+			return memUser._mrf(pointer + 672);
 		}
 
 		public function set maxMotorImpulse(v : Number) : void {
-			memUser._mwf(pointer + 672, v / _scaling);
+			memUser._mwf(pointer + 672, v);
 		}
 
 		public function get angularOnly() : Boolean {

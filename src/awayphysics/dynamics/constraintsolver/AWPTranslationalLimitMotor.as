@@ -48,11 +48,11 @@ package awayphysics.dynamics.constraintsolver {
 		}
 
 		public function get accumulatedImpulse() : Vector3D {
-			return m_accumulatedImpulse.sv3d;
+			return m_accumulatedImpulse.v3d;
 		}
 
 		public function set accumulatedImpulse(v : Vector3D) : void {
-			m_accumulatedImpulse.sv3d = v;
+			m_accumulatedImpulse.v3d = v;
 		}
 
 		public function get normalCFM() : Vector3D {
@@ -80,11 +80,11 @@ package awayphysics.dynamics.constraintsolver {
 		}
 
 		public function get targetVelocity() : Vector3D {
-			return m_targetVelocity.sv3d;
+			return m_targetVelocity.v3d;
 		}
 
 		public function set targetVelocity(v : Vector3D) : void {
-			m_targetVelocity.sv3d = v;
+			m_targetVelocity.v3d = v;
 		}
 
 		public function get maxMotorForce() : Vector3D {

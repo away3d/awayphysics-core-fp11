@@ -7,6 +7,7 @@ package awayphysics.collision.dispatch {
 	import awayphysics.events.AWPCollisionEvent;
 	import awayphysics.math.AWPTransform;
 	import awayphysics.math.AWPVector3;
+	import awayphysics.math.AWPMath;
 
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
@@ -15,19 +16,20 @@ package awayphysics.collision.dispatch {
 	import flash.geom.Vector3D;
 
 	public class AWPCollisionObject extends AWPBase implements IEventDispatcher {
-		public static var ACTIVE_TAG : int = 1;
-		public static var ISLAND_SLEEPING : int = 2;
-		public static var WANTS_DEACTIVATION : int = 3;
-		public static var DISABLE_DEACTIVATION : int = 4;
-		public static var DISABLE_SIMULATION : int = 5;
+		public static const ACTIVE_TAG : int = 1;
+		public static const ISLAND_SLEEPING : int = 2;
+		public static const WANTS_DEACTIVATION : int = 3;
+		public static const DISABLE_DEACTIVATION : int = 4;
+		public static const DISABLE_SIMULATION : int = 5;
 		
 		private var m_shape : AWPCollisionShape;
 		private var m_skin : ObjectContainer3D;
 		private var m_worldTransform : AWPTransform;
 		private var m_anisotropicFriction : AWPVector3;
-		private var dispatcher : EventDispatcher;
-		private var _pos : Vector3D;
-		private var _transform : Matrix3D = new Matrix3D();
+		
+		private var _transform:Matrix3D = new Matrix3D();
+		private var _originScale:Vector3D = new Vector3D(1, 1, 1);
+		private var _dispatcher : EventDispatcher;
 
 		public function AWPCollisionObject(ptr : uint, shape : AWPCollisionShape, skin : ObjectContainer3D) {
 			m_shape = shape;
@@ -37,8 +39,12 @@ package awayphysics.collision.dispatch {
 			
 			m_worldTransform = new AWPTransform(ptr + 4);
 			m_anisotropicFriction = new AWPVector3(ptr + 164);
-
-			dispatcher = new EventDispatcher(this);
+			
+			if (m_skin) {
+				_originScale.setTo(m_skin.scaleX, m_skin.scaleY, m_skin.scaleZ);
+			}
+			
+			_dispatcher = new EventDispatcher(this);
 		}
 
 		public function get shape() : AWPCollisionShape {
@@ -48,10 +54,10 @@ package awayphysics.collision.dispatch {
 		public function get skin() : ObjectContainer3D {
 			return m_skin;
 		}
-
-		public function set skin(value:ObjectContainer3D):void
-		{
+		
+		public function set skin(value:ObjectContainer3D):void {
 			m_skin = value;
+			_originScale.setTo(m_skin.scaleX, m_skin.scaleY, m_skin.scaleZ);
 		}
 
 		/**
@@ -61,11 +67,9 @@ package awayphysics.collision.dispatch {
 		public function updateTransform() : void {
 			if (!m_skin) return;
 			
-			_pos = this.position;
 			_transform.identity();
-			_transform.appendScale(m_skin.scaleX, m_skin.scaleY, m_skin.scaleZ);
-			_transform.append(rotation);
-			_transform.appendTranslation(_pos.x, _pos.y, _pos.z);
+			_transform.appendScale(_originScale.x * m_shape.localScaling.x, _originScale.y * m_shape.localScaling.y, _originScale.z * m_shape.localScaling.z);
+			_transform.append(m_worldTransform.transform);
 			
 			m_skin.transform = _transform;
 		}
@@ -74,32 +78,70 @@ package awayphysics.collision.dispatch {
 		 * set the position in world coordinates
 		 */
 		public function set position(pos : Vector3D) : void {
-			m_worldTransform.position.sv3d = pos;
+			m_worldTransform.position = pos;
+			updateTransform();
 		}
 
 		public function get position() : Vector3D {
-			return m_worldTransform.position.sv3d;
+			return m_worldTransform.position;
 		}
 
 		/**
-		 * set the orientation in world coordinates
+		 * set the orientation with euler angle in world coordinates
 		 */
-		public function set rotation(rot : Matrix3D) : void {
-			m_worldTransform.rotation.m3d = rot;
+		public function set rotation(rot : Vector3D) : void {
+			m_worldTransform.rotation = rot;
+			updateTransform();
 		}
 
-		public function get rotation() : Matrix3D {
-			return m_worldTransform.rotation.m3d;
+		public function get rotation() : Vector3D {
+			return m_worldTransform.rotation;
+		}
+		
+		/**
+		 * set the scaling of collision shape
+		 */
+		public function set scale(sc:Vector3D):void {
+			m_shape.localScaling = sc;
+			updateTransform();
+		}
+		
+		public function get scale():Vector3D {
+			return m_shape.localScaling;
 		}
 
 		/**
-		 * set the position and orientation in world coordinates
+		 * set the transform in world coordinates
 		 */
-		public function setWorldTransform(pos : Vector3D, rot : Matrix3D) : void {
-			m_worldTransform.position.sv3d = pos;
-			m_worldTransform.rotation.m3d = rot;
+		public function set transform(tr:Matrix3D) : void {
+			m_worldTransform.transform = tr;
+			m_shape.localScaling = tr.decompose()[2];
+			updateTransform();
 		}
-
+		
+		public function get transform():Matrix3D {
+			return m_worldTransform.transform;
+		}
+		
+		/**
+		 * get the front direction in world coordinates
+		 */
+		public function get front():Vector3D {
+			return m_worldTransform.basis.column3;
+		}
+		/**
+		 * get the up direction in world coordinates
+		 */
+		public function get up():Vector3D {
+			return m_worldTransform.basis.column2;
+		}
+		/**
+		 * get the right direction in world coordinates
+		 */
+		public function get right():Vector3D {
+			return m_worldTransform.basis.column1;
+		}
+		
 		public function get anisotropicFriction() : Vector3D {
 			return m_anisotropicFriction.v3d;
 		}
@@ -240,24 +282,24 @@ package awayphysics.collision.dispatch {
 
 		public function addEventListener(type : String, listener : Function, useCapture : Boolean = false, priority : int = 0, useWeakReference : Boolean = false) : void {
 			this.collisionFlags |= AWPCollisionFlags.CF_CUSTOM_MATERIAL_CALLBACK;
-			dispatcher.addEventListener(type, listener, useCapture, priority);
+			_dispatcher.addEventListener(type, listener, useCapture, priority);
 		}
 
 		public function dispatchEvent(evt : Event) : Boolean {
-			return dispatcher.dispatchEvent(evt);
+			return _dispatcher.dispatchEvent(evt);
 		}
 
 		public function hasEventListener(type : String) : Boolean {
-			return dispatcher.hasEventListener(type);
+			return _dispatcher.hasEventListener(type);
 		}
 
 		public function removeEventListener(type : String, listener : Function, useCapture : Boolean = false) : void {
 			this.collisionFlags &= (~AWPCollisionFlags.CF_CUSTOM_MATERIAL_CALLBACK);
-			dispatcher.removeEventListener(type, listener, useCapture);
+			_dispatcher.removeEventListener(type, listener, useCapture);
 		}
 
 		public function willTrigger(type : String) : Boolean {
-			return dispatcher.willTrigger(type);
+			return _dispatcher.willTrigger(type);
 		}
 
 		/**

@@ -6,6 +6,7 @@ package awayphysics.dynamics.constraintsolver {
 
 	public class AWPConeTwistConstraint extends AWPTypedConstraint {
 		public function AWPConeTwistConstraint(rbA : AWPRigidBody, pivotInA : Vector3D, rotationInA : Matrix3D, rbB : AWPRigidBody = null, pivotInB : Vector3D = null, rotationInB : Matrix3D = null) {
+			super(2);
 			m_rbA = rbA;
 			m_rbB = rbB;
 

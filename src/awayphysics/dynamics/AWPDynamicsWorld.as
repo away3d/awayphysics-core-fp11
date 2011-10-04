@@ -15,10 +15,11 @@ package awayphysics.dynamics {
 		private var m_nonStaticRigidBodies : Vector.<AWPRigidBody>;
 		private var m_vehicles : Vector.<AWPRaycastVehicle>;
 		private var m_characters : Vector.<AWPKinematicCharacterController>;
+		private var m_constraints:Vector.<AWPTypedConstraint>;
 
 		public static function getInstance() : AWPDynamicsWorld {
 			if (!currentDynamicsWorld) {
-				trace("version: AwayPhysics v0.64 (9-9-2011)");
+				trace("version: AwayPhysics v0.65 (5-10-2011)");
 				currentDynamicsWorld = new AWPDynamicsWorld();
 			}
 			return currentDynamicsWorld;
@@ -31,6 +32,7 @@ package awayphysics.dynamics {
 			m_nonStaticRigidBodies = new Vector.<AWPRigidBody>();
 			m_vehicles = new Vector.<AWPRaycastVehicle>();
 			m_characters = new Vector.<AWPKinematicCharacterController>();
+			m_constraints = new Vector.<AWPTypedConstraint>();
 		}
 
 		/**
@@ -102,10 +104,18 @@ package awayphysics.dynamics {
 
 		public function addConstraint(constraint : AWPTypedConstraint, disableCollisionsBetweenLinkedBodies : Boolean = false) : void {
 			bullet.addConstraintMethod(constraint.pointer, disableCollisionsBetweenLinkedBodies ? 1 : 0);
+			
+			if (m_constraints.indexOf(constraint) < 0) {
+				m_constraints.push(constraint);
+			}
 		}
 
 		public function removeConstraint(constraint : AWPTypedConstraint) : void {
 			bullet.removeConstraintMethod(constraint.pointer);
+			
+			if (m_constraints.indexOf(constraint) >= 0) {
+				m_constraints.splice(m_constraints.indexOf(constraint), 1);
+			}
 		}
 
 		public function addVehicle(vehicle : AWPRaycastVehicle) : void {
@@ -169,6 +179,10 @@ package awayphysics.dynamics {
 		 */
 		public function get nonStaticRigidBodies() : Vector.<AWPRigidBody> {
 			return m_nonStaticRigidBodies;
+		}
+		
+		public function get constraints() : Vector.<AWPTypedConstraint> {
+			return m_constraints;
 		}
 
 		public function get vehicles() : Vector.<AWPRaycastVehicle> {

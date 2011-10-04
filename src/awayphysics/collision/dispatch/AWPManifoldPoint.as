@@ -42,7 +42,7 @@ package awayphysics.collision.dispatch {
 		 *get the value of collision impulse
 		 */
 		public function get appliedImpulse() : Number {
-			return memUser._mrf(pointer + 112) * _scaling;
+			return memUser._mrf(pointer + 112);
 		}
 	}
 }

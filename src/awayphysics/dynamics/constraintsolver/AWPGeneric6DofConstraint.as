@@ -9,6 +9,7 @@ package awayphysics.dynamics.constraintsolver {
 		private var m_angularLimits : Vector.<AWPRotationalLimitMotor>;
 
 		public function AWPGeneric6DofConstraint(rbA : AWPRigidBody, pivotInA : Vector3D, rotationInA : Matrix3D, rbB : AWPRigidBody = null, pivotInB : Vector3D = null, rotationInB : Matrix3D = null, useLinearReferenceFrameA : Boolean = false) {
+			super(3);
 			m_rbA = rbA;
 			m_rbB = rbB;
 

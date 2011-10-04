@@ -5,6 +5,7 @@ package awayphysics.dynamics.constraintsolver {
 
 	public class AWPPoint2PointConstraint extends AWPTypedConstraint {
 		public function AWPPoint2PointConstraint(rbA : AWPRigidBody, pivotInA : Vector3D, rbB : AWPRigidBody = null, pivotInB : Vector3D = null) {
+			super(0);
 			m_rbA = rbA;
 			m_rbB = rbB;
 

@@ -46,7 +46,7 @@ package awayphysics.dynamics.character {
 		 */
 		public function setWalkDirection(walkDirection : Vector3D) : void {
 			useWalkDirection = true;
-			m_walkDirection.sv3d = walkDirection;
+			m_walkDirection.v3d = walkDirection;
 			var vec : Vector3D = walkDirection.clone();
 			vec.normalize();
 			m_normalizedDirection.v3d = vec;
@@ -57,7 +57,7 @@ package awayphysics.dynamics.character {
 		 */
 		public function setVelocityForTimeInterval(velocity : Vector3D, timeInterval : Number) : void {
 			useWalkDirection = false;
-			m_walkDirection.sv3d = velocity;
+			m_walkDirection.v3d = velocity;
 			var vec : Vector3D = velocity.clone();
 			vec.normalize();
 			m_normalizedDirection.v3d = vec;
@@ -107,19 +107,19 @@ package awayphysics.dynamics.character {
 		}
 
 		public function get fallSpeed() : Number {
-			return memUser._mrf(pointer + 24) * _scaling;
+			return memUser._mrf(pointer + 24);
 		}
 
 		public function set fallSpeed(v : Number) : void {
-			memUser._mwf(pointer + 24, v / _scaling);
+			memUser._mwf(pointer + 24, v);
 		}
 
 		public function get jumpSpeed() : Number {
-			return memUser._mrf(pointer + 28) * _scaling;
+			return memUser._mrf(pointer + 28);
 		}
 
 		public function set jumpSpeed(v : Number) : void {
-			memUser._mwf(pointer + 28, v / _scaling);
+			memUser._mwf(pointer + 28, v);
 		}
 
 		public function get maxJumpHeight() : Number {
@@ -131,11 +131,11 @@ package awayphysics.dynamics.character {
 		}
 
 		public function get gravity() : Number {
-			return memUser._mrf(pointer + 44) * _scaling;
+			return memUser._mrf(pointer + 44);
 		}
 
 		public function set gravity(v : Number) : void {
-			memUser._mwf(pointer + 44, v / _scaling);
+			memUser._mwf(pointer + 44, v);
 		}
 
 		private function get wasJumping() : Boolean {

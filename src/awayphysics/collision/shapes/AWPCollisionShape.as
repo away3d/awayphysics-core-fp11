@@ -5,10 +5,13 @@ package awayphysics.collision.shapes {
 	public class AWPCollisionShape extends AWPBase {
 		
 		private var m_shapeType:int;
+		private var m_localScaling:Vector3D;
 		
 		public function AWPCollisionShape(ptr:uint, type:int) {
 			pointer = ptr;
 			m_shapeType = type;
+			
+			m_localScaling = new Vector3D(1, 1, 1);
 		}
 		
 		/**
@@ -18,8 +21,13 @@ package awayphysics.collision.shapes {
 			return m_shapeType;
 		}
 		
-		public function setLocalScaling(scaleX:Number, scaleY:Number, scaleZ:Number):void {
-			bullet.setShapeScalingMethod(pointer, scaleX, scaleY, scaleZ);
+		public function get localScaling():Vector3D {
+			return m_localScaling;
+		}
+		
+		public function set localScaling(scale:Vector3D):void {
+			m_localScaling.setTo(scale.x, scale.y, scale.z);
+			bullet.setShapeScalingMethod(pointer, scale.x, scale.y, scale.z);
 		}
 	}
 }
