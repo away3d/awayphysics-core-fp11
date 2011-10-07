@@ -26,7 +26,7 @@ package awayphysics.collision.shapes {
 			if ( localRot == null )
 			localRot = new Vector3D();
 			
-			var rot:Matrix3D = AWPMath.euler2matrix(localRot);
+			var rot:Matrix3D = AWPMath.euler2matrix(AWPMath.degrees2radiansV3D(localRot));
 			var rotArr : Vector.<Number> = rot.rawData;
 			bullet.addCompoundChildMethod(pointer, child.pointer, localPos.x / _scaling, localPos.y / _scaling, localPos.z / _scaling, rotArr[0], rotArr[4], rotArr[8], rotArr[1], rotArr[5], rotArr[9], rotArr[2], rotArr[6], rotArr[10]);
 

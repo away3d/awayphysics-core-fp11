@@ -85,17 +85,65 @@ package awayphysics.collision.dispatch {
 		public function get position() : Vector3D {
 			return m_worldTransform.position;
 		}
+		
+		public function set x(v:Number):void {
+			m_worldTransform.position = new Vector3D(v, m_worldTransform.position.y, m_worldTransform.position.z);
+			updateTransform();
+		}
+		public function get x():Number {
+			return m_worldTransform.origin.x;
+		}
+		
+		public function set y(v:Number):void {
+			m_worldTransform.position = new Vector3D(m_worldTransform.position.x, v, m_worldTransform.position.z);
+			updateTransform();
+		}
+		public function get y():Number {
+			return m_worldTransform.origin.y;
+		}
+		
+		public function set z(v:Number):void {
+			m_worldTransform.position = new Vector3D(m_worldTransform.position.x, m_worldTransform.position.y, v);
+			updateTransform();
+		}
+		public function get z():Number {
+			return m_worldTransform.origin.z;
+		}
 
 		/**
 		 * set the orientation with euler angle in world coordinates
 		 */
 		public function set rotation(rot : Vector3D) : void {
-			m_worldTransform.rotation = rot;
+			m_worldTransform.rotation = AWPMath.degrees2radiansV3D(rot);
 			updateTransform();
 		}
 
 		public function get rotation() : Vector3D {
-			return m_worldTransform.rotation;
+			return AWPMath.radians2degreesV3D(m_worldTransform.rotation);
+		}
+		
+		public function set rotationX(angle:Number):void {
+			m_worldTransform.rotation = new Vector3D(angle * AWPMath.DEGREES_TO_RADIANS, m_worldTransform.rotation.y, m_worldTransform.rotation.z);
+			updateTransform();
+		}
+		public function get rotationX():Number {
+			return m_worldTransform.rotation.x;
+		}
+		
+		public function set rotationY(angle:Number):void {
+			m_worldTransform.rotation = new Vector3D(m_worldTransform.rotation.x, angle * AWPMath.DEGREES_TO_RADIANS, m_worldTransform.rotation.z);
+			updateTransform();
+		}
+		public function get rotationY():Number {
+			return m_worldTransform.rotation.y;
+		}
+		
+		public function set rotationZ(angle:Number):void {
+			m_worldTransform.rotation = new Vector3D(m_worldTransform.rotation.x, m_worldTransform.rotation.y, angle * AWPMath.DEGREES_TO_RADIANS);
+			updateTransform();
+		}
+		public function get rotationZ():Number {
+			return m_worldTransform.rotation.z;
 		}
 		
 		/**
