@@ -1,23 +1,51 @@
 package awayphysics.dynamics.constraintsolver {
 	import awayphysics.dynamics.AWPRigidBody;
-
+	
+	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
 
 	public class AWPHingeConstraint extends AWPTypedConstraint {
 		private var m_limit : AWPAngularLimit;
+		
+		private var _pivotInA:Vector3D;
+		private var _pivotInB:Vector3D;
+		private var _axisInA:Vector3D;
+		private var _axisInB:Vector3D;
 
 		public function AWPHingeConstraint(rbA : AWPRigidBody, pivotInA : Vector3D, axisInA : Vector3D, rbB : AWPRigidBody = null, pivotInB : Vector3D = null, axisInB : Vector3D = null, useReferenceFrameA : Boolean = false) {
 			super(1);
 			m_rbA = rbA;
 			m_rbB = rbB;
+			
+			_pivotInA=pivotInA;
+			_pivotInB=pivotInB;
+			_axisInA=axisInA;
+			_axisInB=axisInB;
 
 			if (rbB) {
 				pointer = bullet.createHingeConstraintMethod2(rbA.pointer, rbB.pointer, pivotInA.x / _scaling, pivotInA.y / _scaling, pivotInA.z / _scaling, pivotInB.x / _scaling, pivotInB.y / _scaling, pivotInB.z / _scaling, axisInA.x, axisInA.y, axisInA.z, axisInB.x, axisInB.y, axisInB.z, useReferenceFrameA ? 1 : 0);
 			} else {
 				pointer = bullet.createHingeConstraintMethod1(rbA.pointer, pivotInA.x / _scaling, pivotInA.y / _scaling, pivotInA.z / _scaling, axisInA.x, axisInA.y, axisInA.z, useReferenceFrameA ? 1 : 0);
 			}
-
+			
 			m_limit = new AWPAngularLimit(pointer + 676);
+		}
+		
+		public function get pivotInA():Vector3D{
+			return _pivotInA;
+		}
+		public function get pivotInB():Vector3D{
+			return _pivotInB;
+		}
+		public function get axisInA():Vector3D{
+			return _axisInA;
+		}
+		public function get axisInB():Vector3D{
+			return _axisInB;
+		}
+		
+		public function get limit():AWPAngularLimit {
+			return m_limit;
 		}
 
 		public function setLimit(low : Number, high : Number, _softness : Number = 0.9, _biasFactor : Number = 0.3, _relaxationFactor : Number = 1.0) : void {

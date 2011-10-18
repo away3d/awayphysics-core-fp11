@@ -4,11 +4,14 @@ package awayphysics.collision.shapes {
 	public class AWPBvhTriangleMeshShape extends AWPCollisionShape {
 		private var indexDataPtr : uint;
 		private var vertexDataPtr : uint;
+		
+		private var _geometry:Geometry;
 
 		/**
 		 *create a static triangle mesh shape with a 3D mesh object
 		 */
 		public function AWPBvhTriangleMeshShape(geometry : Geometry, useQuantizedAabbCompression : Boolean = true) {
+			_geometry = geometry;
 			var indexData : Vector.<uint> = geometry.subGeometries[0].indexData;
 			var indexDataLen : int = indexData.length;
 			indexDataPtr = bullet.createTriangleIndexDataBufferMethod(indexDataLen);
@@ -39,6 +42,10 @@ package awayphysics.collision.shapes {
 		public function deleteBvhTriangleMeshShapeBuffer() : void {
 			bullet.removeTriangleIndexDataBufferMethod(indexDataPtr);
 			bullet.removeTriangleVertexDataBufferMethod(vertexDataPtr);
+		}
+		
+		public function get geometry():Geometry {
+			return _geometry;
 		}
 	}
 }

@@ -13,6 +13,14 @@ package awayphysics.dynamics.constraintsolver {
 			biasFactor = _biasFactor;
 			relaxationFactor = _relaxationFactor;
 		}
+		
+		public function get low():Number {
+			return normalizeAngle(center - halfRange);
+		}
+		
+		public function get high():Number {
+			return normalizeAngle(center + halfRange);
+		}
 
 		public function get center() : Number {
 			return memUser._mrf(pointer + 0);

@@ -4,8 +4,8 @@ package awayphysics.collision.shapes {
 	
 	public class AWPCollisionShape extends AWPBase {
 		
-		private var m_shapeType:int;
-		private var m_localScaling:Vector3D;
+		protected var m_shapeType:int;
+		protected var m_localScaling:Vector3D;
 		
 		public function AWPCollisionShape(ptr:uint, type:int) {
 			pointer = ptr;

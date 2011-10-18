@@ -6,8 +6,11 @@ package awayphysics.collision.shapes
 	{
 		private var vertexDataPtr : uint;
 		
+		private var _geometry:Geometry;
+		
 		public function AWPConvexHullShape(geometry : Geometry)
 		{
+			_geometry = geometry;
 			var vertexData : Vector.<Number> = geometry.subGeometries[0].vertexData;
 			var vertexDataLen : int = vertexData.length;
 			vertexDataPtr = bullet.createTriangleVertexDataBufferMethod(vertexDataLen);
@@ -24,6 +27,10 @@ package awayphysics.collision.shapes
 		public function deleteConvexHullShapeBuffer() : void
 		{
 			bullet.removeTriangleVertexDataBufferMethod(vertexDataPtr);
+		}
+		
+		public function get geometry():Geometry {
+			return _geometry;
 		}
 	}
 }

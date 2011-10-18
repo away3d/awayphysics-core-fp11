@@ -72,6 +72,36 @@ package awayphysics.math {
 			}
 		}
 		
+		public function get rotationWithMatrix():Matrix3D {
+			if (m_basis) {
+				return m_basis.m3d;
+			}else {
+				return AWPMath.euler2matrix(_transData[1]);
+			}
+		}
+		
+		public function set rotationWithMatrix(m:Matrix3D):void {
+			_transData[1] = AWPMath.matrix2euler(m);
+			if (m_basis) {
+				m_basis.m3d = m;
+			}
+		}
+		
+		public function get axisX():Vector3D {
+			var m:Matrix3D = this.rotationWithMatrix;
+			return new Vector3D(m.rawData[0], m.rawData[4], m.rawData[8]);
+		}
+		
+		public function get axisY():Vector3D {
+			var m:Matrix3D = this.rotationWithMatrix;
+			return new Vector3D(m.rawData[1], m.rawData[5], m.rawData[9]);
+		}
+		
+		public function get axisZ():Vector3D {
+			var m:Matrix3D = this.rotationWithMatrix;
+			return new Vector3D(m.rawData[2], m.rawData[6], m.rawData[10]);
+		}
+		
 		public function get transform():Matrix3D {
 			if (m_origin && m_basis) {
 				_transData[0] = m_origin.sv3d;
@@ -90,6 +120,18 @@ package awayphysics.math {
 				m_origin.sv3d = _transData[0];
 				m_basis.m3d = AWPMath.euler2matrix(_transData[1]);
 			}
+		}
+		
+		public function appendTransform(tr:AWPTransform):void {
+			var m:Matrix3D = this.transform;
+			m.append(tr.transform);
+			this.transform = m;
+		}
+		
+		public function clone():AWPTransform {
+			var tr:AWPTransform = new AWPTransform();
+			tr.transform = this.transform;
+			return tr;
 		}
 	}
 }

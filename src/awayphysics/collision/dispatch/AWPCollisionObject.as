@@ -171,6 +171,10 @@ package awayphysics.collision.dispatch {
 			return m_worldTransform.transform;
 		}
 		
+		public function get worldTransform():AWPTransform {
+			return m_worldTransform;
+		}
+		
 		/**
 		 * get the front direction in world coordinates
 		 */
