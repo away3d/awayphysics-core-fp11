@@ -127,7 +127,7 @@ package awayphysics.collision.dispatch {
 			updateTransform();
 		}
 		public function get rotationX():Number {
-			return m_worldTransform.rotation.x;
+			return m_worldTransform.rotation.x * AWPMath.RADIANS_TO_DEGREES;
 		}
 		
 		public function set rotationY(angle:Number):void {
@@ -135,7 +135,7 @@ package awayphysics.collision.dispatch {
 			updateTransform();
 		}
 		public function get rotationY():Number {
-			return m_worldTransform.rotation.y;
+			return m_worldTransform.rotation.y * AWPMath.RADIANS_TO_DEGREES;
 		}
 		
 		public function set rotationZ(angle:Number):void {
@@ -143,7 +143,7 @@ package awayphysics.collision.dispatch {
 			updateTransform();
 		}
 		public function get rotationZ():Number {
-			return m_worldTransform.rotation.z;
+			return m_worldTransform.rotation.z * AWPMath.RADIANS_TO_DEGREES;
 		}
 		
 		/**
