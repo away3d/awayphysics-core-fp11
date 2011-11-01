@@ -91,7 +91,7 @@ package awayphysics.collision.dispatch {
 			updateTransform();
 		}
 		public function get x():Number {
-			return m_worldTransform.origin.x;
+			return m_worldTransform.position.x;
 		}
 		
 		public function set y(v:Number):void {
@@ -99,7 +99,7 @@ package awayphysics.collision.dispatch {
 			updateTransform();
 		}
 		public function get y():Number {
-			return m_worldTransform.origin.y;
+			return m_worldTransform.position.y;
 		}
 		
 		public function set z(v:Number):void {
@@ -107,7 +107,7 @@ package awayphysics.collision.dispatch {
 			updateTransform();
 		}
 		public function get z():Number {
-			return m_worldTransform.origin.z;
+			return m_worldTransform.position.z;
 		}
 
 		/**
