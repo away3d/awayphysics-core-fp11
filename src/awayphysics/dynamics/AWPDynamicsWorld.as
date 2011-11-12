@@ -1,5 +1,6 @@
 package awayphysics.dynamics {
 	import awayphysics.AWPBase;
+	import awayphysics.collision.dispatch.AWPCollisionWorld;
 	import awayphysics.data.AWPCollisionFlags;
 	import awayphysics.dynamics.character.AWPKinematicCharacterController;
 	import awayphysics.dynamics.constraintsolver.AWPTypedConstraint;
@@ -8,7 +9,7 @@ package awayphysics.dynamics {
 
 	import flash.geom.Vector3D;
 
-	public class AWPDynamicsWorld extends AWPBase {
+	public class AWPDynamicsWorld extends AWPCollisionWorld {
 		private static var currentDynamicsWorld : AWPDynamicsWorld;
 		private var m_gravity : AWPVector3;
 		private var m_rigidBodies : Vector.<AWPRigidBody>;
@@ -19,7 +20,7 @@ package awayphysics.dynamics {
 
 		public static function getInstance() : AWPDynamicsWorld {
 			if (!currentDynamicsWorld) {
-				trace("version: AwayPhysics v0.66 (18-10-2011)");
+				trace("version: AwayPhysics v0.67 (13-11-2011)");
 				currentDynamicsWorld = new AWPDynamicsWorld();
 			}
 			return currentDynamicsWorld;
@@ -27,7 +28,7 @@ package awayphysics.dynamics {
 
 		public function AWPDynamicsWorld() {
 			AWPBase.initialize();
-
+			super();
 			m_rigidBodies = new Vector.<AWPRigidBody>();
 			m_nonStaticRigidBodies = new Vector.<AWPRigidBody>();
 			m_vehicles = new Vector.<AWPRaycastVehicle>();
@@ -69,6 +70,9 @@ package awayphysics.dynamics {
 			if (m_rigidBodies.indexOf(body) < 0) {
 				m_rigidBodies.push(body);
 			}
+			if(m_collisionObjects.indexOf(body) < 0){
+				m_collisionObjects.push(body);
+			}
 		}
 
 		/**
@@ -86,6 +90,9 @@ package awayphysics.dynamics {
 			if (m_rigidBodies.indexOf(body) < 0) {
 				m_rigidBodies.push(body);
 			}
+			if(m_collisionObjects.indexOf(body) < 0){
+				m_collisionObjects.push(body);
+			}
 		}
 
 		/**
@@ -99,6 +106,9 @@ package awayphysics.dynamics {
 			}
 			if (m_rigidBodies.indexOf(body) >= 0) {
 				m_rigidBodies.splice(m_rigidBodies.indexOf(body), 1);
+			}
+			if(m_collisionObjects.indexOf(body) >= 0) {
+				m_collisionObjects.splice(m_collisionObjects.indexOf(body), 1);
 			}
 		}
 
@@ -140,6 +150,10 @@ package awayphysics.dynamics {
 			if (m_characters.indexOf(character) < 0) {
 				m_characters.push(character);
 			}
+			
+			if(m_collisionObjects.indexOf(character.ghostObject) < 0){
+				m_collisionObjects.push(character.ghostObject);
+			}
 		}
 
 		public function removeCharacter(character : AWPKinematicCharacterController) : void {
@@ -147,6 +161,9 @@ package awayphysics.dynamics {
 
 			if (m_characters.indexOf(character) >= 0) {
 				m_characters.splice(m_characters.indexOf(character), 1);
+			}
+			if(m_collisionObjects.indexOf(character.ghostObject) >= 0) {
+				m_collisionObjects.splice(m_collisionObjects.indexOf(character.ghostObject), 1);
 			}
 		}
 

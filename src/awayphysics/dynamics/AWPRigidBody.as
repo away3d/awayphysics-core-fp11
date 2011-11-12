@@ -29,7 +29,7 @@ package awayphysics.dynamics {
 		 */
 		public function AWPRigidBody(shape : AWPCollisionShape, skin : ObjectContainer3D = null, mass : Number = 0) {
 			pointer = bullet.createBodyMethod(this, shape.pointer, mass);
-			super(pointer, shape, skin);
+			super(shape, skin, pointer);
 
 			m_invInertiaTensorWorld = new AWPMatrix3x3(pointer + 256);
 			m_linearVelocity = new AWPVector3(pointer + 304);

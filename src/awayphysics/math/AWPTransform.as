@@ -56,7 +56,9 @@ package awayphysics.math {
 				m_origin.sv3d = v;
 			}
 		}
-		
+		/**
+		 * get the euler angle in radians
+		 */
 		public function get rotation():Vector3D {
 			if (m_basis) {
 				return AWPMath.matrix2euler(m_basis.m3d);
@@ -64,7 +66,9 @@ package awayphysics.math {
 				return _transData[1];
 			}
 		}
-		
+		/**
+		 * set the euler angle in radians
+		 */
 		public function set rotation(v:Vector3D):void {
 			_transData[1] = v;
 			if (m_basis) {

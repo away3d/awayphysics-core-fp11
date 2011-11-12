@@ -38,7 +38,21 @@ AS3_Val as3_ptr;
 //////////////////////////////////////////////////////////////////////////
 
 
-btDiscreteDynamicsWorld* dynamicsWorld;
+struct RayInfo
+{
+	RayInfo(btCollisionObject* collisionObject, const btVector3& rayFromLocal, const btVector3&	rayToLocal)
+	:m_collisionObject(collisionObject),
+	m_rayFromLocal(rayFromLocal),
+	m_rayToLocal(rayToLocal)
+	{
+	}
+	btCollisionObject* m_collisionObject;
+	btVector3 m_rayFromLocal;
+	btVector3 m_rayToLocal;
+};
+btAlignedObjectArray<RayInfo*> rays;
+
+btCollisionWorld* collisionWorld;
 
 /// create the discrete dynamics world with btDbvtBroadphase
 AS3_Val createDiscreteDynamicsWorldWithDbvt(void* data, AS3_Val args) {
@@ -49,9 +63,9 @@ AS3_Val createDiscreteDynamicsWorldWithDbvt(void* data, AS3_Val args) {
 	overlappingPairCache->getOverlappingPairCache()->setInternalGhostPairCallback(new btGhostPairCallback());
 	btSequentialImpulseConstraintSolver* solver = new btSequentialImpulseConstraintSolver();
 
-	dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher,overlappingPairCache,solver,collisionConfiguration);
+	collisionWorld = new btDiscreteDynamicsWorld(dispatcher,overlappingPairCache,solver,collisionConfiguration);
 
-	return_as3_ptr(dynamicsWorld);
+	return_as3_ptr(collisionWorld);
 }
 
 /// create the discrete dynamics world with btAxisSweep3
@@ -73,9 +87,9 @@ AS3_Val createDiscreteDynamicsWorldWithAxisSweep3(void* data, AS3_Val args) {
 	overlappingPairCache->getOverlappingPairCache()->setInternalGhostPairCallback(new btGhostPairCallback());
 	btSequentialImpulseConstraintSolver* solver = new btSequentialImpulseConstraintSolver();
 
-	dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher,overlappingPairCache,solver,collisionConfiguration);
+	collisionWorld = new btDiscreteDynamicsWorld(dispatcher,overlappingPairCache,solver,collisionConfiguration);
 
-	return_as3_ptr(dynamicsWorld);
+	return_as3_ptr(collisionWorld);
 }
 
 // create a static plane shape
@@ -310,7 +324,7 @@ AS3_Val createGImpactMeshShape(void* data, AS3_Val args){
 	btGImpactMeshShape* gimpactMesh = new btGImpactMeshShape(indexVertexArrays);
 	gimpactMesh->updateBound();
 
-	//btCollisionDispatcher * dispatcher = static_cast<btCollisionDispatcher *>(dynamicsWorld ->getDispatcher());
+	//btCollisionDispatcher * dispatcher = static_cast<btCollisionDispatcher *>(collisionWorld ->getDispatcher());
 	//btGImpactCollisionAlgorithm::registerAlgorithm(dispatcher);
 
 	return_as3_ptr(gimpactMesh);
@@ -358,6 +372,57 @@ AS3_Val setShapeScaling(void* data, AS3_Val args){
 	return AS3_Null();
 }
 
+AS3_Val createCollisionObject(void* data, AS3_Val args){
+	AS3_Val as3_Object;
+	btCollisionShape* shape;
+	AS3_ArrayValue(args, "AS3ValType,PtrType",&as3_Object,&shape);
+	
+	btCollisionObject* obj = new btCollisionObject();
+	obj->setCollisionShape(shape);
+	obj->setUserPointer(as3_Object);
+	
+	return_as3_ptr(obj);
+
+}
+AS3_Val addCollisionObject(void* data, AS3_Val args){
+	btCollisionObject* obj;
+	int group;
+	int mask;
+	AS3_ArrayValue(args, "PtrType,IntType,IntType", &obj, &group, &mask);
+
+	collisionWorld->addCollisionObject(obj,group,mask);
+	
+	return AS3_Null();
+}
+AS3_Val removeCollisionObject(void* data, AS3_Val args){
+	btCollisionObject* obj;
+	AS3_ArrayValue(args, "PtrType", &obj);
+
+	collisionWorld->removeCollisionObject(obj);
+
+	return AS3_Null();
+}
+
+AS3_Val addRay(void* data, AS3_Val args){
+	btCollisionObject* obj;
+	double fromx, fromy, fromz;
+	double tox, toy, toz;
+	AS3_ArrayValue(args, "PtrType,DoubleType,DoubleType,DoubleType,DoubleType,DoubleType,DoubleType", &obj, &fromx, &fromy, &fromz, &tox, &toy, &toz);
+	
+	RayInfo* ray=new RayInfo(obj,btVector3(fromx, fromy, fromz),btVector3(tox, toy, toz));
+	rays.push_back(ray);
+	
+	return_as3_ptr(ray);
+}
+AS3_Val removeRay(void* data, AS3_Val args){
+	RayInfo* ray;
+	AS3_ArrayValue(args, "PtrType", &ray);
+	
+	rays.remove(ray);
+	
+	return AS3_Null();
+}
+
 // create rigidbody
 AS3_Val createBody(void* data, AS3_Val args){
 	AS3_Val as3_Body;
@@ -386,6 +451,7 @@ AS3_Val addBody(void* data, AS3_Val args){
 	btRigidBody* body;
 	AS3_ArrayValue(args, "PtrType", &body);
 
+	btDiscreteDynamicsWorld* dynamicsWorld=(btDiscreteDynamicsWorld*)collisionWorld;
 	dynamicsWorld->addRigidBody(body);
 
 	return AS3_Null();
@@ -398,6 +464,7 @@ AS3_Val addBodyWithGroup(void* data, AS3_Val args){
 	int mask;
 	AS3_ArrayValue(args, "PtrType,IntType,IntType", &body, &group, &mask);
 
+	btDiscreteDynamicsWorld* dynamicsWorld=(btDiscreteDynamicsWorld*)collisionWorld;
 	dynamicsWorld->addRigidBody(body,group,mask);
 
 	return AS3_Null();
@@ -408,6 +475,7 @@ AS3_Val removeBody(void* data, AS3_Val args){
 	btRigidBody* body;
 	AS3_ArrayValue(args, "PtrType", &body);
 
+	btDiscreteDynamicsWorld* dynamicsWorld=(btDiscreteDynamicsWorld*)collisionWorld;
 	dynamicsWorld->removeRigidBody(body);
 
 	return AS3_Null();
@@ -671,6 +739,7 @@ AS3_Val addConstraint(void* data, AS3_Val args){
 	int disableCollisions;
 	AS3_ArrayValue(args, "PtrType,IntType", &constraint, &disableCollisions);
 
+	btDiscreteDynamicsWorld* dynamicsWorld=(btDiscreteDynamicsWorld*)collisionWorld;
 	dynamicsWorld->addConstraint(constraint,disableCollisions==1);
 	
 	return AS3_Null();
@@ -681,6 +750,7 @@ AS3_Val removeConstraint(void* data, AS3_Val args){
 	btTypedConstraint* constraint;
 	AS3_ArrayValue(args, "PtrType", &constraint);
 
+	btDiscreteDynamicsWorld* dynamicsWorld=(btDiscreteDynamicsWorld*)collisionWorld;
 	dynamicsWorld->removeConstraint(constraint);
 
 	return AS3_Null();
@@ -699,6 +769,7 @@ AS3_Val createVehicle(void* data, AS3_Val args) {
 	m_tuning.m_frictionSlip=AS3_NumberValue( AS3_GetS( tuning, "frictionSlip" ) );
 	m_tuning.m_maxSuspensionForce=AS3_NumberValue( AS3_GetS( tuning, "maxSuspensionForce" ) );
 
+	btDiscreteDynamicsWorld* dynamicsWorld=(btDiscreteDynamicsWorld*)collisionWorld;
 	btVehicleRaycaster*	m_vehicleRayCaster = new btDefaultVehicleRaycaster(dynamicsWorld);
 	btRaycastVehicle* m_vehicle = new btRaycastVehicle(m_tuning,chassis,m_vehicleRayCaster);
 	m_vehicle->setCoordinateSystem(0,1,2);
@@ -742,6 +813,7 @@ AS3_Val addVehicle(void* data, AS3_Val args){
 	btActionInterface* vehicle;
 	AS3_ArrayValue(args, "PtrType", &vehicle);
 
+	btDiscreteDynamicsWorld* dynamicsWorld=(btDiscreteDynamicsWorld*)collisionWorld;
 	dynamicsWorld->addVehicle(vehicle);
 
 	return AS3_Null();
@@ -751,6 +823,7 @@ AS3_Val removeVehicle(void* data, AS3_Val args){
 	btActionInterface* vehicle;
 	AS3_ArrayValue(args, "PtrType", &vehicle);
 
+	btDiscreteDynamicsWorld* dynamicsWorld=(btDiscreteDynamicsWorld*)collisionWorld;
 	dynamicsWorld->removeVehicle(vehicle);
 
 	return AS3_Null();
@@ -788,6 +861,7 @@ AS3_Val addCharacter(void* data, AS3_Val args){
 	int mask;
 	AS3_ArrayValue(args, "PtrType,IntType,IntType", &character,&group,&mask);
 
+	btDiscreteDynamicsWorld* dynamicsWorld=(btDiscreteDynamicsWorld*)collisionWorld;
 	dynamicsWorld->addCollisionObject(character->m_ghostObject,group,mask);
 	dynamicsWorld->addCharacter(character);
 
@@ -798,6 +872,7 @@ AS3_Val removeCharacter(void* data, AS3_Val args){
 	btKinematicCharacterController* character;
 	AS3_ArrayValue(args, "PtrType", &character);
 
+	btDiscreteDynamicsWorld* dynamicsWorld=(btDiscreteDynamicsWorld*)collisionWorld;
 	dynamicsWorld->removeCollisionObject(character->m_ghostObject);
 	dynamicsWorld->removeCharacter(character);
 
@@ -810,6 +885,8 @@ AS3_Val step(void* data, AS3_Val args) {
 	int maxsubstep;
 	double fixedtime;
 	AS3_ArrayValue(args, "DoubleType,IntType,DoubleType",&timestep,&maxsubstep,&fixedtime);
+
+	btDiscreteDynamicsWorld* dynamicsWorld=(btDiscreteDynamicsWorld*)collisionWorld;
 	dynamicsWorld->stepSimulation(timestep,maxsubstep,fixedtime);
 
 	int vehiclesLen=dynamicsWorld->m_vehicles.size();
@@ -819,6 +896,27 @@ AS3_Val step(void* data, AS3_Val args) {
 		int wheelLen=vehicle->getNumWheels();
 		for (int j=0;j<wheelLen;j++){
 			vehicle->updateWheelTransform(j,true);
+		}
+	}
+	
+	int rayLen = rays.size();
+	for (int i=0;i<rayLen;i++)
+	{
+		RayInfo* ray = rays[i];
+		btVector3 rayFrom = ray->m_collisionObject->m_worldTransform*ray->m_rayFromLocal;
+		btVector3 rayTo = ray->m_collisionObject->m_worldTransform*ray->m_rayToLocal;
+		btCollisionWorld::ClosestRayResultCallback resultCallback(rayFrom, rayTo);
+		collisionWorld->rayTest(rayFrom,rayTo,resultCallback);
+		if (resultCallback.hasHit()){
+			btManifoldPoint* mpt=new btManifoldPoint();
+			mpt->m_localPointA=rayFrom;
+			mpt->m_localPointB=resultCallback.m_collisionObject->m_worldTransform.invXform(resultCallback.m_hitPointWorld);
+			mpt->m_normalWorldOnB=resultCallback.m_hitNormalWorld;
+			mpt->m_appliedImpulse=0;
+			
+			AS3_CallTS("rayCastCallback",(AS3_Val)ray->m_collisionObject->getUserPointer(), "PtrType, AS3ValType", mpt,(AS3_Val)resultCallback.m_collisionObject->getUserPointer());
+			
+			delete mpt;
 		}
 	}
 
@@ -916,11 +1014,17 @@ int main() {
 	AS3_Val createGImpactMeshShapeMethod = AS3_Function( NULL, createGImpactMeshShape );
 	AS3_Val createTriangleShapeMethod = AS3_Function( NULL, createTriangleShape );
 	AS3_Val setShapeScalingMethod = AS3_Function( NULL, setShapeScaling );
-
+	
+	AS3_Val createCollisionObjectMethod = AS3_Function( NULL, createCollisionObject );
+	AS3_Val addCollisionObjectMethod = AS3_Function( NULL, addCollisionObject );
+	AS3_Val removeCollisionObjectMethod = AS3_Function( NULL, removeCollisionObject );
+	AS3_Val addRayMethod = AS3_Function( NULL, addRay );
+	AS3_Val removeRayMethod = AS3_Function( NULL, removeRay );
 	AS3_Val createBodyMethod = AS3_Function( NULL, createBody );
 	AS3_Val addBodyWithGroupMethod = AS3_Function( NULL, addBodyWithGroup );
 	AS3_Val addBodyMethod = AS3_Function( NULL, addBody );
 	AS3_Val removeBodyMethod = AS3_Function( NULL, removeBody );
+	
 	AS3_Val createP2PConstraintMethod1 = AS3_Function( NULL, createP2PConstraint1 );
 	AS3_Val createP2PConstraintMethod2 = AS3_Function( NULL, createP2PConstraint2 );
 	AS3_Val createHingeConstraintMethod1 = AS3_Function( NULL, createHingeConstraint1 );
@@ -966,10 +1070,16 @@ int main() {
 								 "createTriangleShapeMethod:AS3ValType,"
 								 "setShapeScalingMethod:AS3ValType,"
 
+								 "createCollisionObjectMethod:AS3ValType,"
+								 "addCollisionObjectMethod:AS3ValType,"
+								 "removeCollisionObjectMethod:AS3ValType,"
+								 "addRayMethod:AS3ValType,"
+								 "removeRayMethod:AS3ValType,"
 								 "createBodyMethod:AS3ValType,"
 								 "addBodyWithGroupMethod:AS3ValType,"
 								 "addBodyMethod:AS3ValType,"
 								 "removeBodyMethod:AS3ValType,"
+								 
 								 "createP2PConstraintMethod1:AS3ValType,"
 								 "createP2PConstraintMethod2:AS3ValType,"
 								 "createHingeConstraintMethod1:AS3ValType,"
@@ -1014,11 +1124,17 @@ int main() {
 								 createGImpactMeshShapeMethod,
 								 createTriangleShapeMethod,
 								 setShapeScalingMethod,
-
+								 
+								 createCollisionObjectMethod,
+								 addCollisionObjectMethod,
+								 removeCollisionObjectMethod,
+								 addRayMethod,
+								 removeRayMethod,
 								 createBodyMethod,
 								 addBodyWithGroupMethod,
 								 addBodyMethod,
 								 removeBodyMethod,
+								 
 								 createP2PConstraintMethod1,
 								 createP2PConstraintMethod2,
 								 createHingeConstraintMethod1,
@@ -1063,11 +1179,17 @@ int main() {
 	AS3_Release( createGImpactMeshShapeMethod );
 	AS3_Release( createTriangleShapeMethod );
 	AS3_Release( setShapeScalingMethod );
-
+	
+	AS3_Release( createCollisionObjectMethod );
+	AS3_Release( addCollisionObjectMethod );
+	AS3_Release( removeCollisionObjectMethod );
+	AS3_Release( addRayMethod );
+	AS3_Release( removeRayMethod );
 	AS3_Release( createBodyMethod );
 	AS3_Release( addBodyWithGroupMethod );
 	AS3_Release( addBodyMethod );
 	AS3_Release( removeBodyMethod );
+	
 	AS3_Release( createP2PConstraintMethod1 );
 	AS3_Release( createP2PConstraintMethod2 );
 	AS3_Release( createHingeConstraintMethod1 );

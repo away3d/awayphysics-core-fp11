@@ -9,7 +9,7 @@ package awayphysics.collision.dispatch {
 	public class AWPGhostObject extends AWPCollisionObject {
 		public function AWPGhostObject(shape : AWPCollisionShape, skin : ObjectContainer3D = null) {
 			pointer = bullet.createGhostObjectMethod(this, shape.pointer);
-			super(pointer, shape, skin);
+			super(shape, skin, pointer);
 		}
 	}
 }

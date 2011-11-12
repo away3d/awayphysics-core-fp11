@@ -4,7 +4,7 @@ package awayphysics.collision.dispatch {
 	import awayphysics.AWPBase;
 	import awayphysics.collision.shapes.AWPCollisionShape;
 	import awayphysics.data.AWPCollisionFlags;
-	import awayphysics.events.AWPCollisionEvent;
+	import awayphysics.events.AWPEvent;
 	import awayphysics.math.AWPTransform;
 	import awayphysics.math.AWPVector3;
 	import awayphysics.math.AWPMath;
@@ -27,23 +27,32 @@ package awayphysics.collision.dispatch {
 		private var m_worldTransform : AWPTransform;
 		private var m_anisotropicFriction : AWPVector3;
 		
+		private var _rays:Vector.<AWPRay>;
+		
 		private var _transform:Matrix3D = new Matrix3D();
 		private var _originScale:Vector3D = new Vector3D(1, 1, 1);
 		private var _dispatcher : EventDispatcher;
 
-		public function AWPCollisionObject(ptr : uint, shape : AWPCollisionShape, skin : ObjectContainer3D) {
+		public function AWPCollisionObject(shape : AWPCollisionShape, skin : ObjectContainer3D, ptr : uint = 0) {
 			m_shape = shape;
 			m_skin = skin;
-
-			pointer = ptr;
 			
-			m_worldTransform = new AWPTransform(ptr + 4);
-			m_anisotropicFriction = new AWPVector3(ptr + 164);
+			if(ptr>0){
+				pointer = ptr;
+				m_worldTransform = new AWPTransform(ptr + 4);
+				m_anisotropicFriction = new AWPVector3(ptr + 164);
+			}else{
+				pointer = bullet.createCollisionObjectMethod(this, shape.pointer);
+				
+				m_worldTransform = new AWPTransform(pointer + 4);
+				m_anisotropicFriction = new AWPVector3(pointer + 164);
+			}
 			
 			if (m_skin) {
 				_originScale.setTo(m_skin.scaleX, m_skin.scaleY, m_skin.scaleZ);
 			}
 			
+			_rays = new Vector.<AWPRay>();
 			_dispatcher = new EventDispatcher(this);
 		}
 
@@ -81,67 +90,107 @@ package awayphysics.collision.dispatch {
 			m_worldTransform.position = pos;
 			updateTransform();
 		}
-
+		/**
+		 * get the position in world coordinates
+		 */
 		public function get position() : Vector3D {
 			return m_worldTransform.position;
 		}
 		
+		/**
+		 * set the position in x axis
+		 */
 		public function set x(v:Number):void {
 			m_worldTransform.position = new Vector3D(v, m_worldTransform.position.y, m_worldTransform.position.z);
 			updateTransform();
 		}
+		/**
+		 * get the position in x axis
+		 */
 		public function get x():Number {
 			return m_worldTransform.position.x;
 		}
 		
+		/**
+		 * set the position in y axis
+		 */
 		public function set y(v:Number):void {
 			m_worldTransform.position = new Vector3D(m_worldTransform.position.x, v, m_worldTransform.position.z);
 			updateTransform();
 		}
+		/**
+		 * get the position in y axis
+		 */
 		public function get y():Number {
 			return m_worldTransform.position.y;
 		}
 		
+		/**
+		 * set the position in z axis
+		 */
 		public function set z(v:Number):void {
 			m_worldTransform.position = new Vector3D(m_worldTransform.position.x, m_worldTransform.position.y, v);
 			updateTransform();
 		}
+		/**
+		 * get the position in z axis
+		 */
 		public function get z():Number {
 			return m_worldTransform.position.z;
 		}
 
 		/**
-		 * set the orientation with euler angle in world coordinates
+		 * set the euler angle in degrees
 		 */
 		public function set rotation(rot : Vector3D) : void {
 			m_worldTransform.rotation = AWPMath.degrees2radiansV3D(rot);
 			updateTransform();
 		}
-
+		/**
+		 * get the euler angle in degrees
+		 */
 		public function get rotation() : Vector3D {
 			return AWPMath.radians2degreesV3D(m_worldTransform.rotation);
 		}
 		
+		/**
+		 * set the angle of x axis in degree
+		 */
 		public function set rotationX(angle:Number):void {
 			m_worldTransform.rotation = new Vector3D(angle * AWPMath.DEGREES_TO_RADIANS, m_worldTransform.rotation.y, m_worldTransform.rotation.z);
 			updateTransform();
 		}
+		/**
+		 * get the angle of x axis in degree
+		 */
 		public function get rotationX():Number {
 			return m_worldTransform.rotation.x * AWPMath.RADIANS_TO_DEGREES;
 		}
 		
+		/**
+		 * set the angle of y axis in degree
+		 */
 		public function set rotationY(angle:Number):void {
 			m_worldTransform.rotation = new Vector3D(m_worldTransform.rotation.x, angle * AWPMath.DEGREES_TO_RADIANS, m_worldTransform.rotation.z);
 			updateTransform();
 		}
+		/**
+		 * get the angle of y axis in degree
+		 */
 		public function get rotationY():Number {
 			return m_worldTransform.rotation.y * AWPMath.RADIANS_TO_DEGREES;
 		}
 		
+		/**
+		 * set the angle of z axis in degree
+		 */
 		public function set rotationZ(angle:Number):void {
 			m_worldTransform.rotation = new Vector3D(m_worldTransform.rotation.x, m_worldTransform.rotation.y, angle * AWPMath.DEGREES_TO_RADIANS);
 			updateTransform();
 		}
+		/**
+		 * get the angle of z axis in degree
+		 */
 		public function get rotationZ():Number {
 			return m_worldTransform.rotation.z * AWPMath.RADIANS_TO_DEGREES;
 		}
@@ -153,7 +202,9 @@ package awayphysics.collision.dispatch {
 			m_shape.localScaling = sc;
 			updateTransform();
 		}
-		
+		/**
+		 * get the scaling of collision shape
+		 */
 		public function get scale():Vector3D {
 			return m_shape.localScaling;
 		}
@@ -166,7 +217,9 @@ package awayphysics.collision.dispatch {
 			m_shape.localScaling = tr.decompose()[2];
 			updateTransform();
 		}
-		
+		/**
+		 * get the transform in world coordinates
+		 */
 		public function get transform():Matrix3D {
 			return m_worldTransform.transform;
 		}
@@ -192,6 +245,29 @@ package awayphysics.collision.dispatch {
 		 */
 		public function get right():Vector3D {
 			return m_worldTransform.basis.column1;
+		}
+		
+		/**
+		 * add a ray in local space
+		 */
+		public function addRay(from:Vector3D, to:Vector3D):void {
+			var ptr:uint = bullet.addRayMethod(pointer, from.x/_scaling, from.y/_scaling, from.z/_scaling, to.x/_scaling, to.y/_scaling, to.z/_scaling);
+			_rays.push(new AWPRay(from, to, ptr));
+		}
+		 /**
+		  * remove a ray by index
+		  */
+		public function removeRay(index:uint):void {
+			if(index<_rays.length){
+				bullet.removeRayMethod(_rays[index].pointer);
+				_rays.splice(index, 1);
+			}
+		}
+		/**
+		 * get all rays
+		 */
+		public function get rays():Vector.<AWPRay> {
+			return _rays;
 		}
 		
 		public function get anisotropicFriction() : Vector3D {
@@ -357,11 +433,22 @@ package awayphysics.collision.dispatch {
 		/**
 		 * this function just called by alchemy
 		 */
-		public function collisionCallback(mpt : uint, body : AWPCollisionObject) : void {
+		public function collisionCallback(mpt : uint, obj : AWPCollisionObject) : void {
 			var pt : AWPManifoldPoint = new AWPManifoldPoint(mpt);
-			var event : AWPCollisionEvent = new AWPCollisionEvent(AWPCollisionEvent.COLLISION_ADDED);
+			var event : AWPEvent = new AWPEvent(AWPEvent.COLLISION_ADDED);
 			event.manifoldPoint = pt;
-			event.collisionObject = body;
+			event.collisionObject = obj;
+
+			this.dispatchEvent(event);
+		}
+		/**
+		 * this function just called by alchemy
+		 */
+		public function rayCastCallback(mpt : uint, obj : AWPCollisionObject) : void {
+			var pt : AWPManifoldPoint = new AWPManifoldPoint(mpt);
+			var event : AWPEvent = new AWPEvent(AWPEvent.RAY_CAST);
+			event.manifoldPoint = pt;
+			event.collisionObject = obj;
 
 			this.dispatchEvent(event);
 		}

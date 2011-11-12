@@ -5,18 +5,15 @@ package awayphysics.debug
 	import away3d.entities.SegmentSet;
 	import away3d.primitives.LineSegment;
 	
+	import awayphysics.collision.dispatch.AWPRay;
 	import awayphysics.collision.dispatch.AWPCollisionObject;
 	import awayphysics.collision.shapes.*;
 	import awayphysics.data.AWPCollisionShapeType;
 	import awayphysics.data.AWPTypedConstraintType;
 	import awayphysics.dynamics.AWPDynamicsWorld;
-	import awayphysics.dynamics.character.AWPKinematicCharacterController;
 	import awayphysics.dynamics.constraintsolver.*;
-	import awayphysics.dynamics.vehicle.AWPRaycastVehicle;
-	import awayphysics.math.AWPMath;
 	import awayphysics.math.AWPTransform;
 	
-	import flash.display.Sprite;
 	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
 	
@@ -27,7 +24,7 @@ package awayphysics.debug
 		public static const DBG_DrawConstraints : int = 2;
 		public static const DBG_DrawConstraintLimits : int =4;
 		public static const DBG_DrawTransform:int = 8;
-		//public static const DBG_DrawAabb : int = 16;
+		public static const DBG_DrawRay : int = 16;
 		
 		private var _physicsWorld:AWPDynamicsWorld;
 		private var _segmentSet:SegmentSet;
@@ -168,10 +165,10 @@ package awayphysics.debug
 				drawLine(center, prev, color);
 			}
 		}
-		
+		/*
 		private function drawSpherePatch(center:Vector3D, up:Vector3D, axis:Vector3D, radius:Number, minTh:Number, maxTh:Number, minPs:Number, maxPs:Number, color:uint, stepDegrees:Number = 10):void {
 			
-		}
+		}*/
 		
 		
 		private function drawBox(bbMin:Vector3D, bbMax:Vector3D, transform:AWPTransform, color:uint):void {
@@ -278,7 +275,7 @@ package awayphysics.debug
 			drawLine(from, to, color);
 		}
 		
-		private function drawCapsule(radius:Number, halfHeight:Number, upAxis:int, transform:AWPTransform, color:uint):void {
+		private function drawCapsule(radius:Number, halfHeight:Number, transform:AWPTransform, color:uint):void {
 			var pos:Vector3D = transform.position;
 			var rot:Matrix3D = transform.rotationWithMatrix;
 			
@@ -313,7 +310,7 @@ package awayphysics.debug
 			drawLine(pos.add(rot.transformVector(capStart)), pos.add(rot.transformVector(capEnd)), color);
 		}
 		
-		private function drawCylinder(radius:Number, halfHeight:Number, upAxis:int, transform:AWPTransform, color:uint):void {
+		private function drawCylinder(radius:Number, halfHeight:Number, transform:AWPTransform, color:uint):void {
 			var pos:Vector3D = transform.position;
 			var rot:Matrix3D = transform.rotationWithMatrix;
 			
@@ -332,7 +329,7 @@ package awayphysics.debug
 			drawArc(pos.add(rot.transformVector(offsetHeight)), rot.transformVector(yaxis), rot.transformVector(xaxis), radius, radius, 0, 2 * Math.PI, color, false, 10);
 		}
 		
-		private function drawCone(radius:Number, height:Number, upAxis:int, transform:AWPTransform, color:uint):void {
+		private function drawCone(radius:Number, height:Number, transform:AWPTransform, color:uint):void {
 			var pos:Vector3D = transform.position;
 			var rot:Matrix3D = transform.rotationWithMatrix;
 
@@ -454,13 +451,13 @@ package awayphysics.debug
 				drawSphere(sphereShape.radius, transform, color);
 			}else if (shape.shapeType == AWPCollisionShapeType.CAPSULE_SHAPE) {
 				var capsuleShape:AWPCapsuleShape = shape as AWPCapsuleShape;
-				drawCapsule(capsuleShape.radius, capsuleShape.height / 2, 1, transform, color);
+				drawCapsule(capsuleShape.radius, capsuleShape.height / 2, transform, color);
 			}else if (shape.shapeType == AWPCollisionShapeType.CONE_SHAPE) {
 				var coneShape:AWPConeShape = shape as AWPConeShape;
-				drawCone(coneShape.radius, coneShape.height, 1, transform, color);
+				drawCone(coneShape.radius, coneShape.height, transform, color);
 			}else if (shape.shapeType == AWPCollisionShapeType.CYLINDER_SHAPE) {
 				var cylinder:AWPCylinderShape = shape as AWPCylinderShape;
-				drawCylinder(cylinder.radius, cylinder.height / 2, 1, transform, color);
+				drawCylinder(cylinder.radius, cylinder.height / 2, transform, color);
 			}else if (shape.shapeType == AWPCollisionShapeType.STATIC_PLANE) {
 				var staticPlaneShape:AWPStaticPlaneShape = shape as AWPStaticPlaneShape;
 				drawPlane(staticPlaneShape.normal, staticPlaneShape.constant, transform, color);
@@ -610,11 +607,12 @@ package awayphysics.debug
 			if (m_debugMode & AWPDebugDraw.DBG_NoDebug) return;
 			
 			_segmentSet.removeAllSegments();
-			if (m_debugMode & AWPDebugDraw.DBG_DrawCollisionShapes)
-			{
-				var color:uint;
-				for each (var body:AWPCollisionObject in _physicsWorld.rigidBodies) {
-					switch(body.activationState)
+			
+			var color:uint;
+			for each (var obj:AWPCollisionObject in _physicsWorld.collisionObjects) {
+				if (m_debugMode & AWPDebugDraw.DBG_DrawCollisionShapes)
+				{
+					switch(obj.activationState)
 					{
 						case  AWPCollisionObject.ACTIVE_TAG:
 							color = 0xffffff; break;
@@ -629,11 +627,13 @@ package awayphysics.debug
 						default:
 							color = 0xff0000;
 					}
-					debugDrawObject(body.worldTransform, body.shape, color);
+					debugDrawObject(obj.worldTransform, obj.shape, color);
 				}
-				
-				for each(var character:AWPKinematicCharacterController in _physicsWorld.characters) {
-					debugDrawObject(character.ghostObject.worldTransform, character.shape, 0xffffff);
+				if (m_debugMode & AWPDebugDraw.DBG_DrawRay)
+				{
+					for each (var ray:AWPRay in obj.rays) {
+						drawLine(obj.worldTransform.transform.transformVector(ray.rayFrom), obj.worldTransform.transform.transformVector(ray.rayTo), 0xff0000);
+					}
 				}
 			}
 			
