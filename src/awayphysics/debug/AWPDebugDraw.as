@@ -26,6 +26,7 @@ package awayphysics.debug
 		public static const DBG_DrawTransform:int = 8;
 		public static const DBG_DrawRay : int = 16;
 		
+		private var _view:View3D;
 		private var _physicsWorld:AWPDynamicsWorld;
 		private var _segmentSet:SegmentSet;
 		
@@ -36,6 +37,7 @@ package awayphysics.debug
 			_segmentSet = new SegmentSet();
 			view.scene.addChild(_segmentSet);
 			
+			_view = view;
 			_physicsWorld = physicsWorld;
 			m_debugMode = 1;
 		}
@@ -48,7 +50,7 @@ package awayphysics.debug
 		}
 		
 		private function drawLine(from:Vector3D, to:Vector3D, color:uint):void {
-			var line:LineSegment = new LineSegment(from, to, color, color, 2);
+			var line:LineSegment = new LineSegment(from.subtract(_segmentSet.position), to.subtract(_segmentSet.position), color, color, 2);
 			_segmentSet.addSegment(line);
 		}
 		
@@ -606,6 +608,9 @@ package awayphysics.debug
 		public function debugDrawWorld():void {
 			if (m_debugMode & AWPDebugDraw.DBG_NoDebug) return;
 			
+			var dir:Vector3D = _view.camera.forwardVector.clone();
+			dir.scaleBy(100);
+			_segmentSet.position = _view.camera.position.add(dir);
 			_segmentSet.removeAllSegments();
 			
 			var color:uint;
