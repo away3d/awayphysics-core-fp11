@@ -194,21 +194,18 @@ package awayphysics.dynamics {
 		}
 
 		public function set mass(v : Number) : void {
+			bullet.setBodyMassMethod(pointer, v);
+			var physicsWorld:AWPDynamicsWorld = AWPDynamicsWorld.getInstance();
 			if (v == 0) {
-				this.collisionFlags |= AWPCollisionFlags.CF_STATIC_OBJECT;
-				inverseMass = 0;
+				if (physicsWorld.nonStaticRigidBodies.indexOf(this) >= 0) {
+					physicsWorld.nonStaticRigidBodies.splice(physicsWorld.nonStaticRigidBodies.indexOf(this), 1);
+				}
 			} else {
-				this.collisionFlags &= (~AWPCollisionFlags.CF_STATIC_OBJECT);
-				inverseMass = 1 / v;
+				if (physicsWorld.nonStaticRigidBodies.indexOf(this) < 0) {
+					physicsWorld.nonStaticRigidBodies.push(this);
+				}
 			}
-
-			var vec : Vector3D = m_gravity_acceleration.v3d;
-			vec.scaleBy(v);
-			m_gravity.v3d = vec;
-
-			vec = m_linearFactor.v3d;
-			vec.scaleBy(inverseMass);
-			m_invMass.v3d = vec;
+			activate();
 		}
 
 		public function get inverseMass() : Number {

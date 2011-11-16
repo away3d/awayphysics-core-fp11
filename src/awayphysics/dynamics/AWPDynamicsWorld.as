@@ -20,7 +20,7 @@ package awayphysics.dynamics {
 
 		public static function getInstance() : AWPDynamicsWorld {
 			if (!currentDynamicsWorld) {
-				trace("version: AwayPhysics v0.67 (13-11-2011)");
+				trace("version: AwayPhysics v0.67 (16-11-2011)");
 				currentDynamicsWorld = new AWPDynamicsWorld();
 			}
 			return currentDynamicsWorld;
