@@ -5,8 +5,7 @@ package awayphysics.collision.shapes {
 	import flash.geom.Vector3D;
 
 	public class AWPCompoundShape extends AWPCollisionShape {
-		private var m_children : Vector.<AWPCollisionShape>;
-		
+		private var _children : Vector.<AWPCollisionShape>;
 		private var _transforms:Vector.<AWPTransform>;
 
 		/**
@@ -15,7 +14,7 @@ package awayphysics.collision.shapes {
 		public function AWPCompoundShape() {
 			pointer = bullet.createCompoundShapeMethod();
 			super(pointer, 7);
-			m_children = new Vector.<AWPCollisionShape>();
+			_children = new Vector.<AWPCollisionShape>();
 			_transforms = new Vector.<AWPTransform>();
 		}
 
@@ -39,7 +38,7 @@ package awayphysics.collision.shapes {
 			var rotArr : Vector.<Number> = rot.rawData;
 			bullet.addCompoundChildMethod(pointer, child.pointer, localPos.x / _scaling, localPos.y / _scaling, localPos.z / _scaling, rotArr[0], rotArr[4], rotArr[8], rotArr[1], rotArr[5], rotArr[9], rotArr[2], rotArr[6], rotArr[10]);
 
-			m_children.push(child);
+			_children.push(child);
 		}
 
 		/**
@@ -48,15 +47,26 @@ package awayphysics.collision.shapes {
 		public function removeChildShapeByIndex(childShapeindex : int) : void {
 			bullet.removeCompoundChildMethod(pointer, childShapeindex);
 
-			m_children.splice(childShapeindex, 1);
+			_children.splice(childShapeindex, 1);
 			_transforms.splice(childShapeindex, 1);
+		}
+		
+		/**
+		 *remove all children shape from compound shape
+		 */
+		public function removeAllChildren() : void {
+			while (_children.length > 0){
+				removeChildShapeByIndex(0);
+			}
+			_children.length = 0;
+			_transforms.length = 0;
 		}
 
 		/**
 		 *get the children list
 		 */
 		public function get children() : Vector.<AWPCollisionShape> {
-			return m_children;
+			return _children;
 		}
 		
 		public function getChildTransform(index:int):AWPTransform {
@@ -67,7 +77,7 @@ package awayphysics.collision.shapes {
 			m_localScaling.setTo(scale.x, scale.y, scale.z);
 			bullet.setShapeScalingMethod(pointer, scale.x, scale.y, scale.z);
 			var i:int = 0;
-			for each(var shape:AWPCollisionShape in m_children) {
+			for each(var shape:AWPCollisionShape in _children) {
 				shape.localScaling = scale;
 				_transforms[i].position = AWPMath.vectorMultiply(_transforms[i].position, scale);
 				i++;

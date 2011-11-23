@@ -195,8 +195,10 @@ AS3_Val removeCompoundChild(void* data, AS3_Val args){
 	btCompoundShape* cshape;
 	int index;
 	AS3_ArrayValue(args, "PtrType,IntType",&cshape,&index);
-
+	
+	btCollisionShape* shape=cshape->getChildShape(index);
 	cshape->removeChildShapeByIndex(index);
+	delete shape;
 
 	return AS3_Null();
 }
@@ -399,6 +401,9 @@ AS3_Val removeCollisionObject(void* data, AS3_Val args){
 	AS3_ArrayValue(args, "PtrType", &obj);
 
 	collisionWorld->removeCollisionObject(obj);
+	
+	if(obj->getCollisionShape()) delete obj->getCollisionShape();
+	delete obj;
 
 	return AS3_Null();
 }
@@ -419,6 +424,7 @@ AS3_Val removeRay(void* data, AS3_Val args){
 	AS3_ArrayValue(args, "PtrType", &ray);
 	
 	rays.remove(ray);
+	delete ray;
 	
 	return AS3_Null();
 }
@@ -503,6 +509,10 @@ AS3_Val removeBody(void* data, AS3_Val args){
 
 	btDiscreteDynamicsWorld* dynamicsWorld=(btDiscreteDynamicsWorld*)collisionWorld;
 	dynamicsWorld->removeRigidBody(body);
+	
+	if(body->getMotionState()) delete body->getMotionState();
+	if(body->getCollisionShape()) delete body->getCollisionShape();
+	delete body;
 
 	return AS3_Null();
 }
@@ -778,6 +788,8 @@ AS3_Val removeConstraint(void* data, AS3_Val args){
 
 	btDiscreteDynamicsWorld* dynamicsWorld=(btDiscreteDynamicsWorld*)collisionWorld;
 	dynamicsWorld->removeConstraint(constraint);
+	
+	delete constraint;
 
 	return AS3_Null();
 }
@@ -851,6 +863,8 @@ AS3_Val removeVehicle(void* data, AS3_Val args){
 
 	btDiscreteDynamicsWorld* dynamicsWorld=(btDiscreteDynamicsWorld*)collisionWorld;
 	dynamicsWorld->removeVehicle(vehicle);
+	
+	delete vehicle;
 
 	return AS3_Null();
 }
@@ -901,6 +915,10 @@ AS3_Val removeCharacter(void* data, AS3_Val args){
 	btDiscreteDynamicsWorld* dynamicsWorld=(btDiscreteDynamicsWorld*)collisionWorld;
 	dynamicsWorld->removeCollisionObject(character->m_ghostObject);
 	dynamicsWorld->removeCharacter(character);
+	
+	delete character->m_ghostObject->getCollisionShape();
+	delete character->m_ghostObject;
+	delete character;
 
 	return AS3_Null();
 }

@@ -264,6 +264,16 @@ package awayphysics.collision.dispatch {
 			}
 		}
 		/**
+		  * remove all rays in this collision object
+		  */
+		public function removeAllRays():void {
+			while (_rays.length > 0){
+				removeRay(0);
+			}
+			_rays.length = 0;
+		}
+		
+		/**
 		 * get all rays
 		 */
 		public function get rays():Vector.<AWPRay> {
