@@ -84,6 +84,8 @@ package awayphysics.debug
 			drawLine(v2, v0, color);
 		}
 		
+		/*
+		// TODO: not used
 		private function drawAabb(from:Vector3D, to:Vector3D, color:uint):void {
 			var halfExtents:Vector3D = to.subtract(from);
 			halfExtents.scaleBy(0.5);
@@ -119,6 +121,7 @@ package awayphysics.debug
 					edgecoord[i] *= -1;
 			}
 		}
+		*/
 		
 		private function drawTransform(transform:AWPTransform, orthoLen:Number):void {
 			var pos:Vector3D = transform.position;

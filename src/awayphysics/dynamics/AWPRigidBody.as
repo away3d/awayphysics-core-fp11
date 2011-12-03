@@ -3,7 +3,6 @@ package awayphysics.dynamics {
 
 	import awayphysics.collision.dispatch.AWPCollisionObject;
 	import awayphysics.collision.shapes.AWPCollisionShape;
-	import awayphysics.data.AWPCollisionFlags;
 	import awayphysics.math.AWPMatrix3x3;
 	import awayphysics.math.AWPVector3;
 	import awayphysics.math.AWPMath;

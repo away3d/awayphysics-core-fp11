@@ -1,7 +1,6 @@
 package awayphysics.dynamics.constraintsolver {
 	import awayphysics.dynamics.AWPRigidBody;
 	
-	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
 
 	public class AWPHingeConstraint extends AWPTypedConstraint {
