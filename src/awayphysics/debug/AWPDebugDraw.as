@@ -84,8 +84,6 @@ package awayphysics.debug
 			drawLine(v2, v0, color);
 		}
 		
-		/*
-		// TODO: not used
 		private function drawAabb(from:Vector3D, to:Vector3D, color:uint):void {
 			var halfExtents:Vector3D = to.subtract(from);
 			halfExtents.scaleBy(0.5);
@@ -121,7 +119,6 @@ package awayphysics.debug
 					edgecoord[i] *= -1;
 			}
 		}
-		*/
 		
 		private function drawTransform(transform:AWPTransform, orthoLen:Number):void {
 			var pos:Vector3D = transform.position;
@@ -473,8 +470,8 @@ package awayphysics.debug
 				var triangleMesh:AWPBvhTriangleMeshShape = shape as AWPBvhTriangleMeshShape;
 				drawTriangles(triangleMesh.geometry, triangleMesh.localScaling, transform, color);
 			}else if (shape.shapeType == AWPCollisionShapeType.HEIGHT_FIELD_TERRAIN) {
-				var terrain:AWPHeightfieldTerrainShape = shape as AWPHeightfieldTerrainShape;
-				drawTriangles(terrain.geometry, terrain.localScaling, transform, color);
+				//var terrain:AWPHeightfieldTerrainShape = shape as AWPHeightfieldTerrainShape;
+				//drawTriangles(terrain.geometry, terrain.localScaling, transform, color);
 			}
 		}
 		

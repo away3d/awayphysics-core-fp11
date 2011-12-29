@@ -123,6 +123,15 @@ package awayphysics.dynamics {
 			}
 			m_gravity_acceleration.v3d = acceleration;
 		}
+		
+		override public function set scale(sc:Vector3D):void {
+			super.scale = sc;
+			bullet.setBodyMassMethod(pointer, mass);
+		}
+		override public function set transform(tr:Matrix3D) : void {
+			super.transform = tr;
+			bullet.setBodyMassMethod(pointer, mass);
+		}
 
 		public function get invInertiaTensorWorld() : Matrix3D {
 			return m_invInertiaTensorWorld.m3d;
@@ -189,7 +198,7 @@ package awayphysics.dynamics {
 		}
 
 		public function get mass() : Number {
-			return 1 / inverseMass;
+			return (inverseMass == 0)?0:1 / inverseMass;
 		}
 
 		public function set mass(v : Number) : void {

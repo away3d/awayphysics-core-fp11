@@ -138,34 +138,25 @@ package awayphysics.dynamics.character {
 			memUser._mwf(pointer + 44, v);
 		}
 
-		/*
-		// TODO: not used
 		private function get wasJumping() : Boolean {
 			return memUser._mru8(pointer + 169) == 1;
 		}
- 		*/
-		
+
 		private function set wasJumping(v : Boolean) : void {
 			memUser._mw8(pointer + 169, v ? 1 : 0);
 		}
 
-		/*
-		// TODO: not used
-s		private function get useWalkDirection() : Boolean {
+		private function get useWalkDirection() : Boolean {
 			return memUser._mru8(pointer + 171) == 1;
 		}
-		*/
-		
+
 		private function set useWalkDirection(v : Boolean) : void {
 			memUser._mw8(pointer + 171, v ? 1 : 0);
 		}
 
-		/*
-		// TODO: not used
 		private function get velocityTimeInterval() : Number {
 			return memUser._mrf(pointer + 172);
 		}
-		*/
 
 		private function set velocityTimeInterval(v : Number) : void {
 			memUser._mwf(pointer + 172, v);
@@ -183,12 +174,9 @@ s		private function get useWalkDirection() : Boolean {
 			return memUser._mrf(pointer + 20);
 		}
 
-		/*
-		// TODO: not used
 		private function set verticalOffset(v : Number) : void {
 			memUser._mwf(pointer + 20, v);
 		}
-		*/
 
 		private function get maxSlopeRadians() : Number {
 			return memUser._mrf(pointer + 36);
@@ -198,14 +186,10 @@ s		private function get useWalkDirection() : Boolean {
 			memUser._mwf(pointer + 36, v);
 		}
 
-		/*
-		// TODO: not used
 		private function get maxSlopeCosine() : Number {
 			return memUser._mrf(pointer + 40);
 		}
-		* 
- 		*/
-		
+
 		private function set maxSlopeCosine(v : Number) : void {
 			memUser._mwf(pointer + 40, v);
 		}

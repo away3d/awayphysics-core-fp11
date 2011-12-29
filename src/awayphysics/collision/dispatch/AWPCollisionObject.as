@@ -77,7 +77,8 @@ package awayphysics.collision.dispatch {
 			if (!m_skin) return;
 			
 			_transform.identity();
-			_transform.appendScale(_originScale.x * m_shape.localScaling.x, _originScale.y * m_shape.localScaling.y, _originScale.z * m_shape.localScaling.z);
+			var sc:Vector3D = m_shape.localScaling;
+			_transform.appendScale(_originScale.x * sc.x, _originScale.y * sc.y, _originScale.z * sc.z);
 			_transform.append(m_worldTransform.transform);
 			
 			m_skin.transform = _transform;

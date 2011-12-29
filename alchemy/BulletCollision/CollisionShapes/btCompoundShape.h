@@ -54,6 +54,7 @@ SIMD_FORCE_INLINE bool operator==(const btCompoundShapeChild& c1, const btCompou
 ATTRIBUTE_ALIGNED16(class) btCompoundShape	: public btCollisionShape
 {
 	btAlignedObjectArray<btCompoundShapeChild> m_children;
+	btAlignedObjectArray<btTransform> m_originTransform;
 	btVector3						m_localAabbMin;
 	btVector3						m_localAabbMax;
 

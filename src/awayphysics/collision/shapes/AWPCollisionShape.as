@@ -27,7 +27,8 @@ package awayphysics.collision.shapes {
 		
 		public function set localScaling(scale:Vector3D):void {
 			m_localScaling.setTo(scale.x, scale.y, scale.z);
-			bullet.setShapeScalingMethod(pointer, scale.x, scale.y, scale.z);
+			if(scale.w == 0)
+				bullet.setShapeScalingMethod(pointer, scale.x, scale.y, scale.z);
 		}
 	}
 }

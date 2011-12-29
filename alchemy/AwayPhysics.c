@@ -196,9 +196,7 @@ AS3_Val removeCompoundChild(void* data, AS3_Val args){
 	int index;
 	AS3_ArrayValue(args, "PtrType,IntType",&cshape,&index);
 	
-	btCollisionShape* shape=cshape->getChildShape(index);
 	cshape->removeChildShapeByIndex(index);
-	delete shape;
 
 	return AS3_Null();
 }
@@ -368,7 +366,7 @@ AS3_Val setShapeScaling(void* data, AS3_Val args){
 	double scaleX,scaleY,scaleZ;
 
 	AS3_ArrayValue(args, "PtrType,DoubleType,DoubleType,DoubleType",&shape,&scaleX,&scaleY,&scaleZ);
-
+	
 	shape->setLocalScaling(btVector3(scaleX,scaleY,scaleZ));
 
 	return AS3_Null();
@@ -384,7 +382,6 @@ AS3_Val createCollisionObject(void* data, AS3_Val args){
 	obj->setUserPointer(as3_Object);
 	
 	return_as3_ptr(obj);
-
 }
 AS3_Val addCollisionObject(void* data, AS3_Val args){
 	btCollisionObject* obj;
@@ -401,9 +398,6 @@ AS3_Val removeCollisionObject(void* data, AS3_Val args){
 	AS3_ArrayValue(args, "PtrType", &obj);
 
 	collisionWorld->removeCollisionObject(obj);
-	
-	if(obj->getCollisionShape()) delete obj->getCollisionShape();
-	delete obj;
 
 	return AS3_Null();
 }
@@ -509,10 +503,6 @@ AS3_Val removeBody(void* data, AS3_Val args){
 
 	btDiscreteDynamicsWorld* dynamicsWorld=(btDiscreteDynamicsWorld*)collisionWorld;
 	dynamicsWorld->removeRigidBody(body);
-	
-	if(body->getMotionState()) delete body->getMotionState();
-	if(body->getCollisionShape()) delete body->getCollisionShape();
-	delete body;
 
 	return AS3_Null();
 }
@@ -788,8 +778,6 @@ AS3_Val removeConstraint(void* data, AS3_Val args){
 
 	btDiscreteDynamicsWorld* dynamicsWorld=(btDiscreteDynamicsWorld*)collisionWorld;
 	dynamicsWorld->removeConstraint(constraint);
-	
-	delete constraint;
 
 	return AS3_Null();
 }
@@ -864,8 +852,6 @@ AS3_Val removeVehicle(void* data, AS3_Val args){
 	btDiscreteDynamicsWorld* dynamicsWorld=(btDiscreteDynamicsWorld*)collisionWorld;
 	dynamicsWorld->removeVehicle(vehicle);
 	
-	delete vehicle;
-
 	return AS3_Null();
 }
 
@@ -915,10 +901,6 @@ AS3_Val removeCharacter(void* data, AS3_Val args){
 	btDiscreteDynamicsWorld* dynamicsWorld=(btDiscreteDynamicsWorld*)collisionWorld;
 	dynamicsWorld->removeCollisionObject(character->m_ghostObject);
 	dynamicsWorld->removeCharacter(character);
-	
-	delete character->m_ghostObject->getCollisionShape();
-	delete character->m_ghostObject;
-	delete character;
 
 	return AS3_Null();
 }

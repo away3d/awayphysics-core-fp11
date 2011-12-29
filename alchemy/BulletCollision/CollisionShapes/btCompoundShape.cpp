@@ -81,6 +81,7 @@ void	btCompoundShape::addChildShape(const btTransform& localTransform,btCollisio
 		child.m_node = m_dynamicAabbTree->insert(bounds,(void*)index);
 	}
 
+	m_originTransform.push_back(localTransform);
 	m_children.push_back(child);
 
 }
@@ -280,11 +281,11 @@ void btCompoundShape::setLocalScaling(const btVector3& scaling)
 
 	for(int i = 0; i < m_children.size(); i++)
 	{
-		btTransform childTrans = getChildTransform(i);
-		btVector3 childScale = m_children[i].m_childShape->getLocalScaling();
+		btTransform childTrans = m_originTransform[i];
+		//btVector3 childScale = m_children[i].m_childShape->getLocalScaling();
 //		childScale = childScale * (childTrans.getBasis() * scaling);
-		childScale = childScale * scaling / m_localScaling;
-		m_children[i].m_childShape->setLocalScaling(childScale);
+		//childScale = childScale * scaling / m_localScaling;
+		m_children[i].m_childShape->setLocalScaling(scaling);
 		childTrans.setOrigin((childTrans.getOrigin())*scaling);
 		updateChildTransform(i, childTrans,false);
 	}

@@ -7,6 +7,7 @@ package awayphysics.collision.shapes {
 	public class AWPCompoundShape extends AWPCollisionShape {
 		private var _children : Vector.<AWPCollisionShape>;
 		private var _transforms:Vector.<AWPTransform>;
+		private var _childTransform:AWPTransform;
 
 		/**
 		 *create a compound shape use the other primitive shapes
@@ -16,6 +17,8 @@ package awayphysics.collision.shapes {
 			super(pointer, 7);
 			_children = new Vector.<AWPCollisionShape>();
 			_transforms = new Vector.<AWPTransform>();
+			
+			_childTransform = new AWPTransform();
 		}
 
 		/**
@@ -70,17 +73,16 @@ package awayphysics.collision.shapes {
 		}
 		
 		public function getChildTransform(index:int):AWPTransform {
-			return _transforms[index];
+			_childTransform.position=AWPMath.vectorMultiply(_transforms[index].position, m_localScaling);
+			_childTransform.rotation=_transforms[index].rotation;
+			return _childTransform;
 		}
 		
 		override public function set localScaling(scale:Vector3D):void {
 			m_localScaling.setTo(scale.x, scale.y, scale.z);
 			bullet.setShapeScalingMethod(pointer, scale.x, scale.y, scale.z);
-			var i:int = 0;
 			for each(var shape:AWPCollisionShape in _children) {
-				shape.localScaling = scale;
-				_transforms[i].position = AWPMath.vectorMultiply(_transforms[i].position, scale);
-				i++;
+				shape.localScaling = new Vector3D(scale.x, scale.y, scale.z, 1);
 			}
 		}
 	}
