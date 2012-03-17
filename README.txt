@@ -1,2 +1,1 @@
-Away Physics - 3D physics library for the Away3D Engine in Flash Player 11
-Website: http://www.awayphysics.com and examples (coming soon) ...
+Away Physics - 3D physics library for the Away3D Engine in Flash Player 11.1
