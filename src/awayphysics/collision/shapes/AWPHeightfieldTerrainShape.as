@@ -25,11 +25,18 @@ package awayphysics.collision.shapes {
 			super(pointer, 10);
 		}
 
-		/**
-		 * release the heightmap data buffer
-		 */
-		public function deleteHeightfieldTerrainShapeBuffer() : void {
-			bullet.removeHeightmapDataBufferMethod(dataPtr);
+		override public function dispose() : void {
+			m_counter--;
+			if (m_counter > 0) {
+				return;
+			}else {
+				m_counter = 0;
+			}
+			if (!cleanup) {
+				cleanup	= true;
+				bullet.removeHeightmapDataBufferMethod(dataPtr);
+				bullet.disposeCollisionShapeMethod(pointer);
+			}
 		}
 		
 		public function get geometry():Geometry {

@@ -7,6 +7,8 @@ package awayphysics.collision.shapes {
 		protected var m_shapeType:int;
 		protected var m_localScaling:Vector3D;
 		
+		protected var m_counter:int = 0;
+		
 		public function AWPCollisionShape(ptr:uint, type:int) {
 			pointer = ptr;
 			m_shapeType = type;
@@ -29,6 +31,29 @@ package awayphysics.collision.shapes {
 			m_localScaling.setTo(scale.x, scale.y, scale.z);
 			if(scale.w == 0)
 				bullet.setShapeScalingMethod(pointer, scale.x, scale.y, scale.z);
+		}
+		
+		/**
+		 * this function just called by internal
+		 */
+		public function retain():void {
+			m_counter++;
+		}
+		
+		/**
+		 * this function just called by internal
+		 */
+		public function dispose():void {
+			m_counter--;
+			if (m_counter > 0) {
+				return;
+			}else {
+				m_counter = 0;
+			}
+			if (!cleanup) {
+				cleanup	= true;
+				bullet.disposeCollisionShapeMethod(pointer);
+			}
 		}
 	}
 }

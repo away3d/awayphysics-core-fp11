@@ -34,5 +34,7 @@ package awayphysics {
 		 */
 		protected static var _scaling : Number = 100;
 		public var pointer : uint;
+		
+		protected var cleanup:Boolean = false;
 	}
 }

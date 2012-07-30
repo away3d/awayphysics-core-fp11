@@ -24,9 +24,19 @@ package awayphysics.collision.shapes
 			super(pointer, 5);
 		}
 		
-		public function deleteConvexHullShapeBuffer() : void
+		override public function dispose() : void
 		{
-			bullet.removeTriangleVertexDataBufferMethod(vertexDataPtr);
+			m_counter--;
+			if (m_counter > 0) {
+				return;
+			}else {
+				m_counter = 0;
+			}
+			if (!cleanup) {
+				cleanup	= true;
+				bullet.removeTriangleVertexDataBufferMethod(vertexDataPtr);
+				bullet.disposeCollisionShapeMethod(pointer);
+			}
 		}
 		
 		public function get geometry():Geometry {

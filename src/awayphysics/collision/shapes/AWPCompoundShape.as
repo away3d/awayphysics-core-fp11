@@ -6,6 +6,7 @@ package awayphysics.collision.shapes {
 
 	public class AWPCompoundShape extends AWPCollisionShape {
 		private var _children : Vector.<AWPCollisionShape>;
+		private var _allChildren:Vector.<AWPCollisionShape>;
 		private var _transforms:Vector.<AWPTransform>;
 		private var _childTransform:AWPTransform;
 
@@ -16,6 +17,7 @@ package awayphysics.collision.shapes {
 			pointer = bullet.createCompoundShapeMethod();
 			super(pointer, 7);
 			_children = new Vector.<AWPCollisionShape>();
+			_allChildren = new Vector.<AWPCollisionShape>();
 			_transforms = new Vector.<AWPTransform>();
 			
 			_childTransform = new AWPTransform();
@@ -42,6 +44,7 @@ package awayphysics.collision.shapes {
 			bullet.addCompoundChildMethod(pointer, child.pointer, localPos.x / _scaling, localPos.y / _scaling, localPos.z / _scaling, rotArr[0], rotArr[4], rotArr[8], rotArr[1], rotArr[5], rotArr[9], rotArr[2], rotArr[6], rotArr[10]);
 
 			_children.push(child);
+			_allChildren.push(child);
 		}
 
 		/**
@@ -83,6 +86,24 @@ package awayphysics.collision.shapes {
 			bullet.setShapeScalingMethod(pointer, scale.x, scale.y, scale.z);
 			for each(var shape:AWPCollisionShape in _children) {
 				shape.localScaling = new Vector3D(scale.x, scale.y, scale.z, 1);
+			}
+		}
+		
+		override public function dispose():void {
+			m_counter--;
+			if (m_counter > 0) {
+				return;
+			}else {
+				m_counter = 0;
+			}
+			if (!cleanup) {
+				cleanup	= true;
+				removeAllChildren();
+				for each(var shape:AWPCollisionShape in _allChildren) {
+					shape.dispose();
+				}
+				_allChildren.length = 0;
+				bullet.disposeCollisionShapeMethod(pointer);
 			}
 		}
 	}

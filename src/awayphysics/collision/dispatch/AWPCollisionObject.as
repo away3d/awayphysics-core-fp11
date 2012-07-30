@@ -37,6 +37,8 @@ package awayphysics.collision.dispatch {
 			m_shape = shape;
 			m_skin = skin;
 			
+			m_shape.retain();
+			
 			if(ptr>0){
 				pointer = ptr;
 				m_worldTransform = new AWPTransform(ptr + 4);
@@ -67,6 +69,15 @@ package awayphysics.collision.dispatch {
 		public function set skin(value:ObjectContainer3D):void {
 			m_skin = value;
 			_originScale.setTo(m_skin.scaleX, m_skin.scaleY, m_skin.scaleZ);
+		}
+		
+		public function dispose():void {
+			if (!cleanup) {
+				cleanup	= true;
+				removeAllRays();
+				m_shape.dispose();
+				bullet.disposeCollisionObjectMethod(pointer);
+			}
 		}
 
 		/**

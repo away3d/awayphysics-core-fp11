@@ -35,13 +35,20 @@ package awayphysics.collision.shapes {
 			pointer = bullet.createBvhTriangleMeshShapeMethod(triangleIndexVertexArrayPtr, useQuantizedAabbCompression ? 1 : 0, 1);
 			super(pointer, 9);
 		}
-
-		/**
-		 *release the memory of index/vertex buffer
-		 */
-		public function deleteBvhTriangleMeshShapeBuffer() : void {
-			bullet.removeTriangleIndexDataBufferMethod(indexDataPtr);
-			bullet.removeTriangleVertexDataBufferMethod(vertexDataPtr);
+		
+		override public function dispose() : void {
+			m_counter--;
+			if (m_counter > 0) {
+				return;
+			}else {
+				m_counter = 0;
+			}
+			if (!cleanup) {
+				cleanup	= true;
+				bullet.removeTriangleIndexDataBufferMethod(indexDataPtr);
+				bullet.removeTriangleVertexDataBufferMethod(vertexDataPtr);
+				bullet.disposeCollisionShapeMethod(pointer);
+			}
 		}
 		
 		public function get geometry():Geometry {

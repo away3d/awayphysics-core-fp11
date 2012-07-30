@@ -92,6 +92,11 @@ AS3_Val createDiscreteDynamicsWorldWithAxisSweep3(void* data, AS3_Val args) {
 	return_as3_ptr(collisionWorld);
 }
 
+AS3_Val disposeDynamicsWorld(void* data, AS3_Val args){
+	delete collisionWorld;
+	return AS3_Null();
+}
+
 // create a static plane shape
 AS3_Val createStaticPlaneShape(void* data, AS3_Val args){
 	double normalX;
@@ -361,6 +366,15 @@ AS3_Val createTriangleShape(void* data, AS3_Val args){
 	return_as3_ptr(triangleShape);
 }
 
+AS3_Val disposeCollisionShape(void* data, AS3_Val args){
+	btCollisionShape* shape;
+	AS3_ArrayValue(args, "PtrType",&shape);
+	
+	delete shape;
+	
+	return AS3_Null();
+}
+
 AS3_Val setShapeScaling(void* data, AS3_Val args){
 	btCollisionShape* shape;
 	double scaleX,scaleY,scaleZ;
@@ -504,6 +518,15 @@ AS3_Val removeBody(void* data, AS3_Val args){
 	btDiscreteDynamicsWorld* dynamicsWorld=(btDiscreteDynamicsWorld*)collisionWorld;
 	dynamicsWorld->removeRigidBody(body);
 
+	return AS3_Null();
+}
+
+AS3_Val disposeCollisionObject(void* data, AS3_Val args){
+	btCollisionObject* obj;
+	AS3_ArrayValue(args, "PtrType",&obj);
+	
+	delete obj;
+	
 	return AS3_Null();
 }
 
@@ -782,6 +805,15 @@ AS3_Val removeConstraint(void* data, AS3_Val args){
 	return AS3_Null();
 }
 
+AS3_Val disposeConstraint(void* data, AS3_Val args){
+	btTypedConstraint* constraint;
+	AS3_ArrayValue(args, "PtrType", &constraint);
+
+	delete constraint;
+
+	return AS3_Null();
+}
+
 AS3_Val createVehicle(void* data, AS3_Val args) {
 	AS3_Val tuning;
 	btRigidBody* chassis;
@@ -855,6 +887,15 @@ AS3_Val removeVehicle(void* data, AS3_Val args){
 	return AS3_Null();
 }
 
+AS3_Val disposeVehicle(void* data, AS3_Val args){
+	btActionInterface* vehicle;
+	AS3_ArrayValue(args, "PtrType", &vehicle);
+
+	delete vehicle;
+	
+	return AS3_Null();
+}
+
 AS3_Val createGhostObject(void* data, AS3_Val args){
 	AS3_Val as3_Body;
 	btCollisionShape* shape;
@@ -901,6 +942,15 @@ AS3_Val removeCharacter(void* data, AS3_Val args){
 	btDiscreteDynamicsWorld* dynamicsWorld=(btDiscreteDynamicsWorld*)collisionWorld;
 	dynamicsWorld->removeCollisionObject(character->m_ghostObject);
 	dynamicsWorld->removeCharacter(character);
+
+	return AS3_Null();
+}
+
+AS3_Val disposeCharacter(void* data, AS3_Val args){
+	btKinematicCharacterController* character;
+	AS3_ArrayValue(args, "PtrType", &character);
+
+	delete character;
 
 	return AS3_Null();
 }
@@ -1018,6 +1068,8 @@ int main() {
 
 	AS3_Val createDiscreteDynamicsWorldWithDbvtMethod = AS3_Function( NULL, createDiscreteDynamicsWorldWithDbvt );
 	AS3_Val createDiscreteDynamicsWorldWithAxisSweep3Method = AS3_Function( NULL, createDiscreteDynamicsWorldWithAxisSweep3 );
+	AS3_Val disposeDynamicsWorldMethod = AS3_Function( NULL, disposeDynamicsWorld );
+	
 	AS3_Val createStaticPlaneShapeMethod = AS3_Function( NULL, createStaticPlaneShape );
 	AS3_Val createBoxShapeMethod = AS3_Function( NULL, createBoxShape );
 	AS3_Val createSphereShapeMethod = AS3_Function( NULL, createSphereShape );
@@ -1039,6 +1091,7 @@ int main() {
 	AS3_Val createConvexHullShapeMethod = AS3_Function( NULL, createConvexHullShape );
 	AS3_Val createGImpactMeshShapeMethod = AS3_Function( NULL, createGImpactMeshShape );
 	AS3_Val createTriangleShapeMethod = AS3_Function( NULL, createTriangleShape );
+	AS3_Val disposeCollisionShapeMethod = AS3_Function( NULL, disposeCollisionShape );
 	AS3_Val setShapeScalingMethod = AS3_Function( NULL, setShapeScaling );
 	
 	AS3_Val createCollisionObjectMethod = AS3_Function( NULL, createCollisionObject );
@@ -1051,6 +1104,7 @@ int main() {
 	AS3_Val addBodyWithGroupMethod = AS3_Function( NULL, addBodyWithGroup );
 	AS3_Val addBodyMethod = AS3_Function( NULL, addBody );
 	AS3_Val removeBodyMethod = AS3_Function( NULL, removeBody );
+	AS3_Val disposeCollisionObjectMethod = AS3_Function( NULL, disposeCollisionObject );
 	
 	AS3_Val createP2PConstraintMethod1 = AS3_Function( NULL, createP2PConstraint1 );
 	AS3_Val createP2PConstraintMethod2 = AS3_Function( NULL, createP2PConstraint2 );
@@ -1062,18 +1116,23 @@ int main() {
 	AS3_Val createGeneric6DofConstraintMethod2 = AS3_Function( NULL, createGeneric6DofConstraint2 );
 	AS3_Val addConstraintMethod = AS3_Function( NULL, addConstraint );
 	AS3_Val removeConstraintMethod = AS3_Function( NULL, removeConstraint );
+	AS3_Val disposeConstraintMethod = AS3_Function( NULL, disposeConstraint );
 	AS3_Val createVehicleMethod = AS3_Function( NULL, createVehicle );
 	AS3_Val addVehicleWheelMethod = AS3_Function( NULL, addVehicleWheel );
 	AS3_Val addVehicleMethod = AS3_Function( NULL, addVehicle );
 	AS3_Val removeVehicleMethod = AS3_Function( NULL, removeVehicle );
+	AS3_Val disposeVehicleMethod = AS3_Function( NULL, disposeVehicle );
 	AS3_Val createGhostObjectMethod = AS3_Function( NULL, createGhostObject );
 	AS3_Val createCharacterMethod = AS3_Function( NULL, createCharacter );
 	AS3_Val addCharacterMethod = AS3_Function( NULL, addCharacter );
 	AS3_Val removeCharacterMethod = AS3_Function( NULL, removeCharacter );
+	AS3_Val disposeCharacterMethod = AS3_Function( NULL, disposeCharacter );
 	AS3_Val stepMethod = AS3_Function( NULL, step );
 
 	AS3_Val result = AS3_Object( "createDiscreteDynamicsWorldWithDbvtMethod:AS3ValType,"
 								 "createDiscreteDynamicsWorldWithAxisSweep3Method:AS3ValType,"
+								 "disposeDynamicsWorldMethod:AS3ValType,"
+								 
 								 "createStaticPlaneShapeMethod:AS3ValType,"
 								 "createBoxShapeMethod:AS3ValType,"
 								 "createSphereShapeMethod:AS3ValType,"
@@ -1095,6 +1154,7 @@ int main() {
 								 "createConvexHullShapeMethod:AS3ValType,"
 								 "createGImpactMeshShapeMethod:AS3ValType,"
 								 "createTriangleShapeMethod:AS3ValType,"
+								 "disposeCollisionShapeMethod:AS3ValType,"
 								 "setShapeScalingMethod:AS3ValType,"
 
 								 "createCollisionObjectMethod:AS3ValType,"
@@ -1107,6 +1167,7 @@ int main() {
 								 "addBodyWithGroupMethod:AS3ValType,"
 								 "addBodyMethod:AS3ValType,"
 								 "removeBodyMethod:AS3ValType,"
+								 "disposeCollisionObjectMethod:AS3ValType,"
 								 
 								 "createP2PConstraintMethod1:AS3ValType,"
 								 "createP2PConstraintMethod2:AS3ValType,"
@@ -1118,18 +1179,23 @@ int main() {
 								 "createGeneric6DofConstraintMethod2:AS3ValType,"
 								 "addConstraintMethod:AS3ValType,"
 								 "removeConstraintMethod:AS3ValType,"
+								 "disposeConstraintMethod:AS3ValType,"
 								 "createVehicleMethod:AS3ValType,"
 								 "addVehicleWheelMethod:AS3ValType,"
 								 "addVehicleMethod:AS3ValType,"
 								 "removeVehicleMethod:AS3ValType,"
+								 "disposeVehicleMethod:AS3ValType,"
 								 "createGhostObjectMethod:AS3ValType,"
 								 "createCharacterMethod:AS3ValType,"
 								 "addCharacterMethod:AS3ValType,"
 								 "removeCharacterMethod:AS3ValType,"
+								 "disposeCharacterMethod:AS3ValType,"
 								 "stepMethod:AS3ValType",
 
 								 createDiscreteDynamicsWorldWithDbvtMethod,
 								 createDiscreteDynamicsWorldWithAxisSweep3Method,
+								 disposeDynamicsWorldMethod,
+								 
 								 createStaticPlaneShapeMethod,
 								 createBoxShapeMethod,
 								 createSphereShapeMethod,
@@ -1151,6 +1217,7 @@ int main() {
 								 createConvexHullShapeMethod,
 								 createGImpactMeshShapeMethod,
 								 createTriangleShapeMethod,
+								 disposeCollisionShapeMethod,
 								 setShapeScalingMethod,
 								 
 								 createCollisionObjectMethod,
@@ -1163,6 +1230,7 @@ int main() {
 								 addBodyWithGroupMethod,
 								 addBodyMethod,
 								 removeBodyMethod,
+								 disposeCollisionObjectMethod,
 								 
 								 createP2PConstraintMethod1,
 								 createP2PConstraintMethod2,
@@ -1174,18 +1242,23 @@ int main() {
 								 createGeneric6DofConstraintMethod2,
 								 addConstraintMethod,
 								 removeConstraintMethod,
+								 disposeConstraintMethod,
 								 createVehicleMethod,
 								 addVehicleWheelMethod,
 								 addVehicleMethod,
 								 removeVehicleMethod,
+								 disposeVehicleMethod,
 								 createGhostObjectMethod,
 								 createCharacterMethod,
 								 addCharacterMethod,
 								 removeCharacterMethod,
+								 disposeCharacterMethod,
 								 stepMethod);
 
 	AS3_Release( createDiscreteDynamicsWorldWithDbvtMethod );
 	AS3_Release( createDiscreteDynamicsWorldWithAxisSweep3Method );
+	AS3_Release( disposeDynamicsWorldMethod );
+	
 	AS3_Release( createStaticPlaneShapeMethod );
 	AS3_Release( createBoxShapeMethod );
 	AS3_Release( createSphereShapeMethod );
@@ -1207,6 +1280,7 @@ int main() {
 	AS3_Release( createConvexHullShapeMethod );
 	AS3_Release( createGImpactMeshShapeMethod );
 	AS3_Release( createTriangleShapeMethod );
+	AS3_Release( disposeCollisionShapeMethod );
 	AS3_Release( setShapeScalingMethod );
 	
 	AS3_Release( createCollisionObjectMethod );
@@ -1219,6 +1293,7 @@ int main() {
 	AS3_Release( addBodyWithGroupMethod );
 	AS3_Release( addBodyMethod );
 	AS3_Release( removeBodyMethod );
+	AS3_Release( disposeCollisionObjectMethod );
 	
 	AS3_Release( createP2PConstraintMethod1 );
 	AS3_Release( createP2PConstraintMethod2 );
@@ -1230,14 +1305,17 @@ int main() {
 	AS3_Release( createGeneric6DofConstraintMethod2 );
 	AS3_Release( addConstraintMethod );
 	AS3_Release( removeConstraintMethod );
+	AS3_Release( disposeConstraintMethod );
 	AS3_Release( createVehicleMethod );
 	AS3_Release( addVehicleWheelMethod );
 	AS3_Release( addVehicleMethod );
 	AS3_Release( removeVehicleMethod );
+	AS3_Release( disposeVehicleMethod );
 	AS3_Release( createGhostObjectMethod );
 	AS3_Release( createCharacterMethod );
 	AS3_Release( addCharacterMethod );
 	AS3_Release( removeCharacterMethod );
+	AS3_Release( disposeCharacterMethod );
 	AS3_Release( stepMethod );
 
 	AS3_LibInit(result);

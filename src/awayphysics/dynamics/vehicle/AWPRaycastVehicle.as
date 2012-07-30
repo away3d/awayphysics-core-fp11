@@ -71,5 +71,12 @@ package awayphysics.dynamics.vehicle {
 				wheel.updateTransform();
 			}
 		}
+		
+		public function dispose():void {
+			if (!cleanup) {
+				cleanup	= true;
+				bullet.disposeVehicleMethod(pointer);
+			}
+		}
 	}
 }
