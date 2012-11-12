@@ -1,4 +1,15 @@
-/bin
-/.settings
-/.project
-/away3d_core_fp11
+# Build and Release Folders
+bin/
+bin-debug/
+bin-release/
+out/
+
+# Project property files
+.actionScriptProperties
+.flexProperties
+.flexLibProperties
+.settings/
+.idea/
+.project
+.DS_Store
+*.iml
