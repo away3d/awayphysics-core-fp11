@@ -13,8 +13,8 @@ subject to the following restrictions:
 3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef COLLISION__DISPATCHER_H
-#define COLLISION__DISPATCHER_H
+#ifndef BT_COLLISION__DISPATCHER_H
+#define BT_COLLISION__DISPATCHER_H
 
 #include "BulletCollision/BroadphaseCollision/btDispatcher.h"
 #include "BulletCollision/NarrowPhaseCollision/btPersistentManifold.h"
@@ -67,7 +67,8 @@ public:
 	enum DispatcherFlags
 	{
 		CD_STATIC_STATIC_REPORTED = 1,
-		CD_USE_RELATIVE_CONTACT_BREAKING_THRESHOLD = 2
+		CD_USE_RELATIVE_CONTACT_BREAKING_THRESHOLD = 2,
+		CD_DISABLE_CONTACTPOOL_DYNAMIC_ALLOCATION = 4
 	};
 
 	int	getDispatcherFlags() const
@@ -90,7 +91,7 @@ public:
 
 	btPersistentManifold**	getInternalManifoldPointer()
 	{
-		return &m_manifoldsPtr[0];
+		return m_manifoldsPtr.size()? &m_manifoldsPtr[0] : 0;
 	}
 
 	 btPersistentManifold* getManifoldByIndexInternal(int index)
@@ -107,19 +108,18 @@ public:
 
 	virtual ~btCollisionDispatcher();
 
-	virtual btPersistentManifold*	getNewManifold(void* b0,void* b1);
+	virtual btPersistentManifold*	getNewManifold(const btCollisionObject* b0,const btCollisionObject* b1);
 	
 	virtual void releaseManifold(btPersistentManifold* manifold);
 
 
 	virtual void clearManifold(btPersistentManifold* manifold);
 
-			
-	btCollisionAlgorithm* findAlgorithm(btCollisionObject* body0,btCollisionObject* body1,btPersistentManifold* sharedManifold = 0);
+	btCollisionAlgorithm* findAlgorithm(const btCollisionObjectWrapper* body0Wrap,const btCollisionObjectWrapper* body1Wrap,btPersistentManifold* sharedManifold = 0);
 		
-	virtual bool	needsCollision(btCollisionObject* body0,btCollisionObject* body1);
+	virtual bool	needsCollision(const btCollisionObject* body0,const btCollisionObject* body1);
 	
-	virtual bool	needsResponse(btCollisionObject* body0,btCollisionObject* body1);
+	virtual bool	needsResponse(const btCollisionObject* body0,const btCollisionObject* body1);
 	
 	virtual void	dispatchAllCollisionPairs(btOverlappingPairCache* pairCache,const btDispatcherInfo& dispatchInfo,btDispatcher* dispatcher) ;
 
@@ -155,7 +155,17 @@ public:
 		m_collisionConfiguration = config;
 	}
 
+	virtual	btPoolAllocator*	getInternalManifoldPool()
+	{
+		return m_persistentManifoldPoolAllocator;
+	}
+
+	virtual	const btPoolAllocator*	getInternalManifoldPool() const
+	{
+		return m_persistentManifoldPoolAllocator;
+	}
+
 };
 
-#endif //COLLISION__DISPATCHER_H
+#endif //BT_COLLISION__DISPATCHER_H
 

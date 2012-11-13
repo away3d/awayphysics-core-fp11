@@ -1,13 +1,15 @@
 package awayphysics.dynamics.vehicle {
-	import AWPC_Run.CModule;
-	import away3d.containers.ObjectContainer3D;
-
-	import awayphysics.AWPBase;
-	import awayphysics.math.AWPTransform;
-	import awayphysics.math.AWPVector3;
-
 	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
+	
+	import AWPC_Run.CModule;
+	
+	import away3d.containers.ObjectContainer3D;
+	
+	import awayphysics.AWPBase;
+	import awayphysics.math.AWPMath;
+	import awayphysics.math.AWPTransform;
+	import awayphysics.math.AWPVector3;
 
 	/**
 	 * defining suspension and wheel parameters
@@ -20,8 +22,6 @@ package awayphysics.dynamics.vehicle {
 		private var m_chassisConnectionPointCS : AWPVector3;
 		private var m_wheelDirectionCS : AWPVector3;
 		private var m_wheelAxleCS : AWPVector3;
-		
-		private var _transform:Matrix3D = new Matrix3D();
 
 		public function AWPWheelInfo(ptr : uint, _skin : ObjectContainer3D = null) {
 			pointer = ptr;
@@ -49,6 +49,7 @@ package awayphysics.dynamics.vehicle {
 
 		public function set worldPosition(pos : Vector3D) : void {
 			m_worldTransform.position = pos;
+			updateTransform();
 		}
 
 		public function get worldPosition() : Vector3D {
@@ -56,21 +57,23 @@ package awayphysics.dynamics.vehicle {
 		}
 
 		public function set worldRotation(rot : Vector3D) : void {
-			m_worldTransform.rotation = rot;
+			m_worldTransform.rotation = AWPMath.degrees2radiansV3D(rot);
+			updateTransform();
 		}
 
 		public function get worldRotation() : Vector3D {
-			return m_worldTransform.rotation;
+			return AWPMath.radians2degreesV3D(m_worldTransform.rotation);
 		}
 
 		public function updateTransform() : void {
 			if (!m_skin) return;
 			
-			_transform.identity();
-			_transform.appendScale(m_skin.scaleX, m_skin.scaleY, m_skin.scaleZ);
-			_transform.append(m_worldTransform.transform);
-			
-			m_skin.transform = _transform;
+			m_skin.scaleX = m_skin.scaleX;
+			m_skin.scaleY = m_skin.scaleY;
+			m_skin.scaleZ = m_skin.scaleZ;
+			var rot:Vector3D = AWPMath.radians2degreesV3D(m_worldTransform.rotation);
+			m_skin.rotateTo(rot.x,rot.y,rot.z);
+			m_skin.position = m_worldTransform.position;
 		}
 
 		public function get chassisConnectionPointCS() : Vector3D {

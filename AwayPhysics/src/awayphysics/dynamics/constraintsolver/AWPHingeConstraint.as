@@ -48,8 +48,7 @@ package awayphysics.dynamics.constraintsolver {
 				CModule.free(vec1.pointer);
 				CModule.free(vec2.pointer);
 			}
-			
-			m_limit = new AWPAngularLimit(pointer + 676);
+			m_limit = new AWPAngularLimit(pointer + 688);
 		}
 		
 		public function get pivotInA():Vector3D{
@@ -80,43 +79,43 @@ package awayphysics.dynamics.constraintsolver {
 		}
 
 		public function get motorTargetVelocity() : Number {
-			return CModule.readFloat(pointer + 668);
+			return CModule.readFloat(pointer + 680);
 		}
 
 		public function set motorTargetVelocity(v : Number) : void {
-			CModule.writeFloat(pointer + 668, v);
+			CModule.writeFloat(pointer + 680, v);
 		}
 
 		public function get maxMotorImpulse() : Number {
-			return CModule.readFloat(pointer + 672);
+			return CModule.readFloat(pointer + 684);
 		}
 
 		public function set maxMotorImpulse(v : Number) : void {
-			CModule.writeFloat(pointer + 672, v);
+			CModule.writeFloat(pointer + 684, v);
 		}
 
 		public function get angularOnly() : Boolean {
-			return CModule.read8(pointer + 724) == 1;
+			return CModule.read8(pointer + 736) == 1;
 		}
 
 		public function set angularOnly(v : Boolean) : void {
-			CModule.write8(pointer + 724, v ? 1 : 0);
+			CModule.write8(pointer + 736, v ? 1 : 0);
 		}
 
 		public function get enableAngularMotor() : Boolean {
-			return CModule.read8(pointer + 725) == 1;
+			return CModule.read8(pointer + 737) == 1;
 		}
 
 		public function set enableAngularMotor(v : Boolean) : void {
-			CModule.write8(pointer + 725, v ? 1 : 0);
+			CModule.write8(pointer + 737, v ? 1 : 0);
 		}
 
 		public function get useOffsetForConstraintFrame() : Boolean {
-			return CModule.read8(pointer + 727) == 1;
+			return CModule.read8(pointer + 739) == 1;
 		}
 
 		public function set useOffsetForConstraintFrame(v : Boolean) : void {
-			CModule.write8(pointer + 727, v ? 1 : 0);
+			CModule.write8(pointer + 739, v ? 1 : 0);
 		}
 	}
 }

@@ -40,7 +40,7 @@ package awayphysics.dynamics {
 
 		public static function getInstance() : AWPDynamicsWorld {
 			if (!currentDynamicsWorld) {
-				trace("version: AwayPhysics v1.0 alpha (30-8-2012)");
+				trace("version: AwayPhysics v1.0 alpha (13-11-2012)");
 				currentDynamicsWorld = new AWPDynamicsWorld();
 			}
 			return currentDynamicsWorld;
@@ -62,7 +62,7 @@ package awayphysics.dynamics {
 		 */
 		public function initWithDbvtBroadphase() : void {
 			pointer = createDiscreteDynamicsWorldWithDbvtInC();
-			m_gravity = new AWPVector3(pointer + 224);
+			m_gravity = new AWPVector3(pointer + 256);
 			this.gravity = new Vector3D(0, -10, 0);
 		}
 
@@ -78,7 +78,7 @@ package awayphysics.dynamics {
 			pointer = createDiscreteDynamicsWorldWithAxisSweep3InC(vec1.pointer, vec2.pointer);
 			CModule.free(vec1.pointer);
 			CModule.free(vec2.pointer);
-			m_gravity = new AWPVector3(pointer + 224);
+			m_gravity = new AWPVector3(pointer + 256);
 			this.gravity = new Vector3D(0, -10, 0);
 		}
 		
@@ -319,14 +319,14 @@ package awayphysics.dynamics {
 		 * get if implement object collision callback
 		 */
 		public function get collisionCallbackOn() : Boolean {
-			return CModule.read8(pointer + 247) == 1;
+			return CModule.read8(pointer + 280) == 1;
 		}
 
 		/**
 		 * set this to true if need add a collision event to object, default is false
 		 */
 		public function set collisionCallbackOn(v : Boolean) : void {
-			CModule.write8(pointer + 247, v ? 1 : 0);
+			CModule.write8(pointer + 280, v ? 1 : 0);
 		}
 
 		/**

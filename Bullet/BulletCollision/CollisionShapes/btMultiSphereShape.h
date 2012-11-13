@@ -13,8 +13,8 @@ subject to the following restrictions:
 3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef MULTI_SPHERE_MINKOWSKI_H
-#define MULTI_SPHERE_MINKOWSKI_H
+#ifndef BT_MULTI_SPHERE_MINKOWSKI_H
+#define BT_MULTI_SPHERE_MINKOWSKI_H
 
 #include "btConvexInternalShape.h"
 #include "BulletCollision/BroadphaseCollision/btBroadphaseProxy.h" // for the types
@@ -25,13 +25,15 @@ subject to the following restrictions:
 
 ///The btMultiSphereShape represents the convex hull of a collection of spheres. You can create special capsules or other smooth volumes.
 ///It is possible to animate the spheres for deformation, but call 'recalcLocalAabb' after changing any sphere position/radius
-class btMultiSphereShape : public btConvexInternalAabbCachingShape
+ATTRIBUTE_ALIGNED16(class) btMultiSphereShape : public btConvexInternalAabbCachingShape
 {
 	
 	btAlignedObjectArray<btVector3> m_localPositionArray;
 	btAlignedObjectArray<btScalar>  m_radiArray;
 	
 public:
+	BT_DECLARE_ALIGNED_ALLOCATOR();
+	
 	btMultiSphereShape (const btVector3* positions,const btScalar* radi,int numSpheres);
 
 	///CollisionShape Interface
@@ -96,4 +98,4 @@ SIMD_FORCE_INLINE	int	btMultiSphereShape::calculateSerializeBufferSize() const
 
 
 
-#endif //MULTI_SPHERE_MINKOWSKI_H
+#endif //BT_MULTI_SPHERE_MINKOWSKI_H

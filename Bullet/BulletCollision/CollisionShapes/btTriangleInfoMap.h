@@ -61,6 +61,7 @@ struct	btTriangleInfoMap : public btInternalTriangleInfoMap
 	btScalar	m_planarEpsilon; ///used to determine if a triangle edge is planar with zero angle
 	btScalar	m_equalVertexThreshold; ///used to compute connectivity: if the distance between two vertices is smaller than m_equalVertexThreshold, they are considered to be 'shared'
 	btScalar	m_edgeDistanceThreshold; ///used to determine edge contacts: if the closest distance between a contact point and an edge is smaller than this distance threshold it is considered to "hit the edge"
+	btScalar	m_maxEdgeAngleThreshold; //ignore edges that connect triangles at an angle larger than this m_maxEdgeAngleThreshold
 	btScalar	m_zeroAreaThreshold; ///used to determine if a triangle is degenerate (length squared of cross product of 2 triangle edges < threshold)
 	
 	
@@ -71,6 +72,7 @@ struct	btTriangleInfoMap : public btInternalTriangleInfoMap
 		m_equalVertexThreshold = btScalar(0.0001)*btScalar(0.0001);
 		m_edgeDistanceThreshold = btScalar(0.1);
 		m_zeroAreaThreshold = btScalar(0.0001)*btScalar(0.0001);
+		m_maxEdgeAngleThreshold = SIMD_2_PI;
 	}
 	virtual ~btTriangleInfoMap() {}
 
@@ -83,6 +85,7 @@ struct	btTriangleInfoMap : public btInternalTriangleInfoMap
 
 };
 
+///those fields have to be float and not btScalar for the serialization to work properly
 struct	btTriangleInfoData
 {
 	int			m_flags;
@@ -120,11 +123,11 @@ SIMD_FORCE_INLINE	int	btTriangleInfoMap::calculateSerializeBufferSize() const
 SIMD_FORCE_INLINE	const char*	btTriangleInfoMap::serialize(void* dataBuffer, btSerializer* serializer) const
 {
 	btTriangleInfoMapData* tmapData = (btTriangleInfoMapData*) dataBuffer;
-	tmapData->m_convexEpsilon = m_convexEpsilon;
-	tmapData->m_planarEpsilon = m_planarEpsilon;
-	tmapData->m_equalVertexThreshold = m_equalVertexThreshold;
-	tmapData->m_edgeDistanceThreshold = m_edgeDistanceThreshold;
-	tmapData->m_zeroAreaThreshold = m_zeroAreaThreshold;
+	tmapData->m_convexEpsilon = (float)m_convexEpsilon;
+	tmapData->m_planarEpsilon = (float)m_planarEpsilon;
+	tmapData->m_equalVertexThreshold =(float) m_equalVertexThreshold;
+	tmapData->m_edgeDistanceThreshold = (float)m_edgeDistanceThreshold;
+	tmapData->m_zeroAreaThreshold = (float)m_zeroAreaThreshold;
 	
 	tmapData->m_hashTableSize = m_hashTable.size();
 
@@ -169,9 +172,9 @@ SIMD_FORCE_INLINE	const char*	btTriangleInfoMap::serialize(void* dataBuffer, btS
 		btTriangleInfoData* memPtr = (btTriangleInfoData*)chunk->m_oldPtr;
 		for (int i=0;i<numElem;i++,memPtr++)
 		{
-			memPtr->m_edgeV0V1Angle = m_valueArray[i].m_edgeV0V1Angle;
-			memPtr->m_edgeV1V2Angle = m_valueArray[i].m_edgeV1V2Angle;
-			memPtr->m_edgeV2V0Angle = m_valueArray[i].m_edgeV2V0Angle;
+			memPtr->m_edgeV0V1Angle = (float)m_valueArray[i].m_edgeV0V1Angle;
+			memPtr->m_edgeV1V2Angle = (float)m_valueArray[i].m_edgeV1V2Angle;
+			memPtr->m_edgeV2V0Angle = (float)m_valueArray[i].m_edgeV2V0Angle;
 			memPtr->m_flags = m_valueArray[i].m_flags;
 		}
 		serializer->finalizeChunk(chunk,"btTriangleInfoData",BT_ARRAY_CODE,(void*) &m_valueArray[0]);

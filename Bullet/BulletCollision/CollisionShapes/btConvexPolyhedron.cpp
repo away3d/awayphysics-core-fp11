@@ -17,7 +17,6 @@ subject to the following restrictions:
 ///This file was written by Erwin Coumans
 ///Separating axis rest based on work from Pierre Terdiman, see
 ///And contact clipping based on work from Simon Hobbs
-#define TEST_INTERNAL_OBJECTS 1
 
 #include "btConvexPolyhedron.h"
 #include "LinearMath/btHashMap.h"
@@ -151,6 +150,7 @@ void	btConvexPolyhedron::initialize()
 		}
 	}
 
+#ifdef USE_CONNECTED_FACES
 	for(int i=0;i<m_faces.size();i++)
 	{
 		int numVertices = m_faces[i].m_indices.size();
@@ -169,6 +169,7 @@ void	btConvexPolyhedron::initialize()
 			m_faces[i].m_connectedFaces[j] = connectedFace;
 		}
 	}
+#endif//USE_CONNECTED_FACES
 
 	for(int i=0;i<m_faces.size();i++)
 	{
@@ -273,23 +274,29 @@ void	btConvexPolyhedron::initialize()
 #endif
 }
 
-
-void btConvexPolyhedron::project(const btTransform& trans, const btVector3& dir, btScalar& min, btScalar& max) const
+void btConvexPolyhedron::project(const btTransform& trans, const btVector3& dir, btScalar& minProj, btScalar& maxProj, btVector3& witnesPtMin,btVector3& witnesPtMax) const
 {
-	min = FLT_MAX;
-	max = -FLT_MAX;
+	minProj = FLT_MAX;
+	maxProj = -FLT_MAX;
 	int numVerts = m_vertices.size();
 	for(int i=0;i<numVerts;i++)
 	{
 		btVector3 pt = trans * m_vertices[i];
 		btScalar dp = pt.dot(dir);
-		if(dp < min)	min = dp;
-		if(dp > max)	max = dp;
+		if(dp < minProj)
+		{
+			minProj = dp;
+			witnesPtMin = pt;
+		}
+		if(dp > maxProj)
+		{
+			maxProj = dp;
+			witnesPtMax = pt;
+		}
 	}
-	if(min>max)
+	if(minProj>maxProj)
 	{
-		btScalar tmp = min;
-		min = max;
-		max = tmp;
+		btSwap(minProj,maxProj);
+		btSwap(witnesPtMin,witnesPtMax);
 	}
 }

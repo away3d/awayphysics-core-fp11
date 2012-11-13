@@ -13,8 +13,8 @@ subject to the following restrictions:
 3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef STRIDING_MESHINTERFACE_H
-#define STRIDING_MESHINTERFACE_H
+#ifndef BT_STRIDING_MESHINTERFACE_H
+#define BT_STRIDING_MESHINTERFACE_H
 
 #include "LinearMath/btVector3.h"
 #include "btTriangleCallback.h"
@@ -27,13 +27,15 @@ subject to the following restrictions:
 ///	The btStridingMeshInterface is the interface class for high performance generic access to triangle meshes, used in combination with btBvhTriangleMeshShape and some other collision shapes.
 /// Using index striding of 3*sizeof(integer) it can use triangle arrays, using index striding of 1*sizeof(integer) it can handle triangle strips.
 /// It allows for sharing graphics and collision meshes. Also it provides locking/unlocking of graphics meshes that are in gpu memory.
-class  btStridingMeshInterface
+ATTRIBUTE_ALIGNED16(class ) btStridingMeshInterface
 {
 	protected:
 	
 		btVector3 m_scaling;
 
 	public:
+		BT_DECLARE_ALIGNED_ALLOCATOR();
+		
 		btStridingMeshInterface() :m_scaling(btScalar(1.),btScalar(1.),btScalar(1.))
 		{
 
@@ -159,4 +161,4 @@ SIMD_FORCE_INLINE	int	btStridingMeshInterface::calculateSerializeBufferSize() co
 
 
 
-#endif //STRIDING_MESHINTERFACE_H
+#endif //BT_STRIDING_MESHINTERFACE_H

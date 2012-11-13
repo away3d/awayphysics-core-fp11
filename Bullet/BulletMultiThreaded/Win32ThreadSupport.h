@@ -18,8 +18,8 @@ subject to the following restrictions:
 
 #ifdef USE_WIN32_THREADING  //platform specific defines are defined in PlatformDefinitions.h
 
-#ifndef WIN32_THREAD_SUPPORT_H
-#define WIN32_THREAD_SUPPORT_H
+#ifndef BT_WIN32_THREAD_SUPPORT_H
+#define BT_WIN32_THREAD_SUPPORT_H
 
 #include "LinearMath/btAlignedObjectArray.h"
 
@@ -66,7 +66,7 @@ public:
 
 	struct	Win32ThreadConstructionInfo
 	{
-		Win32ThreadConstructionInfo(char* uniqueName,
+		Win32ThreadConstructionInfo(const char* uniqueName,
 									Win32ThreadFunc userThreadFunc,
 									Win32lsMemorySetupFunc	lsMemoryFunc,
 									int numThreads=1,
@@ -81,7 +81,7 @@ public:
 
 		}
 
-		char*					m_uniqueName;
+		const char*				m_uniqueName;
 		Win32ThreadFunc			m_userThreadFunc;
 		Win32lsMemorySetupFunc	m_lsMemoryFunc;
 		int						m_numThreads;
@@ -131,8 +131,11 @@ public:
 
 	virtual btCriticalSection* createCriticalSection();
 
+	virtual void deleteBarrier(btBarrier* barrier);
+
+        virtual void deleteCriticalSection(btCriticalSection* criticalSection);
 };
 
-#endif //WIN32_THREAD_SUPPORT_H
+#endif //BT_WIN32_THREAD_SUPPORT_H
 
 #endif //USE_WIN32_THREADING

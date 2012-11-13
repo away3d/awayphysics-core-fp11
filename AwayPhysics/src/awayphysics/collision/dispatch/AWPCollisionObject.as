@@ -35,7 +35,6 @@ package awayphysics.collision.dispatch {
 		
 		private var _rays:Vector.<AWPRay>;
 		
-		private var _transform:Matrix3D = new Matrix3D();
 		private var _originScale:Vector3D = new Vector3D(1, 1, 1);
 		private var _dispatcher : EventDispatcher;
 
@@ -55,7 +54,6 @@ package awayphysics.collision.dispatch {
 				m_worldTransform = new AWPTransform(pointer + 4);
 				m_anisotropicFriction = new AWPVector3(pointer + 164);
 			}
-			
 			if (m_skin) {
 				_originScale.setTo(m_skin.scaleX, m_skin.scaleY, m_skin.scaleZ);
 			}
@@ -93,12 +91,13 @@ package awayphysics.collision.dispatch {
 		public function updateTransform() : void {
 			if (!m_skin) return;
 			
-			_transform.identity();
-			var sc:Vector3D = m_shape.localScaling;
-			_transform.appendScale(_originScale.x * sc.x, _originScale.y * sc.y, _originScale.z * sc.z);
-			_transform.append(m_worldTransform.transform);
-			
-			m_skin.transform = _transform;
+			var vec:Vector3D = m_shape.localScaling;
+			m_skin.scaleX = _originScale.x * vec.x;
+			m_skin.scaleY = _originScale.y * vec.y;
+			m_skin.scaleZ = _originScale.z * vec.z;
+			vec = AWPMath.radians2degreesV3D(m_worldTransform.rotation);
+			m_skin.rotateTo(vec.x,vec.y,vec.z);
+			m_skin.position = m_worldTransform.position;
 		}
 
 		/**
@@ -408,30 +407,18 @@ package awayphysics.collision.dispatch {
 		 * the values defined by AWPCollisionObjectTypes
 		 */
 		public function get internalType() : int {
-			return CModule.read32(pointer + 232);
+			return CModule.read32(pointer + 236);
 		}
 		
 		public function get hitFraction() : Number {
-			return CModule.readFloat(pointer + 240);
-		}
-
-		public function set hitFraction(v : Number) : void {
-			CModule.writeFloat(pointer + 240, v);
-		}
-		
-		public function get ccdSweptSphereRadius() : Number {
 			return CModule.readFloat(pointer + 244);
 		}
 
-		/**
-		 * used to motion clamping
-		 * refer to http://bulletphysics.org/mediawiki-1.5.8/index.php/Anti_tunneling_by_Motion_Clamping
-		 */
-		public function set ccdSweptSphereRadius(v : Number) : void {
+		public function set hitFraction(v : Number) : void {
 			CModule.writeFloat(pointer + 244, v);
 		}
 		
-		public function get ccdMotionThreshold() : Number {
+		public function get ccdSweptSphereRadius() : Number {
 			return CModule.readFloat(pointer + 248);
 		}
 
@@ -439,8 +426,20 @@ package awayphysics.collision.dispatch {
 		 * used to motion clamping
 		 * refer to http://bulletphysics.org/mediawiki-1.5.8/index.php/Anti_tunneling_by_Motion_Clamping
 		 */
-		public function set ccdMotionThreshold(v : Number) : void {
+		public function set ccdSweptSphereRadius(v : Number) : void {
 			CModule.writeFloat(pointer + 248, v);
+		}
+		
+		public function get ccdMotionThreshold() : Number {
+			return CModule.readFloat(pointer + 252);
+		}
+
+		/**
+		 * used to motion clamping
+		 * refer to http://bulletphysics.org/mediawiki-1.5.8/index.php/Anti_tunneling_by_Motion_Clamping
+		 */
+		public function set ccdMotionThreshold(v : Number) : void {
+			CModule.writeFloat(pointer + 252, v);
 		}
 
 		public function addEventListener(type : String, listener : Function, useCapture : Boolean = false, priority : int = 0, useWeakReference : Boolean = false) : void {

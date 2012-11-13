@@ -18,7 +18,7 @@ package awayphysics.dynamics.character {
 			m_ghostObject = ghostObject;
 
 			pointer = createCharacterInC(ghostObject.pointer, ghostObject.shape.pointer, stepHeight, 1);
-
+			
 			m_walkDirection = new AWPVector3(pointer + 60);
 			m_normalizedDirection = new AWPVector3(pointer + 76);
 		}

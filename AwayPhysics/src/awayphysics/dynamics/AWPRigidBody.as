@@ -33,17 +33,17 @@ package awayphysics.dynamics {
 			pointer = createBodyInC(shape.pointer, mass);
 			super(shape, skin, pointer);
 
-			m_invInertiaTensorWorld = new AWPMatrix3x3(pointer + 256);
-			m_linearVelocity = new AWPVector3(pointer + 304);
-			m_angularVelocity = new AWPVector3(pointer + 320);
-			m_linearFactor = new AWPVector3(pointer + 340);
-			m_angularFactor = new AWPVector3(pointer + 504);
-			m_gravity = new AWPVector3(pointer + 356);
-			m_gravity_acceleration = new AWPVector3(pointer + 372);
-			m_invInertiaLocal = new AWPVector3(pointer + 388);
-			m_totalForce = new AWPVector3(pointer + 404);
-			m_totalTorque = new AWPVector3(pointer + 420);
-			m_invMass = new AWPVector3(pointer + 520);
+			m_invInertiaTensorWorld = new AWPMatrix3x3(pointer + 260);
+			m_linearVelocity = new AWPVector3(pointer + 308);
+			m_angularVelocity = new AWPVector3(pointer + 324);
+			m_linearFactor = new AWPVector3(pointer + 344);
+			m_angularFactor = new AWPVector3(pointer + 508);
+			m_gravity = new AWPVector3(pointer + 360);
+			m_gravity_acceleration = new AWPVector3(pointer + 376);
+			m_invInertiaLocal = new AWPVector3(pointer + 392);
+			m_totalForce = new AWPVector3(pointer + 408);
+			m_totalTorque = new AWPVector3(pointer + 424);
+			m_invMass = new AWPVector3(pointer + 524);
 		}
 		
 		/**
@@ -220,51 +220,51 @@ package awayphysics.dynamics {
 		}
 
 		public function get inverseMass() : Number {
-			return CModule.readFloat(pointer + 336);
+			return CModule.readFloat(pointer + 340);
 		}
 
 		public function set inverseMass(v : Number) : void {
-			CModule.writeFloat(pointer + 336, v);
+			CModule.writeFloat(pointer + 340, v);
 		}
 
 		public function get linearDamping() : Number {
-			return CModule.readFloat(pointer + 436);
-		}
-
-		public function set linearDamping(v : Number) : void {
-			CModule.writeFloat(pointer + 436, v);
-		}
-
-		public function get angularDamping() : Number {
 			return CModule.readFloat(pointer + 440);
 		}
 
-		public function set angularDamping(v : Number) : void {
+		public function set linearDamping(v : Number) : void {
 			CModule.writeFloat(pointer + 440, v);
 		}
 
+		public function get angularDamping() : Number {
+			return CModule.readFloat(pointer + 444);
+		}
+
+		public function set angularDamping(v : Number) : void {
+			CModule.writeFloat(pointer + 444, v);
+		}
+
 		public function get linearSleepingThreshold() : Number {
-			return CModule.readFloat(pointer + 464);
-		}
-
-		public function set linearSleepingThreshold(v : Number) : void {
-			CModule.writeFloat(pointer + 464, v);
-		}
-
-		public function get angularSleepingThreshold() : Number {
 			return CModule.readFloat(pointer + 468);
 		}
 
-		public function set angularSleepingThreshold(v : Number) : void {
+		public function set linearSleepingThreshold(v : Number) : void {
 			CModule.writeFloat(pointer + 468, v);
 		}
 
+		public function get angularSleepingThreshold() : Number {
+			return CModule.readFloat(pointer + 472);
+		}
+
+		public function set angularSleepingThreshold(v : Number) : void {
+			CModule.writeFloat(pointer + 472, v);
+		}
+
 		public function get rigidbodyFlags() : int {
-			return CModule.read32(pointer + 496);
+			return CModule.read32(pointer + 500);
 		}
 
 		public function set rigidbodyFlags(v : int) : void {
-			CModule.write32(pointer + 496, v);
+			CModule.write32(pointer + 500, v);
 		}
 	}
 }

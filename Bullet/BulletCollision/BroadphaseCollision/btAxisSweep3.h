@@ -16,8 +16,8 @@
 //
 // 3. This notice may not be removed or altered from any source distribution.
 
-#ifndef AXIS_SWEEP_3_H
-#define AXIS_SWEEP_3_H
+#ifndef BT_AXIS_SWEEP_3_H
+#define BT_AXIS_SWEEP_3_H
 
 #include "LinearMath/btVector3.h"
 #include "btOverlappingPairCache.h"
@@ -615,7 +615,7 @@ void btAxisSweep3Internal<BP_FP_INT_TYPE>::removeHandle(BP_FP_INT_TYPE handle,bt
 }
 
 template <typename BP_FP_INT_TYPE>
-void btAxisSweep3Internal<BP_FP_INT_TYPE>::resetPool(btDispatcher* dispatcher)
+void btAxisSweep3Internal<BP_FP_INT_TYPE>::resetPool(btDispatcher* /*dispatcher*/)
 {
 	if (m_numHandles == 0)
 	{

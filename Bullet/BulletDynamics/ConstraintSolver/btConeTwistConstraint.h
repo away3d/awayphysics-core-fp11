@@ -33,8 +33,8 @@ and swing 1 and 2 are along the z and y axes respectively.
 
 
 
-#ifndef CONETWISTCONSTRAINT_H
-#define CONETWISTCONSTRAINT_H
+#ifndef BT_CONETWISTCONSTRAINT_H
+#define BT_CONETWISTCONSTRAINT_H
 
 #include "LinearMath/btVector3.h"
 #include "btJacobianEntry.h"
@@ -50,7 +50,7 @@ enum btConeTwistFlags
 };
 
 ///btConeTwistConstraint can be used to simulate ragdoll joints (upper arm, leg etc)
-class btConeTwistConstraint : public btTypedConstraint
+ATTRIBUTE_ALIGNED16(class) btConeTwistConstraint : public btTypedConstraint
 {
 public:
 	btJacobianEntry	m_jac[3]; //3 orthogonal linear constraints
@@ -124,6 +124,8 @@ protected:
 
 public:
 
+	BT_DECLARE_ALIGNED_ALLOCATOR();
+
 	btConeTwistConstraint(btRigidBody& rbA,btRigidBody& rbB,const btTransform& rbAFrame, const btTransform& rbBFrame);
 	
 	btConeTwistConstraint(btRigidBody& rbA,const btTransform& rbAFrame);
@@ -138,8 +140,9 @@ public:
 	
 	void	getInfo2NonVirtual(btConstraintInfo2* info,const btTransform& transA,const btTransform& transB,const btMatrix3x3& invInertiaWorldA,const btMatrix3x3& invInertiaWorldB);
 
-	virtual	void	solveConstraintObsolete(btRigidBody& bodyA,btRigidBody& bodyB,btScalar	timeStep);
+	virtual	void	solveConstraintObsolete(btSolverBody& bodyA,btSolverBody& bodyB,btScalar	timeStep);
 
+    
 	void	updateRHS(btScalar	timeStep);
 
 
@@ -341,4 +344,4 @@ SIMD_FORCE_INLINE const char*	btConeTwistConstraint::serialize(void* dataBuffer,
 }
 
 
-#endif //CONETWISTCONSTRAINT_H
+#endif //BT_CONETWISTCONSTRAINT_H

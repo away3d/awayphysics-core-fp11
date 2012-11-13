@@ -61,13 +61,12 @@ package awayphysics.dynamics.constraintsolver {
 				CModule.free(vec1.pointer);
 				CModule.free(mat1.pointer);
 			}
-
-			m_linearLimits = new AWPTranslationalLimitMotor(pointer + 668);
+			m_linearLimits = new AWPTranslationalLimitMotor(pointer + 680);
 
 			m_angularLimits = new Vector.<AWPRotationalLimitMotor>(3, true);
-			m_angularLimits[0] = new AWPRotationalLimitMotor(pointer + 856);
-			m_angularLimits[1] = new AWPRotationalLimitMotor(pointer + 920);
-			m_angularLimits[2] = new AWPRotationalLimitMotor(pointer + 984);
+			m_angularLimits[0] = new AWPRotationalLimitMotor(pointer + 868);
+			m_angularLimits[1] = new AWPRotationalLimitMotor(pointer + 932);
+			m_angularLimits[2] = new AWPRotationalLimitMotor(pointer + 996);
 		}
 		
 		public function get rbAFrame():AWPTransform {

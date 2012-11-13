@@ -24,8 +24,8 @@ http://gimpact.sf.net
 */
 
 
-#ifndef GENERIC_6DOF_CONSTRAINT_H
-#define GENERIC_6DOF_CONSTRAINT_H
+#ifndef BT_GENERIC_6DOF_CONSTRAINT_H
+#define BT_GENERIC_6DOF_CONSTRAINT_H
 
 #include "LinearMath/btVector3.h"
 #include "btJacobianEntry.h"
@@ -268,7 +268,7 @@ This brings support for limit parameters and motors. </li>
 </ul>
 
 */
-class btGeneric6DofConstraint : public btTypedConstraint
+ATTRIBUTE_ALIGNED16(class) btGeneric6DofConstraint : public btTypedConstraint
 {
 public:
 
@@ -346,6 +346,8 @@ protected:
 
 public:
 
+	BT_DECLARE_ALIGNED_ALLOCATOR();
+	
 	///for backwards compatibility during the transition to 'getInfo/getInfo2'
 	bool		m_useSolveConstraintObsolete;
 
@@ -611,4 +613,4 @@ SIMD_FORCE_INLINE	const char*	btGeneric6DofConstraint::serialize(void* dataBuffe
 
 
 
-#endif //GENERIC_6DOF_CONSTRAINT_H
+#endif //BT_GENERIC_6DOF_CONSTRAINT_H

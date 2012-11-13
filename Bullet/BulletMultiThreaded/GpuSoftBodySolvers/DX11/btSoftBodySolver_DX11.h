@@ -30,12 +30,16 @@ class DXFunctions
 {
 public:
 	
+	typedef HRESULT (WINAPI * CompileFromMemoryFunc)(LPCSTR,SIZE_T,LPCSTR,const D3D10_SHADER_MACRO*,LPD3D10INCLUDE,LPCSTR,LPCSTR,UINT,UINT,ID3DX11ThreadPump*,ID3D10Blob**,ID3D10Blob**,HRESULT*);
+
 	ID3D11Device *		 m_dx11Device;
 	ID3D11DeviceContext* m_dx11Context;
+	CompileFromMemoryFunc m_dx11CompileFromMemory;
 
-	DXFunctions( ID3D11Device *dx11Device, ID3D11DeviceContext* dx11Context) :
+	DXFunctions(ID3D11Device *dx11Device, ID3D11DeviceContext* dx11Context, CompileFromMemoryFunc dx11CompileFromMemory) :
 		m_dx11Device( dx11Device ),
-		m_dx11Context( dx11Context )
+		m_dx11Context( dx11Context ),
+		m_dx11CompileFromMemory( dx11CompileFromMemory )
 	{
 
 	}
@@ -208,6 +212,7 @@ public:
 		 */
 		void updateBounds( const btVector3 &lowerBound, const btVector3 &upperBound );
 
+		
 		// TODO: All of these set functions will have to do checks and
 		// update the world because restructuring of the arrays will be necessary
 		// Reasonable use of "friend"?
@@ -509,6 +514,7 @@ protected:
 
 	DXFunctions::KernelDesc		applyForcesKernel;
 
+	bool	m_enableUpdateBounds;
 
 	/**
 	 * Integrate motion on the solver.
@@ -561,7 +567,7 @@ protected:
 	void releaseKernels();
 
 public:
-	btDX11SoftBodySolver(ID3D11Device * dx11Device, ID3D11DeviceContext* dx11Context);
+	btDX11SoftBodySolver(ID3D11Device * dx11Device, ID3D11DeviceContext* dx11Context, DXFunctions::CompileFromMemoryFunc dx11CompileFromMemory = &D3DX11CompileFromMemory);
 
 	virtual ~btDX11SoftBodySolver();
 	
@@ -570,6 +576,16 @@ public:
 	{
 		return DX_SOLVER;
 	}
+
+	void	setEnableUpdateBounds(bool enableBounds)
+	{
+		m_enableUpdateBounds = enableBounds;
+	}
+	bool getEnableUpdateBounds() const
+	{
+		return  m_enableUpdateBounds;
+	}
+
 
 
 	virtual btSoftBodyLinkData &getLinkData();
@@ -591,14 +607,14 @@ public:
 
 	virtual void optimize( btAlignedObjectArray< btSoftBody * > &softBodies , bool forceUpdate=false);
 
-	virtual void copyBackToSoftBodies();
+	virtual void copyBackToSoftBodies(bool bMove = true);
 
 	virtual void solveConstraints( float solverdt );
 
 	virtual void predictMotion( float solverdt );
 
 	
-	virtual void processCollision( btSoftBody *, btCollisionObject* );
+	virtual void processCollision( btSoftBody *, const btCollisionObjectWrapper* );
 
 	virtual void processCollision( btSoftBody*, btSoftBody* );
 
@@ -655,8 +671,8 @@ protected:
 	void releaseKernels();
 
 public:
-	btSoftBodySolverOutputDXtoDX(ID3D11Device *dx11Device, ID3D11DeviceContext* dx11Context) :
-	  dxFunctions( dx11Device, dx11Context )
+	btSoftBodySolverOutputDXtoDX(ID3D11Device *dx11Device, ID3D11DeviceContext* dx11Context, DXFunctions::CompileFromMemoryFunc dx11CompileFromMemory = &D3DX11CompileFromMemory) :
+	  dxFunctions( dx11Device, dx11Context, dx11CompileFromMemory )
 	{
 		m_shadersInitialized = false;
 	}

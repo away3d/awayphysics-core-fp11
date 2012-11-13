@@ -22,8 +22,8 @@ TODO:
  - add conversion for ODE constraint solver
 */
 
-#ifndef SLIDER_CONSTRAINT_H
-#define SLIDER_CONSTRAINT_H
+#ifndef BT_SLIDER_CONSTRAINT_H
+#define BT_SLIDER_CONSTRAINT_H
 
 
 
@@ -60,9 +60,9 @@ enum btSliderFlags
 };
 
 
-class btSliderConstraint : public btTypedConstraint
+ATTRIBUTE_ALIGNED16(class) btSliderConstraint : public btTypedConstraint
 {
-public:
+protected:
 	///for backwards compatibility during the transition to 'getInfo/getInfo2'
 	bool		m_useSolveConstraintObsolete;
 	bool		m_useOffsetForConstraintFrame;
@@ -155,6 +155,8 @@ public:
 	//------------------------    
 	void initParams();
 public:
+	BT_DECLARE_ALIGNED_ALLOCATOR();
+	
 	// constructors
     btSliderConstraint(btRigidBody& rbA, btRigidBody& rbB, const btTransform& frameInA, const btTransform& frameInB ,bool useLinearReferenceFrameA);
     btSliderConstraint(btRigidBody& rbB, const btTransform& frameInB, bool useLinearReferenceFrameA);
@@ -329,5 +331,5 @@ SIMD_FORCE_INLINE	const char*	btSliderConstraint::serialize(void* dataBuffer, bt
 
 
 
-#endif //SLIDER_CONSTRAINT_H
+#endif //BT_SLIDER_CONSTRAINT_H
 

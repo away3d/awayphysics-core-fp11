@@ -29,6 +29,7 @@ subject to the following restrictions:
 
 
 
+
 btHingeConstraint::btHingeConstraint(btRigidBody& rbA,btRigidBody& rbB, const btVector3& pivotInA,const btVector3& pivotInB,
 									 const btVector3& axisInA,const btVector3& axisInB, bool useReferenceFrameA)
 									 :btTypedConstraint(HINGE_CONSTRAINT_TYPE, rbA,rbB),
@@ -133,8 +134,7 @@ m_enableAngularMotor(false),
 m_useSolveConstraintObsolete(HINGE_USE_OBSOLETE_SOLVER),
 m_useOffsetForConstraintFrame(HINGE_USE_FRAME_OFFSET),
 m_useReferenceFrameA(useReferenceFrameA),
-m_flags(0)
-,m_limit()
+m_flags(0),m_limit()
 {
 	///not providing rigidbody B means implicitly using worldspace for body B
 
@@ -247,7 +247,7 @@ void btHingeConstraint::getInfo1(btConstraintInfo1* info)
 		if(getSolveLimit() || getEnableAngularMotor())
 		{
 			info->m_numConstraintRows++; // limit 3rd anguar as well
-			info->nub--;
+			info->nub--; 
 		}
 
 	}
@@ -481,7 +481,7 @@ void btHingeConstraint::getInfo2Internal(btConstraintInfo2* info, const btTransf
 			}
 			// bounce (we'll use slider parameter abs(1.0 - m_dampingLimAng) for that)
 			btScalar bounce = m_limit.getRelaxationFactor();
-
+			
 			if(bounce > btScalar(0.0))
 			{
 				btScalar vel = angVelA.dot(ax1);
@@ -576,7 +576,7 @@ void btHingeConstraint::setMotorTarget(const btQuaternion& qAinB, btScalar dt)
 	btScalar targetAngle = qHinge.getAngle();
 	if (targetAngle > SIMD_PI) // long way around. flip quat and recalculate.
 	{
-		qHinge = operator-(qHinge);
+		qHinge = -(qHinge);
 		targetAngle = qHinge.getAngle();
 	}
 	if (qHinge.getZ() < 0)
@@ -604,8 +604,8 @@ void btHingeConstraint::getInfo2InternalUsingFrameOffset(btConstraintInfo2* info
 	btTransform trA = transA*m_rbAFrame;
 	btTransform trB = transB*m_rbBFrame;
 	// pivot point
-	btVector3 pivotAInW = trA.getOrigin();
-	btVector3 pivotBInW = trB.getOrigin();
+//	btVector3 pivotAInW = trA.getOrigin();
+//	btVector3 pivotBInW = trB.getOrigin();
 #if 1
 	// difference between frames in WCS
 	btVector3 ofs = trB.getOrigin() - trA.getOrigin();

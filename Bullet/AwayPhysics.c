@@ -1,6 +1,6 @@
 
 /*
-compile: /g++ -I./ AwayPhysics.c libbulletdynamics.a libbulletcollision.a libbulletmath.a -emit-swc=AWPC_Run -O4 -fno-exceptions -Wall -o AwayPhysics.swc
+compile: g++ -I./ AwayPhysics.c libbulletdynamics.a libbulletcollision.a libbulletmath.a -emit-swc=AWPC_Run -flto-api=exports.txt -fno-exceptions -O4 -o AwayPhysics.swc
 */
 
 #include <stdlib.h>
@@ -708,7 +708,7 @@ void createGeneric6DofConstraint2(){
 	frameInB.setBasis(*rotationInB);
 
 	btGeneric6DofConstraint* generic6Dof=new btGeneric6DofConstraint(*bodyA,*bodyB,frameInA,frameInB,useLinearReferenceFrameA==1);
-
+	
 	AS3_Return(generic6Dof);
 }
 
@@ -975,8 +975,8 @@ void physicsStepInC() {
 		for (int i=0;i<numManifolds;i++)
 		{
 			btPersistentManifold* contactManifold = dynamicsWorld->getDispatcher()->getManifoldByIndexInternal(i);
-			btCollisionObject* obA = static_cast<btCollisionObject*>(contactManifold->getBody0());
-			btCollisionObject* obB = static_cast<btCollisionObject*>(contactManifold->getBody1());
+			const btCollisionObject* obA = contactManifold->getBody0();
+			const btCollisionObject* obB = contactManifold->getBody1();
 
 			if (obA->getCollisionFlags() & btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK){
 				int numContacts = contactManifold->getNumContacts();

@@ -12,7 +12,6 @@ package awayphysics.collision.dispatch {
 
 		public function AWPManifoldPoint(ptr : uint) {
 			pointer = ptr;
-
 			m_localPointA = new AWPVector3(ptr + 0);
 			m_localPointB = new AWPVector3(ptr + 16);
 			m_normalWorldOnB = new AWPVector3(ptr + 64);
@@ -43,7 +42,7 @@ package awayphysics.collision.dispatch {
 		 *get the value of collision impulse
 		 */
 		public function get appliedImpulse() : Number {
-			return CModule.readFloat(pointer + 112);
+			return CModule.readFloat(pointer + 120);
 		}
 	}
 }

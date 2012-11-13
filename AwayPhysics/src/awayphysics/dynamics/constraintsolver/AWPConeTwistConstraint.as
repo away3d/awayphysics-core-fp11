@@ -91,79 +91,79 @@ package awayphysics.dynamics.constraintsolver {
 		}
 		 */
 		public function get limitSoftness() : Number {
-			return CModule.readFloat(pointer + 416);
-		}
-
-		public function set limitSoftness(v : Number) : void {
-			CModule.writeFloat(pointer + 416, v);
-		}
-
-		public function get biasFactor() : Number {
-			return CModule.readFloat(pointer + 420);
-		}
-
-		public function set biasFactor(v : Number) : void {
-			CModule.writeFloat(pointer + 420, v);
-		}
-
-		public function get relaxationFactor() : Number {
-			return CModule.readFloat(pointer + 424);
-		}
-
-		public function set relaxationFactor(v : Number) : void {
-			CModule.writeFloat(pointer + 424, v);
-		}
-
-		public function get damping() : Number {
 			return CModule.readFloat(pointer + 428);
 		}
 
-		public function set damping(v : Number) : void {
+		public function set limitSoftness(v : Number) : void {
 			CModule.writeFloat(pointer + 428, v);
 		}
 
-		public function get swingSpan1() : Number {
+		public function get biasFactor() : Number {
 			return CModule.readFloat(pointer + 432);
 		}
 
-		public function set swingSpan1(v : Number) : void {
+		public function set biasFactor(v : Number) : void {
 			CModule.writeFloat(pointer + 432, v);
 		}
 
-		public function get swingSpan2() : Number {
+		public function get relaxationFactor() : Number {
 			return CModule.readFloat(pointer + 436);
 		}
 
-		public function set swingSpan2(v : Number) : void {
+		public function set relaxationFactor(v : Number) : void {
 			CModule.writeFloat(pointer + 436, v);
 		}
 
-		public function get twistSpan() : Number {
+		public function get damping() : Number {
 			return CModule.readFloat(pointer + 440);
 		}
 
-		public function set twistSpan(v : Number) : void {
+		public function set damping(v : Number) : void {
 			CModule.writeFloat(pointer + 440, v);
 		}
 
-		public function get fixThresh() : Number {
+		public function get swingSpan1() : Number {
 			return CModule.readFloat(pointer + 444);
 		}
 
-		public function set fixThresh(v : Number) : void {
+		public function set swingSpan1(v : Number) : void {
 			CModule.writeFloat(pointer + 444, v);
 		}
 
+		public function get swingSpan2() : Number {
+			return CModule.readFloat(pointer + 448);
+		}
+
+		public function set swingSpan2(v : Number) : void {
+			CModule.writeFloat(pointer + 448, v);
+		}
+
+		public function get twistSpan() : Number {
+			return CModule.readFloat(pointer + 452);
+		}
+
+		public function set twistSpan(v : Number) : void {
+			CModule.writeFloat(pointer + 452, v);
+		}
+
+		public function get fixThresh() : Number {
+			return CModule.readFloat(pointer + 456);
+		}
+
+		public function set fixThresh(v : Number) : void {
+			CModule.writeFloat(pointer + 456, v);
+		}
+
 		public function get twistAngle() : Number {
-			return CModule.readFloat(pointer + 500);
+			return CModule.readFloat(pointer + 512);
 		}
 
 		public function get angularOnly() : Boolean {
-			return CModule.read8(pointer + 512) == 1;
+			return CModule.read8(pointer + 524) == 1;
 		}
 
 		public function set angularOnly(v : Boolean) : void {
-			CModule.write8(pointer + 512, v ? 1 : 0);
+			CModule.write8(pointer + 524, v ? 1 : 0);
 		}
 		/*public function get enableMotor():Boolean { return memUser._mru8(pointer + 540) == 1; }
 		public function set enableMotor(v:Boolean):void { memUser._mw8(pointer + 540, v ? 1 : 0); }

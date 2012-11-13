@@ -27,8 +27,8 @@
    POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef AOS_VECTORMATH_BULLET_CONVERT_H
-#define AOS_VECTORMATH_BULLET_CONVERT_H
+#ifndef BT_AOS_VECTORMATH_BULLET_CONVERT_H
+#define BT_AOS_VECTORMATH_BULLET_CONVERT_H
 
 #include "PlatformDefinitions.h"
 #include "LinearMath/btVector3.h"
@@ -37,7 +37,7 @@
 
 inline Vectormath::Aos::Vector3	getVmVector3(const btVector3& bulletVec)
 {
-	return Vectormath::Aos::Vector3(bulletVec.getX(),bulletVec.getY(),bulletVec.getZ());
+	return Vectormath::Aos::Vector3((float)bulletVec.getX(),(float)bulletVec.getY(),(float)bulletVec.getZ());
 }
 
 inline btVector3 getBtVector3(const Vectormath::Aos::Vector3& vmVec)
@@ -51,7 +51,7 @@ inline btVector3 getBtVector3(const Vectormath::Aos::Point3& vmVec)
 
 inline Vectormath::Aos::Quat	getVmQuat(const btQuaternion& bulletQuat)
 {
-	Vectormath::Aos::Quat vmQuat(bulletQuat.getX(),bulletQuat.getY(),bulletQuat.getZ(),bulletQuat.getW());
+	Vectormath::Aos::Quat vmQuat((float)bulletQuat.getX(),(float)bulletQuat.getY(),(float)bulletQuat.getZ(),(float)bulletQuat.getW());
 	return vmQuat;
 }
 
@@ -70,4 +70,4 @@ inline Vectormath::Aos::Matrix3	getVmMatrix3(const btMatrix3x3& btMat)
 }
 
 
-#endif //AOS_VECTORMATH_BULLET_CONVERT_H
+#endif //BT_AOS_VECTORMATH_BULLET_CONVERT_H

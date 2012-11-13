@@ -1,14 +1,14 @@
 #include "btInternalEdgeUtility.h"
 
 #include "BulletCollision/CollisionShapes/btBvhTriangleMeshShape.h"
+#include "BulletCollision/CollisionShapes/btScaledBvhTriangleMeshShape.h"
 #include "BulletCollision/CollisionShapes/btTriangleShape.h"
 #include "BulletCollision/CollisionDispatch/btCollisionObject.h"
 #include "BulletCollision/NarrowPhaseCollision/btManifoldPoint.h"
 #include "LinearMath/btIDebugDraw.h"
-
+#include "BulletCollision/CollisionDispatch/btCollisionObjectWrapper.h"
 
 //#define DEBUG_INTERNAL_EDGE
-
 
 #ifdef DEBUG_INTERNAL_EDGE
 #include <stdio.h>
@@ -450,14 +450,20 @@ bool	btClampNormal(const btVector3& edge,const btVector3& tri_normal_org,const b
 
 
 /// Changes a btManifoldPoint collision normal to the normal from the mesh.
-void btAdjustInternalEdgeContacts(btManifoldPoint& cp, const btCollisionObject* colObj0,const btCollisionObject* colObj1, int partId0, int index0, int normalAdjustFlags)
+void btAdjustInternalEdgeContacts(btManifoldPoint& cp, const btCollisionObjectWrapper* colObj0Wrap,const btCollisionObjectWrapper* colObj1Wrap, int partId0, int index0, int normalAdjustFlags)
 {
 	//btAssert(colObj0->getCollisionShape()->getShapeType() == TRIANGLE_SHAPE_PROXYTYPE);
-	if (colObj0->getCollisionShape()->getShapeType() != TRIANGLE_SHAPE_PROXYTYPE)
+	if (colObj0Wrap->getCollisionShape()->getShapeType() != TRIANGLE_SHAPE_PROXYTYPE)
 		return;
 
-	btBvhTriangleMeshShape* trimesh = (btBvhTriangleMeshShape*)colObj0->getRootCollisionShape();
-	btTriangleInfoMap* triangleInfoMapPtr = (btTriangleInfoMap*) trimesh->getTriangleInfoMap();
+	btBvhTriangleMeshShape* trimesh = 0;
+	
+	if( colObj0Wrap->getCollisionObject()->getCollisionShape()->getShapeType() == SCALED_TRIANGLE_MESH_SHAPE_PROXYTYPE )
+	   trimesh = ((btScaledBvhTriangleMeshShape*)colObj0Wrap->getCollisionObject()->getCollisionShape())->getChildShape();
+   else	   
+	   trimesh = (btBvhTriangleMeshShape*)colObj0Wrap->getCollisionObject()->getCollisionShape();
+	   
+   	btTriangleInfoMap* triangleInfoMapPtr = (btTriangleInfoMap*) trimesh->getTriangleInfoMap();
 	if (!triangleInfoMapPtr)
 		return;
 
@@ -470,13 +476,13 @@ void btAdjustInternalEdgeContacts(btManifoldPoint& cp, const btCollisionObject* 
 
 	btScalar frontFacing = (normalAdjustFlags & BT_TRIANGLE_CONVEX_BACKFACE_MODE)==0? 1.f : -1.f;
 	
-	const btTriangleShape* tri_shape = static_cast<const btTriangleShape*>(colObj0->getCollisionShape());
+	const btTriangleShape* tri_shape = static_cast<const btTriangleShape*>(colObj0Wrap->getCollisionShape());
 	btVector3 v0,v1,v2;
 	tri_shape->getVertex(0,v0);
 	tri_shape->getVertex(1,v1);
 	tri_shape->getVertex(2,v2);
 
-	btVector3 center = (v0+v1+v2)*btScalar(1./3.);
+	//btVector3 center = (v0+v1+v2)*btScalar(1./3.);
 
 	btVector3 red(1,0,0), green(0,1,0),blue(0,0,1),white(1,1,1),black(0,0,0);
 	btVector3 tri_normal;
@@ -499,16 +505,65 @@ void btAdjustInternalEdgeContacts(btManifoldPoint& cp, const btCollisionObject* 
 	int numConcaveEdgeHits = 0;
 	int numConvexEdgeHits = 0;
 
-	btVector3 localContactNormalOnB = colObj0->getWorldTransform().getBasis().transpose() * cp.m_normalWorldOnB;
+	btVector3 localContactNormalOnB = colObj0Wrap->getWorldTransform().getBasis().transpose() * cp.m_normalWorldOnB;
 	localContactNormalOnB.normalize();//is this necessary?
-
-	if ((info->m_edgeV0V1Angle)< SIMD_2_PI)
+	
+	// Get closest edge
+	int      bestedge=-1;
+	btScalar    disttobestedge=BT_LARGE_FLOAT;
+	//
+	// Edge 0 -> 1
+	if (btFabs(info->m_edgeV0V1Angle)< triangleInfoMapPtr->m_maxEdgeAngleThreshold)
+	{	
+	   btVector3 nearest;
+	   btNearestPointInLineSegment( cp.m_localPointB, v0, v1, nearest );
+	   btScalar     len=(contact-nearest).length();
+	   //
+	   if( len < disttobestedge )
+	   {
+	      bestedge=0;
+	      disttobestedge=len;
+      }	      
+   }	   
+	// Edge 1 -> 2
+	if (btFabs(info->m_edgeV1V2Angle)< triangleInfoMapPtr->m_maxEdgeAngleThreshold)
+	{	
+	   btVector3 nearest;
+	   btNearestPointInLineSegment( cp.m_localPointB, v1, v2, nearest );
+	   btScalar     len=(contact-nearest).length();
+	   //
+	   if( len < disttobestedge )
+	   {
+	      bestedge=1;
+	      disttobestedge=len;
+      }	      
+   }	   
+	// Edge 2 -> 0
+	if (btFabs(info->m_edgeV2V0Angle)< triangleInfoMapPtr->m_maxEdgeAngleThreshold)
+	{	
+	   btVector3 nearest;
+	   btNearestPointInLineSegment( cp.m_localPointB, v2, v0, nearest );
+	   btScalar     len=(contact-nearest).length();
+	   //
+	   if( len < disttobestedge )
+	   {
+	      bestedge=2;
+	      disttobestedge=len;
+      }	      
+   }   	      	
+	
+#ifdef BT_INTERNAL_EDGE_DEBUG_DRAW
+   btVector3 upfix=tri_normal * btVector3(0.1f,0.1f,0.1f);
+   btDebugDrawLine(tr * v0 + upfix, tr * v1 + upfix, red );
+#endif   
+	if (btFabs(info->m_edgeV0V1Angle)< triangleInfoMapPtr->m_maxEdgeAngleThreshold)
 	{
 #ifdef BT_INTERNAL_EDGE_DEBUG_DRAW
 		btDebugDrawLine(tr*contact,tr*(contact+cp.m_normalWorldOnB*10),black);
 #endif
 		btScalar len = (contact-nearest).length();
 		if(len<triangleInfoMapPtr->m_edgeDistanceThreshold)
+		if( bestedge==0 )
 		{
 			btVector3 edge(v0-v1);
 			isNearEdge = true;
@@ -558,12 +613,12 @@ void btAdjustInternalEdgeContacts(btManifoldPoint& cp, const btCollisionObject* 
 					{
 						if (((normalAdjustFlags & BT_TRIANGLE_CONVEX_DOUBLE_SIDED)!=0) || (clampedLocalNormal.dot(frontFacing*tri_normal)>0))
 						{
-							btVector3 newNormal = colObj0->getWorldTransform().getBasis() * clampedLocalNormal;
+							btVector3 newNormal = colObj0Wrap->getWorldTransform().getBasis() * clampedLocalNormal;
 							//					cp.m_distance1 = cp.m_distance1 * newNormal.dot(cp.m_normalWorldOnB);
 							cp.m_normalWorldOnB = newNormal;
 							// Reproject collision point along normal. (what about cp.m_distance1?)
 							cp.m_positionWorldOnB = cp.m_positionWorldOnA - cp.m_normalWorldOnB * cp.m_distance1;
-							cp.m_localPointB = colObj0->getWorldTransform().invXform(cp.m_positionWorldOnB);
+							cp.m_localPointB = colObj0Wrap->getWorldTransform().invXform(cp.m_positionWorldOnB);
 							
 						}
 					}
@@ -577,7 +632,11 @@ void btAdjustInternalEdgeContacts(btManifoldPoint& cp, const btCollisionObject* 
 	btDebugDrawLine(tr*nearest,tr*cp.m_localPointB,green);
 #endif //BT_INTERNAL_EDGE_DEBUG_DRAW
 
-	if ((info->m_edgeV1V2Angle)< SIMD_2_PI)
+#ifdef BT_INTERNAL_EDGE_DEBUG_DRAW
+   btDebugDrawLine(tr * v1 + upfix, tr * v2 + upfix , green );
+#endif   
+
+	if (btFabs(info->m_edgeV1V2Angle)< triangleInfoMapPtr->m_maxEdgeAngleThreshold)
 	{
 #ifdef BT_INTERNAL_EDGE_DEBUG_DRAW
 		btDebugDrawLine(tr*contact,tr*(contact+cp.m_normalWorldOnB*10),black);
@@ -587,6 +646,7 @@ void btAdjustInternalEdgeContacts(btManifoldPoint& cp, const btCollisionObject* 
 
 		btScalar len = (contact-nearest).length();
 		if(len<triangleInfoMapPtr->m_edgeDistanceThreshold)
+		if( bestedge==1 )
 		{
 			isNearEdge = true;
 #ifdef BT_INTERNAL_EDGE_DEBUG_DRAW
@@ -634,19 +694,19 @@ void btAdjustInternalEdgeContacts(btManifoldPoint& cp, const btCollisionObject* 
 				else
 				{
 					numConvexEdgeHits++;
-					btVector3 localContactNormalOnB = colObj0->getWorldTransform().getBasis().transpose() * cp.m_normalWorldOnB;
+					btVector3 localContactNormalOnB = colObj0Wrap->getWorldTransform().getBasis().transpose() * cp.m_normalWorldOnB;
 					btVector3 clampedLocalNormal;
 					bool isClamped = btClampNormal(edge,swapFactor*tri_normal,localContactNormalOnB, info->m_edgeV1V2Angle,clampedLocalNormal);
 					if (isClamped)
 					{
 						if (((normalAdjustFlags & BT_TRIANGLE_CONVEX_DOUBLE_SIDED)!=0) || (clampedLocalNormal.dot(frontFacing*tri_normal)>0))
 						{
-							btVector3 newNormal = colObj0->getWorldTransform().getBasis() * clampedLocalNormal;
+							btVector3 newNormal = colObj0Wrap->getWorldTransform().getBasis() * clampedLocalNormal;
 							//					cp.m_distance1 = cp.m_distance1 * newNormal.dot(cp.m_normalWorldOnB);
 							cp.m_normalWorldOnB = newNormal;
 							// Reproject collision point along normal.
 							cp.m_positionWorldOnB = cp.m_positionWorldOnA - cp.m_normalWorldOnB * cp.m_distance1;
-							cp.m_localPointB = colObj0->getWorldTransform().invXform(cp.m_positionWorldOnB);
+							cp.m_localPointB = colObj0Wrap->getWorldTransform().invXform(cp.m_positionWorldOnB);
 						}
 					}
 				}
@@ -658,8 +718,11 @@ void btAdjustInternalEdgeContacts(btManifoldPoint& cp, const btCollisionObject* 
 #ifdef BT_INTERNAL_EDGE_DEBUG_DRAW
 	btDebugDrawLine(tr*nearest,tr*cp.m_localPointB,blue);
 #endif //BT_INTERNAL_EDGE_DEBUG_DRAW
+#ifdef BT_INTERNAL_EDGE_DEBUG_DRAW
+   btDebugDrawLine(tr * v2 + upfix, tr * v0 + upfix , blue );
+#endif   
 
-	if ((info->m_edgeV2V0Angle)< SIMD_2_PI)
+	if (btFabs(info->m_edgeV2V0Angle)< triangleInfoMapPtr->m_maxEdgeAngleThreshold)
 	{
 
 #ifdef BT_INTERNAL_EDGE_DEBUG_DRAW
@@ -668,6 +731,7 @@ void btAdjustInternalEdgeContacts(btManifoldPoint& cp, const btCollisionObject* 
 
 		btScalar len = (contact-nearest).length();
 		if(len<triangleInfoMapPtr->m_edgeDistanceThreshold)
+		if( bestedge==2 )
 		{
 			isNearEdge = true;
 #ifdef BT_INTERNAL_EDGE_DEBUG_DRAW
@@ -715,19 +779,19 @@ void btAdjustInternalEdgeContacts(btManifoldPoint& cp, const btCollisionObject* 
 					//				printf("hitting convex edge\n");
 
 
-					btVector3 localContactNormalOnB = colObj0->getWorldTransform().getBasis().transpose() * cp.m_normalWorldOnB;
+					btVector3 localContactNormalOnB = colObj0Wrap->getWorldTransform().getBasis().transpose() * cp.m_normalWorldOnB;
 					btVector3 clampedLocalNormal;
 					bool isClamped = btClampNormal(edge,swapFactor*tri_normal,localContactNormalOnB,info->m_edgeV2V0Angle,clampedLocalNormal);
 					if (isClamped)
 					{
 						if (((normalAdjustFlags & BT_TRIANGLE_CONVEX_DOUBLE_SIDED)!=0) || (clampedLocalNormal.dot(frontFacing*tri_normal)>0))
 						{
-							btVector3 newNormal = colObj0->getWorldTransform().getBasis() * clampedLocalNormal;
+							btVector3 newNormal = colObj0Wrap->getWorldTransform().getBasis() * clampedLocalNormal;
 							//					cp.m_distance1 = cp.m_distance1 * newNormal.dot(cp.m_normalWorldOnB);
 							cp.m_normalWorldOnB = newNormal;
 							// Reproject collision point along normal.
 							cp.m_positionWorldOnB = cp.m_positionWorldOnA - cp.m_normalWorldOnB * cp.m_distance1;
-							cp.m_localPointB = colObj0->getWorldTransform().invXform(cp.m_positionWorldOnB);
+							cp.m_localPointB = colObj0Wrap->getWorldTransform().invXform(cp.m_positionWorldOnB);
 						}
 					}
 				} 
@@ -756,17 +820,23 @@ void btAdjustInternalEdgeContacts(btManifoldPoint& cp, const btCollisionObject* 
 				{
 					tri_normal *= -1;
 				}
-				cp.m_normalWorldOnB = colObj0->getWorldTransform().getBasis()*tri_normal;
+				cp.m_normalWorldOnB = colObj0Wrap->getWorldTransform().getBasis()*tri_normal;
 			} else
 			{
+				btVector3 newNormal = tri_normal *frontFacing;
+				//if the tri_normal is pointing opposite direction as the current local contact normal, skip it
+				btScalar d = newNormal.dot(localContactNormalOnB) ;
+				if (d< 0)
+				{
+					return;
+				}
 				//modify the normal to be the triangle normal (or backfacing normal)
-				cp.m_normalWorldOnB = colObj0->getWorldTransform().getBasis() *(tri_normal *frontFacing);
+				cp.m_normalWorldOnB = colObj0Wrap->getWorldTransform().getBasis() *newNormal;
 			}
-			
-			
+						
 			// Reproject collision point along normal.
 			cp.m_positionWorldOnB = cp.m_positionWorldOnA - cp.m_normalWorldOnB * cp.m_distance1;
-			cp.m_localPointB = colObj0->getWorldTransform().invXform(cp.m_positionWorldOnB);
+			cp.m_localPointB = colObj0Wrap->getWorldTransform().invXform(cp.m_positionWorldOnB);
 		}
 	}
 }
