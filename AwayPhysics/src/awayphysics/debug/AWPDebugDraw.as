@@ -418,11 +418,11 @@ package awayphysics.debug
 			var v1:Vector3D = new Vector3D();
 			var v2:Vector3D = new Vector3D();
 			for (var i:int = 0; i < indexDataLen; i += 3 ) {
-				v0.setTo(vertexData[3*indexData[m]] * scale.x, vertexData[3*indexData[m]+1] * scale.y, vertexData[3*indexData[m]+2] * scale.z);
+				v0.setTo(vertexData[13*indexData[m]] * scale.x, vertexData[13*indexData[m]+1] * scale.y, vertexData[13*indexData[m]+2] * scale.z);
 				m++;
-				v1.setTo(vertexData[3*indexData[m]] * scale.x, vertexData[3*indexData[m]+1] * scale.y, vertexData[3*indexData[m]+2] * scale.z);
+				v1.setTo(vertexData[13*indexData[m]] * scale.x, vertexData[13*indexData[m]+1] * scale.y, vertexData[13*indexData[m]+2] * scale.z);
 				m++;
-				v2.setTo(vertexData[3*indexData[m]] * scale.x, vertexData[3*indexData[m]+1] * scale.y, vertexData[3*indexData[m]+2] * scale.z);
+				v2.setTo(vertexData[13*indexData[m]] * scale.x, vertexData[13*indexData[m]+1] * scale.y, vertexData[13*indexData[m]+2] * scale.z);
 				m++;
 				drawTriangle(transform.transform.transformVector(v0), transform.transform.transformVector(v1), transform.transform.transformVector(v2), color);
 			}
