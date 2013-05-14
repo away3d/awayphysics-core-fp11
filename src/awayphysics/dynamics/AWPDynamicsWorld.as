@@ -1,4 +1,5 @@
 package awayphysics.dynamics {
+	import away3d.Away3D;
 	import awayphysics.AWPBase;
 	import awayphysics.collision.dispatch.AWPCollisionWorld;
 	import awayphysics.data.AWPCollisionFlags;
@@ -20,6 +21,8 @@ package awayphysics.dynamics {
 
 		public static function getInstance() : AWPDynamicsWorld {
 			if (!currentDynamicsWorld) {
+				if (Away3D.MAJOR_VERSION ==4 && Away3D.MINOR_VERSION > 0)
+					throw new Error("Incorrect AWAY3D version "+Away3D.MAJOR_VERSION+"."+Away3D.MINOR_VERSION+ ". Use Away3D 4.0");
 				trace("version: AwayPhysics v0.69 (30-7-2012)");
 				currentDynamicsWorld = new AWPDynamicsWorld();
 			}
