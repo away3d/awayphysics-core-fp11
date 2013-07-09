@@ -321,6 +321,14 @@ package awayphysics.collision.dispatch {
 			CModule.writeFloat(pointer + 224, v);
 		}
 
+		public function get rollingFriction() : Number {
+			return CModule.readFloat(pointer + 232);
+		}
+
+		public function set rollingFriction(v : Number) : void {
+			CModule.writeFloat(pointer + 232, v);
+		}
+
 		public function get restitution() : Number {
 			return CModule.readFloat(pointer + 228);
 		}
