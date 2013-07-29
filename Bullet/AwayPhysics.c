@@ -28,6 +28,110 @@ struct RayInfo
 	btVector3 m_rayToLocal;
 };
 btAlignedObjectArray<RayInfo*> rays;
+btCollisionWorld* collisionWorld;
+
+void tickCallback(btDynamicsWorld *world, btScalar timeStep) {
+    
+    btDiscreteDynamicsWorld* dynamicsWorld=(btDiscreteDynamicsWorld*)collisionWorld;
+    
+	int rayLen = rays.size();
+	for (int i=0;i<rayLen;i++)
+	{
+		RayInfo* ray = rays[i];
+		btVector3 rayFrom = ray->m_collisionObject->m_worldTransform*ray->m_rayFromLocal;
+		btVector3 rayTo = ray->m_collisionObject->m_worldTransform*ray->m_rayToLocal;
+		btCollisionWorld::ClosestRayResultCallback resultCallback(rayFrom, rayTo);
+		collisionWorld->rayTest(rayFrom,rayTo,resultCallback);
+		if (resultCallback.hasHit()){
+			btManifoldPoint* mpt=new btManifoldPoint();
+			mpt->m_localPointA=rayFrom;
+			mpt->m_localPointB=resultCallback.m_collisionObject->m_worldTransform.invXform(resultCallback.m_hitPointWorld);
+			mpt->m_normalWorldOnB=resultCallback.m_hitNormalWorld;
+			mpt->m_appliedImpulse=0;
+			
+			inline_as3(
+				"import com.adobe.flascc.CModule;\n"
+	  			"CModule.rootSprite.rayCastCallback(%0,%1,%2);\n"
+                : : "r"(ray->m_collisionObject), "r"(mpt), "r"(resultCallback.m_collisionObject)
+            );
+			
+			delete mpt;
+		}
+	}
+
+	if(dynamicsWorld->m_collisionCallbackOn){
+		int numManifolds = dynamicsWorld->getDispatcher()->getNumManifolds();
+		for (int i=0;i<numManifolds;i++)
+		{
+			btPersistentManifold* contactManifold = dynamicsWorld->getDispatcher()->getManifoldByIndexInternal(i);
+			const btCollisionObject* obA = contactManifold->getBody0();
+			const btCollisionObject* obB = contactManifold->getBody1();
+
+			if (obA->getCollisionFlags() & btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK){
+				int numContacts = contactManifold->getNumContacts();
+				if(numContacts>0){
+					btManifoldPoint* mpt=new btManifoldPoint();
+					mpt->m_localPointA=btVector3(0,0,0);
+					mpt->m_localPointB=btVector3(0,0,0);
+					mpt->m_normalWorldOnB=btVector3(0,0,0);
+					mpt->m_appliedImpulse=0;
+					for (int j=0;j<numContacts;j++)
+					{
+						btManifoldPoint& pt = contactManifold->getContactPoint(j);
+						mpt->m_localPointA+=pt.m_localPointA;
+						mpt->m_localPointB+=pt.m_localPointB;
+						mpt->m_normalWorldOnB+=pt.m_normalWorldOnB;
+						mpt->m_appliedImpulse+=pt.m_appliedImpulse;
+					}
+					mpt->m_localPointA/=numContacts;
+					mpt->m_localPointB/=numContacts;
+					mpt->m_normalWorldOnB.normalize();
+					mpt->m_appliedImpulse/=numContacts;
+					
+					inline_as3(
+						"import com.adobe.flascc.CModule;\n"
+	  					"CModule.rootSprite.collisionCallback(%0,%1,%2);\n"
+                		: : "r"(obA), "r"(mpt), "r"(obB)
+           			);
+
+					delete mpt;
+				}
+			}
+
+			if(obB->getCollisionFlags() & btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK){
+				int numContacts = contactManifold->getNumContacts();
+				if(numContacts>0){
+					btManifoldPoint* mpt=new btManifoldPoint();
+					mpt->m_localPointA=btVector3(0,0,0);
+					mpt->m_localPointB=btVector3(0,0,0);
+					mpt->m_normalWorldOnB=btVector3(0,0,0);
+					mpt->m_appliedImpulse=0;
+					for (int j=0;j<numContacts;j++)
+					{
+						btManifoldPoint& pt = contactManifold->getContactPoint(j);
+						mpt->m_localPointA+=pt.m_localPointB;
+						mpt->m_localPointB+=pt.m_localPointA;
+						mpt->m_normalWorldOnB+=pt.m_normalWorldOnB;
+						mpt->m_appliedImpulse+=pt.m_appliedImpulse;
+					}
+					mpt->m_localPointA/=numContacts;
+					mpt->m_localPointB/=numContacts;
+					mpt->m_normalWorldOnB/=-1;
+					mpt->m_normalWorldOnB.normalize();
+					mpt->m_appliedImpulse/=numContacts;
+					
+					inline_as3(
+						"import com.adobe.flascc.CModule;\n"
+	  					"CModule.rootSprite.collisionCallback(%0,%1,%2);\n"
+                		: : "r"(obB), "r"(mpt), "r"(obA)
+           			);
+
+					delete mpt;
+				}
+			}
+		}
+	}
+}
 
 void vector3() __attribute__((used, annotate("as3sig:public function vector3():uint"), annotate("as3package:AWPC_Run")));
 void vector3() {
@@ -40,8 +144,6 @@ void matrix3x3() {
 	AS3_Return(mat);
 }
 
-btCollisionWorld* collisionWorld;
-
 /// create the discrete dynamics world with btDbvtBroadphase
 void createDiscreteDynamicsWorldWithDbvtInC() __attribute__((used, annotate("as3sig:public function createDiscreteDynamicsWorldWithDbvtInC():uint"), annotate("as3package:AWPC_Run")));
 void createDiscreteDynamicsWorldWithDbvtInC() {
@@ -52,6 +154,7 @@ void createDiscreteDynamicsWorldWithDbvtInC() {
 	btSequentialImpulseConstraintSolver* solver = new btSequentialImpulseConstraintSolver();
 
 	collisionWorld = new btDiscreteDynamicsWorld(dispatcher,overlappingPairCache,solver,collisionConfiguration);
+	((btDiscreteDynamicsWorld*)collisionWorld)->setInternalTickCallback(tickCallback, 0, true);
 
 	AS3_Return(collisionWorld);
 }
@@ -72,6 +175,7 @@ void createDiscreteDynamicsWorldWithAxisSweep3InC() {
 	btSequentialImpulseConstraintSolver* solver = new btSequentialImpulseConstraintSolver();
 
 	collisionWorld = new btDiscreteDynamicsWorld(dispatcher,overlappingPairCache,solver,collisionConfiguration);
+	((btDiscreteDynamicsWorld*)collisionWorld)->setInternalTickCallback(tickCallback, 0, true);
 
 	AS3_Return(collisionWorld);
 }
@@ -942,104 +1046,6 @@ void physicsStepInC() {
 		int wheelLen=vehicle->getNumWheels();
 		for (int j=0;j<wheelLen;j++){
 			vehicle->updateWheelTransform(j,true);
-		}
-	}
-	
-	int rayLen = rays.size();
-	for (int i=0;i<rayLen;i++)
-	{
-		RayInfo* ray = rays[i];
-		btVector3 rayFrom = ray->m_collisionObject->m_worldTransform*ray->m_rayFromLocal;
-		btVector3 rayTo = ray->m_collisionObject->m_worldTransform*ray->m_rayToLocal;
-		btCollisionWorld::ClosestRayResultCallback resultCallback(rayFrom, rayTo);
-		collisionWorld->rayTest(rayFrom,rayTo,resultCallback);
-		if (resultCallback.hasHit()){
-			btManifoldPoint* mpt=new btManifoldPoint();
-			mpt->m_localPointA=rayFrom;
-			mpt->m_localPointB=resultCallback.m_collisionObject->m_worldTransform.invXform(resultCallback.m_hitPointWorld);
-			mpt->m_normalWorldOnB=resultCallback.m_hitNormalWorld;
-			mpt->m_appliedImpulse=0;
-			
-			inline_as3(
-				"import com.adobe.flascc.CModule;\n"
-	  			"CModule.rootSprite.rayCastCallback(%0,%1,%2);\n"
-                : : "r"(ray->m_collisionObject), "r"(mpt), "r"(resultCallback.m_collisionObject)
-            );
-			
-			delete mpt;
-		}
-	}
-
-	if(dynamicsWorld->m_collisionCallbackOn){
-		int numManifolds = dynamicsWorld->getDispatcher()->getNumManifolds();
-		for (int i=0;i<numManifolds;i++)
-		{
-			btPersistentManifold* contactManifold = dynamicsWorld->getDispatcher()->getManifoldByIndexInternal(i);
-			const btCollisionObject* obA = contactManifold->getBody0();
-			const btCollisionObject* obB = contactManifold->getBody1();
-
-			if (obA->getCollisionFlags() & btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK){
-				int numContacts = contactManifold->getNumContacts();
-				if(numContacts>0){
-					btManifoldPoint* mpt=new btManifoldPoint();
-					mpt->m_localPointA=btVector3(0,0,0);
-					mpt->m_localPointB=btVector3(0,0,0);
-					mpt->m_normalWorldOnB=btVector3(0,0,0);
-					mpt->m_appliedImpulse=0;
-					for (int j=0;j<numContacts;j++)
-					{
-						btManifoldPoint& pt = contactManifold->getContactPoint(j);
-						mpt->m_localPointA+=pt.m_localPointA;
-						mpt->m_localPointB+=pt.m_localPointB;
-						mpt->m_normalWorldOnB+=pt.m_normalWorldOnB;
-						mpt->m_appliedImpulse+=pt.m_appliedImpulse;
-					}
-					mpt->m_localPointA/=numContacts;
-					mpt->m_localPointB/=numContacts;
-					mpt->m_normalWorldOnB.normalize();
-					mpt->m_appliedImpulse/=numContacts;
-					
-					inline_as3(
-						"import com.adobe.flascc.CModule;\n"
-	  					"CModule.rootSprite.collisionCallback(%0,%1,%2);\n"
-                		: : "r"(obA), "r"(mpt), "r"(obB)
-           			);
-
-					delete mpt;
-				}
-			}
-
-			if(obB->getCollisionFlags() & btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK){
-				int numContacts = contactManifold->getNumContacts();
-				if(numContacts>0){
-					btManifoldPoint* mpt=new btManifoldPoint();
-					mpt->m_localPointA=btVector3(0,0,0);
-					mpt->m_localPointB=btVector3(0,0,0);
-					mpt->m_normalWorldOnB=btVector3(0,0,0);
-					mpt->m_appliedImpulse=0;
-					for (int j=0;j<numContacts;j++)
-					{
-						btManifoldPoint& pt = contactManifold->getContactPoint(j);
-						mpt->m_localPointA+=pt.m_localPointB;
-						mpt->m_localPointB+=pt.m_localPointA;
-						mpt->m_normalWorldOnB+=pt.m_normalWorldOnB;
-						mpt->m_appliedImpulse+=pt.m_appliedImpulse;
-					}
-					mpt->m_localPointA/=numContacts;
-					mpt->m_localPointB/=numContacts;
-					mpt->m_normalWorldOnB/=-1;
-					mpt->m_normalWorldOnB.normalize();
-					mpt->m_appliedImpulse/=numContacts;
-					
-					inline_as3(
-						"import com.adobe.flascc.CModule;\n"
-	  					"CModule.rootSprite.collisionCallback(%0,%1,%2);\n"
-                		: : "r"(obB), "r"(mpt), "r"(obA)
-           			);
-
-					delete mpt;
-				}
-			}
 		}
 	}
 
