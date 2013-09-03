@@ -1,1 +1,1 @@
-Away Physics - 3D physics library for the Away3D Engine in Flash Player 11.1
+Away Physics - 3D physics library for the Away3D Engine in Flash Player 11
