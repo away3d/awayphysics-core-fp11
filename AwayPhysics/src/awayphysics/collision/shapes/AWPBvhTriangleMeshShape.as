@@ -2,6 +2,7 @@ package awayphysics.collision.shapes {
 	import AWPC_Run.*;
 	
 	import away3d.core.base.*;
+	import flash.utils.getQualifiedClassName;
 	
 	public class AWPBvhTriangleMeshShape extends AWPCollisionShape {
 		private var indexDataPtr : uint;
@@ -12,9 +13,17 @@ package awayphysics.collision.shapes {
 		/**
 		 *create a static triangle mesh shape with a 3D mesh object
 		 */
-		public function AWPBvhTriangleMeshShape(geometry : Geometry, useQuantizedAabbCompression : Boolean = true) {
+		public function AWPBvhTriangleMeshShape(geometry:Geometry, subGeometryIndex:int = 0, useQuantizedAabbCompression : Boolean = true) {
 			_geometry = geometry;
-			var indexData : Vector.<uint> = geometry.subGeometries[0].indexData;
+			
+			var vertexDataNum:int = 0;
+			if(geometry.subGeometries[subGeometryIndex] is CompactSubGeometry){
+				vertexDataNum = 13;
+			}else if(geometry.subGeometries[subGeometryIndex] is SubGeometry){
+				vertexDataNum = 3;
+			}
+			
+			var indexData : Vector.<uint> = geometry.subGeometries[subGeometryIndex].indexData;
 			var indexDataLen : int = indexData.length;
 			indexDataPtr = createTriangleIndexDataBufferInC(indexDataLen);
 			
@@ -22,14 +31,14 @@ package awayphysics.collision.shapes {
 				CModule.write32(indexDataPtr+i*4,indexData[i]);
 			}
 			
-			var vertexData : Vector.<Number> = geometry.subGeometries[0].vertexData;
-			var vertexDataLen : int = vertexData.length/13;
+			var vertexData : Vector.<Number> = geometry.subGeometries[subGeometryIndex].vertexData;
+			var vertexDataLen : int = vertexData.length/vertexDataNum;
 			vertexDataPtr = createTriangleVertexDataBufferInC(vertexDataLen*3);
 			
 			for (i = 0; i < vertexDataLen; i++ ) {
-				CModule.writeFloat(vertexDataPtr+i*12,vertexData[i*13] / _scaling);
-				CModule.writeFloat(vertexDataPtr+i*12 + 4,vertexData[i*13+1] / _scaling);
-				CModule.writeFloat(vertexDataPtr+i*12 + 8,vertexData[i*13+2] / _scaling);
+				CModule.writeFloat(vertexDataPtr+i*12,vertexData[i*vertexDataNum] / _scaling);
+				CModule.writeFloat(vertexDataPtr+i*12 + 4,vertexData[i*vertexDataNum+1] / _scaling);
+				CModule.writeFloat(vertexDataPtr+i*12 + 8,vertexData[i*vertexDataNum+2] / _scaling);
 			}
 			
 			var triangleIndexVertexArrayPtr : uint = createTriangleIndexVertexArrayInC(int(indexDataLen / 3), indexDataPtr, int(vertexDataLen), vertexDataPtr);
