@@ -16,7 +16,6 @@ package awayphysics.dynamics {
 	import AWPC_Run.disposeDynamicsWorldInC;
 	import AWPC_Run.CModule;
 	
-	import awayphysics.AWPBase;
 	import awayphysics.collision.dispatch.AWPCollisionObject;
 	import awayphysics.collision.dispatch.AWPCollisionWorld;
 	import awayphysics.data.AWPCollisionFlags;
