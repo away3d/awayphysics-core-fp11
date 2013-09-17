@@ -37,6 +37,7 @@ package awayphysics.collision.dispatch {
 		
 		private var _originScale:Vector3D = new Vector3D(1, 1, 1);
 		private var _dispatcher : EventDispatcher;
+		private var _numListeners: int;
 
 		public function AWPCollisionObject(shape : AWPCollisionShape, skin : ObjectContainer3D, ptr : uint = 0) {
 			m_shape = shape;
@@ -451,7 +452,7 @@ package awayphysics.collision.dispatch {
 		}
 
 		public function addEventListener(type : String, listener : Function, useCapture : Boolean = false, priority : int = 0, useWeakReference : Boolean = false) : void {
-			this.collisionFlags |= AWPCollisionFlags.CF_CUSTOM_MATERIAL_CALLBACK;
+			if (!_numListeners++) this.collisionFlags |= AWPCollisionFlags.CF_CUSTOM_MATERIAL_CALLBACK;
 			_dispatcher.addEventListener(type, listener, useCapture, priority);
 		}
 
@@ -464,7 +465,7 @@ package awayphysics.collision.dispatch {
 		}
 
 		public function removeEventListener(type : String, listener : Function, useCapture : Boolean = false) : void {
-			this.collisionFlags &= (~AWPCollisionFlags.CF_CUSTOM_MATERIAL_CALLBACK);
+			if (!--_numListeners) this.collisionFlags &= (~AWPCollisionFlags.CF_CUSTOM_MATERIAL_CALLBACK);
 			_dispatcher.removeEventListener(type, listener, useCapture);
 		}
 
