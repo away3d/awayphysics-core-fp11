@@ -1,6 +1,6 @@
 
 /*
-compile: g++ -I./ AwayPhysics.c libbulletdynamics.a libbulletcollision.a libbulletmath.a -emit-swc=AWPC_Run -flto-api=exports.txt -fno-exceptions -O4 -o AwayPhysics.swc
+compile: g++ -I./ AwayPhysics.c libbulletdynamics.a libbulletcollision.a libbulletmath.a -emit-swc=AWPC_Run -flto-api=exports.txt -fno-exceptions -fno-rtti -O4 -o AwayPhysics.swc
 */
 
 #include <stdlib.h>
