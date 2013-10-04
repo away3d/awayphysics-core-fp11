@@ -22,19 +22,11 @@ package awayphysics.dynamics.constraintsolver {
 			m_rbA = rbA;
 			m_rbB = rbB;
 			
-			m_rbAFrame = new AWPTransform();
-			m_rbAFrame.position = pivotInA;
-			m_rbAFrame.rotation = AWPMath.degrees2radiansV3D(rotationInA);
-
 			var posInA : Vector3D = pivotInA.clone();
-			var rotA:Matrix3D = AWPMath.euler2matrix(m_rbAFrame.rotation);
+			var rotA:Matrix3D = AWPMath.euler2matrix(AWPMath.degrees2radiansV3D(rotationInA));
 			if (rbB) {
-				m_rbBFrame = new AWPTransform();
-				m_rbBFrame.position = pivotInB;
-				m_rbBFrame.rotation = AWPMath.degrees2radiansV3D(rotationInB);
-				
 				var posInB : Vector3D = pivotInB.clone();
-				var rotB:Matrix3D = AWPMath.euler2matrix(m_rbBFrame.rotation);
+				var rotB:Matrix3D = AWPMath.euler2matrix(AWPMath.degrees2radiansV3D(rotationInB));
 				
 				var vec1:AWPVector3 = new AWPVector3();
 				vec1.sv3d = posInA;
@@ -50,7 +42,6 @@ package awayphysics.dynamics.constraintsolver {
 				CModule.free(mat1.pointer);
 				CModule.free(mat2.pointer);
 			} else {
-				m_rbBFrame = null;
 				vec1 = new AWPVector3();
 				vec1.v3d = posInA;
 				mat1 = new AWPMatrix3x3();
@@ -59,6 +50,9 @@ package awayphysics.dynamics.constraintsolver {
 				CModule.free(vec1.pointer);
 				CModule.free(mat1.pointer);
 			}
+			
+			m_rbAFrame = new AWPTransform(pointer + 300);
+			m_rbBFrame = new AWPTransform(pointer + 364);
 		}
 		
 		public function get rbAFrame():AWPTransform {
@@ -67,6 +61,34 @@ package awayphysics.dynamics.constraintsolver {
 		
 		public function get rbBFrame():AWPTransform {
 			return m_rbBFrame;
+		}
+		
+		public function get pivotInA():Vector3D{
+			return m_rbAFrame.position;
+		}
+		public function set pivotInA(v:Vector3D):void{
+			m_rbAFrame.position = v;
+		}
+		
+		public function get pivotInB():Vector3D{
+			return m_rbBFrame.position;
+		}
+		public function set pivotInB(v:Vector3D):void{
+			m_rbBFrame.position = v;
+		}
+		
+		public function set rotationInA(rot:Vector3D) : void {
+			m_rbAFrame.rotation = AWPMath.degrees2radiansV3D(rot);
+		}
+		public function get rotationInA():Vector3D {
+			return AWPMath.radians2degreesV3D(m_rbAFrame.rotation);
+		}
+		
+		public function set rotationInB(rot:Vector3D) : void {
+			m_rbBFrame.rotation = AWPMath.degrees2radiansV3D(rot);
+		}
+		public function get rotationInB():Vector3D {
+			return AWPMath.radians2degreesV3D(m_rbBFrame.rotation);
 		}
 
 		public function setLimit(_swingSpan1 : Number, _swingSpan2 : Number, _twistSpan : Number, _softness : Number = 1, _biasFactor : Number = 0.3, _relaxationFactor : Number = 1) : void {

@@ -2,7 +2,6 @@ package awayphysics.collision.shapes {
 	import AWPC_Run.*;
 	
 	import away3d.core.base.*;
-	import flash.utils.getQualifiedClassName;
 	
 	public class AWPBvhTriangleMeshShape extends AWPCollisionShape {
 		private var indexDataPtr : uint;

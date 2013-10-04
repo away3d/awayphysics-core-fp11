@@ -42,7 +42,7 @@ package awayphysics.dynamics {
 			if (!currentDynamicsWorld) {
 				if (Away3D.MAJOR_VERSION ==4 && Away3D.MINOR_VERSION < 1)
 					throw new Error("Incorrect AWAY3D version "+Away3D.MAJOR_VERSION+"."+Away3D.MINOR_VERSION+ ". Use Away3D 4.1 or higher");
-				trace("version: AwayPhysics v1.0 alpha (4-9-2013)");
+				trace("version: AwayPhysics v1.0 alpha (4-10-2013)");
 				currentDynamicsWorld = new AWPDynamicsWorld();
 			}
 			return currentDynamicsWorld;

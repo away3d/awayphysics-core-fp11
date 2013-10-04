@@ -13,6 +13,7 @@ BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h line59 added btAlignedObjectAr
 BulletDynamics/Dynamics/btDiscreteDynamicsWorld.cpp line509 added m_vehicles.push_back(vehicle);
 BulletDynamics/Dynamics/btDiscreteDynamicsWorld.cpp line515 added m_vehicles.remove(vehicle);
 BulletDynamics/ConstraintSolver/btTypedConstraint.h line318 added public
+BulletDynamics/ConstraintSolver/btPoint2PointConstraint.h line56 removed #ifdef IN_PARALLELL_SOLVER
 BulletDynamics/ConstraintSolver/btHingeConstraint.h line52 removed #ifdef IN_PARALLELL_SOLVER
 BulletDynamics/ConstraintSolver/btHingeConstraint.h  removed all #ifdef _BT_USE_CENTER_LIMIT_
 BulletDynamics/ConstraintSolver/btHingeConstraint.cpp removed all #ifdef _BT_USE_CENTER_LIMIT_

@@ -1,4 +1,5 @@
 package awayphysics.dynamics.constraintsolver {
+	import awayphysics.math.AWPTransform;
 	import AWPC_Run.CModule;
 	import AWPC_Run.createHingeConstraint1InC;
 	import AWPC_Run.createHingeConstraint2InC;
@@ -8,32 +9,24 @@ package awayphysics.dynamics.constraintsolver {
 	import flash.geom.Vector3D;
 
 	public class AWPHingeConstraint extends AWPTypedConstraint {
-		private var m_limit : AWPAngularLimit;
-		
-		private var _pivotInA:Vector3D;
-		private var _pivotInB:Vector3D;
-		private var _axisInA:Vector3D;
-		private var _axisInB:Vector3D;
+		private var m_rbAFrame:AWPTransform;
+		private var m_rbBFrame:AWPTransform;
+		private var m_limit:AWPAngularLimit;
 
 		public function AWPHingeConstraint(rbA : AWPRigidBody, pivotInA : Vector3D, axisInA : Vector3D, rbB : AWPRigidBody = null, pivotInB : Vector3D = null, axisInB : Vector3D = null, useReferenceFrameA : Boolean = false) {
 			super(1);
 			m_rbA = rbA;
 			m_rbB = rbB;
 			
-			_pivotInA=pivotInA;
-			_pivotInB=pivotInB;
-			_axisInA=axisInA;
-			_axisInB=axisInB;
-
 			if (rbB) {
 				var vec1:AWPVector3 = new AWPVector3();
-				vec1.sv3d = _pivotInA;
+				vec1.sv3d = pivotInA;
 				var vec2:AWPVector3 = new AWPVector3();
-				vec2.sv3d = _pivotInB;
+				vec2.sv3d = pivotInB;
 				var vec3:AWPVector3 = new AWPVector3();
-				vec3.v3d = _axisInA;
+				vec3.v3d = axisInA;
 				var vec4:AWPVector3 = new AWPVector3();
-				vec4.v3d = _axisInB;
+				vec4.v3d = axisInB;
 				pointer = createHingeConstraint2InC(rbA.pointer, rbB.pointer, vec1.pointer, vec2.pointer, vec3.pointer, vec4.pointer, useReferenceFrameA ? 1 : 0);
 				CModule.free(vec1.pointer);
 				CModule.free(vec2.pointer);
@@ -41,27 +34,35 @@ package awayphysics.dynamics.constraintsolver {
 				CModule.free(vec4.pointer);
 			} else {
 				vec1 = new AWPVector3();
-				vec1.sv3d = _pivotInA;
+				vec1.sv3d = pivotInA;
 				vec2 = new AWPVector3();
-				vec2.v3d = _axisInA;
+				vec2.v3d = axisInA;
 				pointer = createHingeConstraint1InC(rbA.pointer, vec1.pointer, vec2.pointer, useReferenceFrameA ? 1 : 0);
 				CModule.free(vec1.pointer);
 				CModule.free(vec2.pointer);
 			}
+			m_rbAFrame = new AWPTransform(pointer + 552);
+			m_rbBFrame = new AWPTransform(pointer + 616);
 			m_limit = new AWPAngularLimit(pointer + 688);
 		}
 		
 		public function get pivotInA():Vector3D{
-			return _pivotInA;
+			return m_rbAFrame.position;
+		}
+		public function set pivotInA(v:Vector3D):void{
+			m_rbAFrame.position = v;
 		}
 		public function get pivotInB():Vector3D{
-			return _pivotInB;
+			return m_rbBFrame.position;
+		}
+		public function set pivotInB(v:Vector3D):void{
+			m_rbBFrame.position = v;
 		}
 		public function get axisInA():Vector3D{
-			return _axisInA;
+			return m_rbAFrame.basis.column3;
 		}
 		public function get axisInB():Vector3D{
-			return _axisInB;
+			return m_rbBFrame.basis.column3;
 		}
 		
 		public function get limit():AWPAngularLimit {
