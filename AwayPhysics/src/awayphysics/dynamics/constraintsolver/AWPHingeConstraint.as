@@ -3,6 +3,7 @@ package awayphysics.dynamics.constraintsolver {
 	import AWPC_Run.CModule;
 	import AWPC_Run.createHingeConstraint1InC;
 	import AWPC_Run.createHingeConstraint2InC;
+	import AWPC_Run.setHingeConstraintAxisInC;
 	import awayphysics.dynamics.AWPRigidBody;
 	import awayphysics.math.AWPVector3;
 	
@@ -63,6 +64,9 @@ package awayphysics.dynamics.constraintsolver {
 		}
 		public function get axisInB():Vector3D{
 			return m_rbBFrame.basis.column3;
+		}
+		public function setAxis(axis:Vector3D):void{
+			setHingeConstraintAxisInC(pointer, axis.x, axis.y, axis.z);
 		}
 		
 		public function get limit():AWPAngularLimit {

@@ -711,6 +711,23 @@ void createHingeConstraint2InC(){
 	AS3_Return(hinge);
 }
 
+void setHingeConstraintAxisInC() __attribute__((used, annotate("as3sig:public function setHingeConstraintAxisInC(as3_hinge:uint,as3_axisX:Number,as3_axisY:Number,as3_axisZ:Number):uint"), annotate("as3package:AWPC_Run")));
+void setHingeConstraintAxisInC(){
+	btHingeConstraint* hinge;
+	float axisX;
+	float axisY;
+	float axisZ;
+	AS3_GetScalarFromVar(hinge, as3_hinge);
+	AS3_GetScalarFromVar(axisX, as3_axisX);
+	AS3_GetScalarFromVar(axisY, as3_axisY);
+	AS3_GetScalarFromVar(axisZ, as3_axisZ);
+
+	btVector3 axis(axisX, axisY, axisZ);
+	hinge->setAxis(axis);
+
+	AS3_Return(0);
+}
+
 void createConeTwistConstraint1() __attribute__((used, annotate("as3sig:public function createConeTwistConstraint1(as3_bodyA:uint,as3_pivotInA:uint,as3_rot:uint):uint"), annotate("as3package:AWPC_Run")));
 void createConeTwistConstraint1(){
 	btRigidBody* bodyA;
